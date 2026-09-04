@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw YouTube thumbnail cache for scripts/process-stills.ts (re-fetchable)
+/scripts/.cache/
+
+# local screenshots / scratch
+/screenshots/
