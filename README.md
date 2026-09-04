@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UNC Student Film Association website
 
-## Getting Started
+A three-route demo of the club's new site: the homepage, one film page, and
+the 2025 awards ceremony. Next.js 16 (App Router), TypeScript, Tailwind v4,
+statically generated, deployed on Vercel. There is no CMS: the whole site is a
+pure function of two JSON files.
 
-First, run the development server:
+## Add a film
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Add an entry to `content/films.json` (copy an existing one). Required:
+   `slug`, `title`, `year`, `track`, `director`, `logline`, `youtubeId`,
+   `viewable`, `runtime` (or `null`), `still`, `awards`, `credits`.
+2. If it won anything, add the same categories to `content/awards.json`
+   under that year, and list them in the film's `awards` array. The build
+   fails if the two files disagree.
+3. Run `npm run stills` to fetch the YouTube frame and write the treated
+   stills into `public/stills/`. Set `"still": null` if no frame exists.
+4. Run `npm run check` (types, lint, gold rule) and `npm run build`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Category names must match `CANONICAL_CATEGORIES` in `content/types.ts`.
+Credits are a flat list of `{ "role", "name" }` pairs in the order they
+should roll.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server at http://localhost:3000 |
+| `npm run build` | Production build (runs the gold-rule check first) |
+| `npm run check` | Type check, lint, and gold-rule check |
+| `npm run stills` | Fetch and process film stills (`--sheets` for comparison sheets, see `scripts/process-stills.ts`) |
 
-## Learn More
+## Where things are
 
-To learn more about Next.js, take a look at the following resources:
+- `content/` — `films.json`, `awards.json`, the types, and the validator that
+  fails the build on malformed content.
+- `components/` — shared components. `AwardBadge.tsx` is the only file
+  allowed to use the gold color; `scripts/check-gold.mjs` enforces that.
+- `components/home/`, `components/film/`, `components/awards/` — per-route
+  pieces.
+- `app/globals.css` — the design tokens (palette, type scale) and the few
+  component-shaped rules (credit block, still reveal, hero).
+- `scripts/process-stills.ts` — the build-time dither pipeline.
+- `DESIGN_NOTES.md` — every design decision, what was rejected, and why.
+- `docs/` — hero and dither comparison images referenced by the notes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Content the club still needs to supply
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See DESIGN_NOTES.md section 5: exec board names, semester dates, full crew
+credits per film, person-level award winners, and the 2026 slate.

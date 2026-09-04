@@ -301,17 +301,132 @@ Kept on purpose after the review, with the reason:
 
 ---
 
-## 2. Image treatment
+## 2. Image treatment [9, 16.2]
 
-*(filled in after the pipeline comparison)*
+The pipeline agent compared four dithers at two and three tones and three
+working widths, producing contact sheets of all twelve stills for each
+combination (`npm run stills -- --sheets`). I looked at the sheets and made
+the call. Reference images: `docs/dither-contact-sheet.png` (chosen) and
+`docs/dither-floyd-rejected.png` (rejected).
 
-## 3. Hero concepts
+**Chosen: ordered Bayer 8×8, two tones (base and carolina), 320px working
+width, nearest-neighbour upscale to 1280×720, lossless webp.**
 
-*(filled in after both are built and screenshotted)*
+- *Bayer 8×8 over Floyd–Steinberg and Atkinson.* Error diffusion reads as a
+  fax of a photograph: it preserves tonal detail, so a well-lit frame still
+  looks well-lit and a phone-shot interior still looks like a phone-shot
+  interior. Bayer reads as a screen print. It flattens the sources harder,
+  which is the whole point [9.2]. Atkinson is the most graphic of the four
+  but blows out the two darkest faces (FDOC, Omnes Unum) into nothing.
+  Bayer 4×4 reads as crosshatch texture rather than print.
+- *Two tones over three.* With `deep` as a midtone every frame looks
+  nicer on its own, but the well-lit films resolve into flat deep fields and
+  the grid starts showing who lit their film properly again. Two tones
+  keep the set together, which matters more than any single frame.
+- *320px working width.* Each dither cell becomes an exact 4px block at
+  1280. 480 gives 2.67px cells and faint moiré; 640 gives 2px cells that
+  read as a smooth photo at card size and lose the print character.
+- *Lossless.* A two-colour image compresses to 2–5 KB losslessly; lossy webp
+  is 25× larger and adds a thousand off-palette colours to the grain.
+- Every treated file was verified to contain only `#0B0D0F` and `#4B9CD3`.
 
-## 4. Screenshot passes
+**Card-size rendition.** The first homepage pass showed tile-shaped moiré on
+the cards: 4px cells downscaled to about 340px land at about 1.05px per cell
+and beat against the pixel grid. Three fixes were rendered side by side:
+(a) the 1280px still downscaled with smoothing, (b) the native 320×180
+rendition upscaled with `image-rendering: pixelated`, (c) the native
+rendition upscaled with default smoothing. (b) was worst: at a non-integer
+ratio, nearest-neighbour duplicates every twentieth column and the tiles get
+bigger. (c) was clean. So the pipeline now also writes
+`{slug}-treated-sm.webp` at native resolution and `FilmCard` serves it;
+the hero, facade, and awards finale keep the 1280px file.
 
-*(one entry per pass per route, desktop and 375px)*
+**Bad sources, kept as they are [17].**
+- *At Last, the Gift* has no thumbnail at all: the YouTube upload is private,
+  so every thumbnail variant 404s. Nothing was substituted. The content
+  schema now allows `still: null`, `viewable` is false, and the
+  `Frame` component renders a type-only 16:9 leader (surface rectangle,
+  title in the display face, "No frame available" in the credit style). It
+  is an Audience Choice winner, so it sits in the "also on the slate" list
+  rather than the six-up strip.
+- *Discrete Magematics* is a 2:3 poster on black, not a frame. It treats to a
+  solid carolina rectangle with illegible text. It is the one card that
+  visibly breaks the grid, and it is the film's real thumbnail.
+- *Slam!* is a title card at 640×480 (no max-res thumbnail; the pipeline fell
+  back to the standard-definition one).
+- *Silenced* carries an "Official Selection, Argyle Film Festival 2026"
+  laurel baked into the frame. It survives the treatment legibly, but it is
+  an award graphic outside the site's award system.
+
+## 3. Hero concepts [11.1, 16.3]
+
+Two built, both screenshotted at 1440 and 375. Images in `docs/`.
+
+**A. The push (rejected).** `components/home/HeroPush.tsx`, kept in the
+repo for the record. A full-width letterboxed FDOC still, a 28-second scale
+from 1.0 to 1.07, a scrim, and the wordmark, description, and button over
+the image. It is the brief's safe recommendation and it works. It is also
+the universal dark landing hero: type over an image with a gradient under
+it. The dither fights the wordmark (high-frequency noise behind serifs), the
+scrim exists only to fix that, and section 13 says text over a still needs
+a backing at all. Nothing about it says "film club" rather than "agency".
+
+**B. The lit screen (kept).** `components/home/HeroScreen.tsx`. The brief's
+own hint: the most characteristic thing in this world is a dark room with a
+lit screen. A 16:9 screen sits in the room carrying the dithered still, with
+letterbox bars above and below it. Carolina light spills off the screen onto
+the walls (a radial gradient behind it, the one place a gradient is allowed
+by principle 5, because it is the light source). The wordmark sits *under*
+the screen as a one-line title card, not over the image, so it needs no scrim
+and the still stays untouched. On load the lamp comes up: the glow fades in
+over 1.6s and the screen brightens over 1.4s. That is the site's one
+orchestrated motion moment [5.5]; nothing else on the site animates in.
+
+Iteration on B: the first build hid the glow entirely (its ellipse faded out
+at the screen's edge, so it sat behind the frame), and the two-line
+display-xl wordmark pushed below the fold at 1440×900. Fixed by widening the
+glow to 30% carolina at centre with a slower falloff, shrinking the screen
+to 48rem, and setting the wordmark on one line at clamp(2.75rem, 6.4vw,
+6rem), which is also a better title card.
+
+Touch devices never hover, so on `(hover: none)` the screen runs the reveal
+once after the lamp-up (real frame at 2.4s, back to treated at 5.2s). A
+phone visitor sees the signature interaction explain itself.
+
+**Reduced motion.** No lamp-up and no glow fade: the room is already lit
+when the page arrives. The still reveal becomes an instant swap rather than
+a cross-fade. The touch auto-reveal does not run. Same information, no
+motion, nothing missing.
+
+## 4. Screenshot passes [14.2]
+
+Every pass was captured at 1440 and 375 with Playwright driving the
+installed Chrome (exact viewports, full-page), and looked at before anything
+was changed. Chanel's rule at the end of each pass: remove one thing.
+
+### 4.0 `/` Homepage
+
+**Pass 1** (1440 / 375). The hero worked. Wrong: the "Now showing" rule sat
+four pixels under the hero button; the winner laurels in the awards teaser
+floated 12px from their titles; the lede for the awards section dropped the
+"took seven" sentence because I had written the sweep rule as a strict
+majority and 7 of 15 is not one; and every card in the strip showed
+tile-shaped moiré (section 2). Changed: hero bottom padding 64/96, laurel
+gap 8px, sweep rule to "at least five wins and at least double the
+runner-up", card rendition (section 2).
+
+**Pass 2** (1440 / 375). Moiré unchanged. Cause: the base `.still__treated`
+rule already carried `image-rendering: pixelated` from the first design
+system commit and the card rule had not applied. Rendered the three options
+side by side (section 2) and switched cards to smooth upscaling of the native
+rendition.
+
+**Pass 3** (1440 / 375). Cards clean; the six frames read as one contact
+sheet. Confirmed on the 375 capture that the nav wraps to two rows
+(wordmark, then links) rather than shrinking the wordmark, and that the
+touch auto-reveal fired (the capture caught the real frame mid-cycle).
+*Removed:* the second call to action I had planned beside the hero button.
+One action per section.
 
 ### 4.1 `/awards/2025`
 
@@ -376,6 +491,61 @@ the categories, rounded down, and at least double the runner-up. Seven of
 fifteen against three qualifies; eight against seven would not. A strict
 majority would have dropped "one sweep" from the lede for this exact night.
 
+### 4.2 `/films/fdoc`
+
+Built by the film-page agent against the shared components; its passes are
+reproduced here from its report, followed by my own pass.
+
+**Pass 1** (1440 / 375). Structure right first time. Wrong: section rules
+carried 192px of air (double the plan's ceiling); the credit empty-state
+panel sat hard-left while the single director row was centred on the
+gutter; at 375 two large badges plus the gap came to 344px against a 343px
+column, so the laurel row collapsed by accident. Changed: rules to 48+48
+desktop / 32+32 mobile; panel centred under the gutter; mobile badge gap
+reduced.
+
+**Pass 2** (1440 / 375 / 320, plus `/films/at-last-the-gift` and
+`/films/slam`). Slam renders no Awards section and no orphan rule. At Last,
+the Gift renders the type-only leader at facade width, a dark screen for a
+film that is not showing. Wrong: the reduced mobile gap produced a
+2/1/1/1/1/1 wrap; the not-streaming line was a 15px caption. Changed: badges
+become a deliberate single column below 40rem; explanation moved to body
+size.
+
+**Pass 3** (with a temporary "Placeholder Person (test)" on Best Director in
+both content files). Person line renders as a cream credit line under the
+category; removed afterwards, `git diff content/` empty.
+
+**My pass** (1440 / 375). The seven laurels wrap 5+2 on desktop and stack
+on mobile, which is how a one-sheet lists wins; kept. The credit block with
+one real row and the in-block invitation reads as intended: the invitation
+names the five departments the awards prove existed. Adjacent-film frames
+loaded on a second capture (the first missed one to lazy loading, not a
+bug).
+
 ## 5. Things the club needs to supply
 
-*(running list; doubles as the pitch argument)*
+Each of these is an explicit empty state on the live site, written so it
+reads as an invitation rather than a gap. Together they are the pitch
+argument: the current site cannot hold any of this.
+
+1. **Exec board names.** The crew block on the homepage lists roles with
+   "Name to be supplied". Roles used: president, vice president, treasurer,
+   executive producers, and the screenwriting, editing, and acting guilds,
+   per the structure the club describes. Confirm the real roles.
+2. **Semester dates.** Pitches open, review board decisions, festival.
+   "Now showing" carries "date to be announced" for all three.
+3. **Full crew credits per film.** Each film page shows the director and an
+   in-block note naming the departments its awards prove existed.
+4. **Person-level award winners.** Every acting, craft, and score award is
+   film-level only. The award row and badge components already render a
+   person line when one exists; tested with a placeholder and removed.
+5. **The 2026 slate.** The festival happened in May 2026 and was never
+   published. One JSON entry per film plus `npm run stills`.
+6. **A public upload of At Last, the Gift**, or a still from it. The video is
+   private, so the site has no frame for an Audience Choice winner.
+7. **Confirmation of the "independent films" copy** in How it works. It
+   describes indie films as member-led projects outside the greenlit slate;
+   that is my best reading of the old site's vocabulary, not the club's
+   words.
+8. **A domain.** The site's metadata points at the Vercel URL until then.
