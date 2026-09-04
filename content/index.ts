@@ -130,7 +130,9 @@ const FILM_KEYS = [
   "viewable", "runtime", "still", "awards", "credits",
 ] as const;
 
-function parseStill(file: string, path: string, v: unknown, slug: string): Still {
+function parseStill(file: string, path: string, v: unknown, slug: string): Still | null {
+  // null means no frame exists for this film (see Still in ./types.ts).
+  if (v === null) return null;
   const o = expectRecord(file, path, v);
   rejectUnknownKeys(file, path, o, ["treated", "original"]);
   const still: Still = {

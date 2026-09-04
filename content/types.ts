@@ -67,7 +67,13 @@ export interface Credit {
   name: string;
 }
 
-/** Paths (under /public) to the dithered and untreated stills. */
+/**
+ * Paths (under /public) to the dithered and untreated stills. A film's
+ * `still` is null when no frame is available at all (for 2025 that is
+ * "At Last, the Gift", whose YouTube upload is private, so YouTube serves no
+ * thumbnail). Components render a type-only frame in that case; nothing is
+ * generated in its place (SFA_SYSTEM_DESIGN.md 9.4).
+ */
 export interface Still {
   treated: string;
   original: string;
@@ -85,7 +91,7 @@ export interface Film {
   viewable: boolean;
   /** Minutes, or null when unknown. */
   runtime: number | null;
-  still: Still;
+  still: Still | null;
   awards: Award[];
   credits: Credit[];
 }

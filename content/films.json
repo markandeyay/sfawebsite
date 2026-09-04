@@ -101,12 +101,9 @@
     "director": "Christopher Cooper",
     "logline": "Timothy Coleman disappeared thirteen months ago. Elaine Coleman is going to find him.",
     "youtubeId": "LKPT6smWlJo",
-    "viewable": true,
+    "viewable": false,
     "runtime": null,
-    "still": {
-      "treated": "/stills/at-last-the-gift-treated.webp",
-      "original": "/stills/at-last-the-gift.webp"
-    },
+    "still": null,
     "awards": [
       { "category": "Audience Choice", "person": null }
     ],
