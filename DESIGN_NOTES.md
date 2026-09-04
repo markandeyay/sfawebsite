@@ -569,6 +569,26 @@ used" warnings. Cards are below the fold, so the priority flag was removed;
 all three routes now load with an empty console. The hero still and the
 film-page facade keep their priority.
 
+## 6. Deployment [12.4]
+
+No deploy token was present in the environment, so the site was deployed
+through the brief's fallback path: the GitHub repo imported in the Vercel
+dashboard, framework auto-detected, no environment variables. Production
+builds from `main` on every push.
+
+- Production: https://sfawebsite-kappa.vercel.app
+- First deployment: https://sfawebsite-9wxvcl4yf-markandeyayalamanchi9-1237s-projects.vercel.app
+
+Two things learned on the way. `sfawebsite.vercel.app` belongs to an
+unrelated project, so Vercel assigned the `-kappa` domain; the site's
+metadata URL was updated to match. And the team-scoped alias
+(`sfawebsite-markandeyayalamanchi9-1237s-projects.vercel.app`) sits behind
+Vercel's login wall by default, so it must not be the link handed to the
+president; the `-kappa` domain is public.
+
+Cold-visit check on the production domain: all three routes captured at
+1440 and 375 with an empty console, identical to the local production build.
+
 ## 5. Things the club needs to supply
 
 Each of these is an explicit empty state on the live site, written so it

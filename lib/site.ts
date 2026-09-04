@@ -5,7 +5,7 @@ export const SITE = {
   description:
     "The UNC Student Film Association is a student-run production club. Members pitch scripts, crew up, shoot films, and screen them at a festival and awards ceremony each May.",
   // Replaced with the real domain when the club buys one; used for metadata only.
-  url: "https://sfawebsite.vercel.app",
+  url: "https://sfawebsite-kappa.vercel.app",
   instagram: "https://www.instagram.com/uncstudentfilmassociation",
   youtube: "https://www.youtube.com/@studentfilmassociationunc",
   // The typo is in the real URL. Do not correct it.

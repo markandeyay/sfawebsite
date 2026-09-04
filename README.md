@@ -2,7 +2,7 @@
 
 A three-route demo of the club's new site: the homepage, one film page, and
 the 2025 awards ceremony. Next.js 16 (App Router), TypeScript, Tailwind v4,
-statically generated, deployed on Vercel. There is no CMS: the whole site is a
+statically generated, deployed on Vercel at https://sfawebsite-kappa.vercel.app (production builds from `main` on every push). There is no CMS: the whole site is a
 pure function of two JSON files.
 
 ## Add a film
