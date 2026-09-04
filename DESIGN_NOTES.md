@@ -313,6 +313,69 @@ Kept on purpose after the review, with the reason:
 
 *(one entry per pass per route, desktop and 375px)*
 
+### 4.1 `/awards/2025`
+
+Built as `app/awards/[year]/page.tsx` with `components/awards/{Tally,Act,AwardRow,BestPicture}.tsx`
+and the pure helpers in `components/awards/ceremony.ts`. Every number on the page
+(fifteen, five, seven, the tally, the sweep sentence) is derived from
+`awards.json`; the only hand-written words are "May", the act names and "Directed by".
+
+The question asked on every pass: is this a list, or an event? The answer the
+page settles on is that the *acts* are allowed to be a list because they are
+framed by two things that are not: a tally that states the night's result as
+data before a single envelope opens, and a finale that is the one place the
+page shows a picture.
+
+**Pass 1** (1440 / 375). The header, tally and finale worked first time. The
+acts did not: a 1fr/1fr grid put the gutter in the dead centre of a 1152px
+wrap, so each row was a small gold badge floating beside a 500px void and the
+whole act read as a form. The category caps sat a few pixels below the winner's
+baseline, because `items-baseline` on a row whose winner is an inline-flex
+badge aligns to the laurel SVG, which has no baseline. The finale's "Watch
+FDOC" button was justified 900px away from "Directed by Keller Huffman".
+Mobile was already right: rows stack category over winner, the still bleeds to
+the viewport edge. *Removed:* an `sr-only` "7 wins" duplicate on the tally
+numeral; a `dl` already reads "FDOC, 7".
+
+**Pass 2.** Act lists capped at 56rem with a 2fr/3fr grid, so the category
+column is the narrow one and the gutter sits at two fifths, the proportion of
+the credit block on the film page. Rows align to the top with a 4px offset on
+the label instead of to a synthesized baseline. Finale credit and button now
+sit together on one line, left-aligned, as in the wireframe. The rules
+looked alternately bright and dim in the capture; measured rather than guessed
+(below).
+
+**Pass 3.** Measurement showed the winner link was `inline-block`, so the
+`dd` carried a 5px line-box strut under every badge; made it `block w-fit`.
+Sampling a column of pixels in the PNG showed every rule is exactly one pixel
+of pure `deep`, so the alternating brightness was the image viewer's downscale,
+not the render. Moved every spacing onto the plan's 8px list (row padding 24,
+act top 32/48, finale text 32/48). *Removed:* an "Accepted by {person}" line I
+had invented for the finale. The plan's finale is still, laurel, title,
+director, button, and "accepted by" is a guess at what a Best Picture
+`person` would mean.
+
+**Pass 4.** Tried the tally numerals one step up (display-lg). Wrong: at 80px
+they match the h1 and the tally becomes a scoreboard that shouts over the
+title. The plan's scale was right (numerals one step below the h1; the sweep
+sentence carries the headline in words). Bodoni Moda's "1" reads as a bar at
+opsz 96 at any size; that is the face, not a bug. Act gaps pulled back from
+96 + 24 to 64 + 24 so the space after an act's last row (88px) is inside the
+plan's 96px ceiling, with 48px from rule to the next act name. 320px: no
+horizontal overflow; long titles wrap inside the laurels.
+
+**Pass 5.** Person-level test: set `"Placeholder Person"` on Best Lead Actor in
+both content files, captured, then reverted (`git diff content/` empty). The
+name renders as a gold credit line under the title, the laurels re-centre on
+the two-line block, and the category label stays level with the title line.
+Hover on a winner: gold offset underline, consistent with `.link`; kept.
+*Removed:* a dead `max-w-full` on the row link.
+
+Definition of "sweep" (in `ceremony.ts`): the leading film has at least half
+the categories, rounded down, and at least double the runner-up. Seven of
+fifteen against three qualifies; eight against seven would not. A strict
+majority would have dropped "one sweep" from the lede for this exact night.
+
 ## 5. Things the club needs to supply
 
 *(running list; doubles as the pitch argument)*

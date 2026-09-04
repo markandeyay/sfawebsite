@@ -5,6 +5,8 @@ interface FrameProps {
   film: Film;
   priority?: boolean;
   className?: string;
+  /** See Still. Cards use the native-resolution rendition. */
+  size?: "large" | "card";
 }
 
 /**
@@ -14,7 +16,7 @@ interface FrameProps {
  * a surface rectangle, with the reason in a credit line. Nothing is
  * generated in place of the missing frame (SFA_SYSTEM_DESIGN.md 9.4).
  */
-export function Frame({ film, priority = false, className = "" }: FrameProps) {
+export function Frame({ film, priority = false, className = "", size = "large" }: FrameProps) {
   if (film.still) {
     return (
       <Still
@@ -22,6 +24,7 @@ export function Frame({ film, priority = false, className = "" }: FrameProps) {
         alt={`Frame from ${film.title}`}
         priority={priority}
         className={className}
+        size={size}
       />
     );
   }

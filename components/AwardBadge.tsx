@@ -71,7 +71,7 @@ export function AwardBadge(props: AwardBadgeProps) {
           ? "text-display-sm"
           : "text-[1.125rem]";
     return (
-      <div className={`inline-flex items-center gap-3 text-gold ${className}`}>
+      <div className={`inline-flex items-center gap-2 text-gold ${className}`}>
         <Laurel side="left" size={size} />
         <div className="min-w-0">
           <span className={`display block ${titleSize}`}>{props.children}</span>

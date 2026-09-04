@@ -11,8 +11,18 @@ export interface StillProps {
   /** Load eagerly for the hero and the film page facade. */
   priority?: boolean;
   className?: string;
-  /** `sizes` hint is unused by plain img but kept for parity if migrated. */
-  sizes?: string;
+  /**
+   * "large" (default) serves the 1280x720 treated still: hero, facade,
+   * awards finale. "card" serves the native-resolution rendition
+   * (`-treated-sm.webp`, one pixel per dither cell) and lets the browser
+   * upscale it; downscaling the 1280px dither to card width produces moiré.
+   */
+  size?: "large" | "card";
+}
+
+/** Convention from scripts/process-stills.ts: the native-resolution twin of a treated still. */
+export function smallTreated(treatedPath: string): string {
+  return treatedPath.replace(/-treated.webp$/, "-treated-sm.webp");
 }
 
 /**
@@ -21,8 +31,11 @@ export interface StillProps {
  * ancestor with the `reveal` class is hovered, focused, or given
  * `is-revealed`. See app/globals.css.
  */
-export function Still({ still, alt, priority = false, className = "" }: StillProps) {
+export function Still({ still, alt, priority = false, className = "", size = "large" }: StillProps) {
   const loading = priority ? "eager" : "lazy";
+  const treatedSrc = size === "card" ? smallTreated(still.treated) : still.treated;
+  const treatedW = size === "card" ? 320 : 1280;
+  const treatedH = size === "card" ? 180 : 720;
   return (
     <div className={`still ${className}`}>
       <img
@@ -36,14 +49,14 @@ export function Still({ still, alt, priority = false, className = "" }: StillPro
         className="still__original"
       />
       <img
-        src={still.treated}
+        src={treatedSrc}
         alt={alt}
-        width={1280}
-        height={720}
+        width={treatedW}
+        height={treatedH}
         loading={loading}
         decoding="async"
         fetchPriority={priority ? "high" : "auto"}
-        className="still__treated"
+        className={size === "card" ? "still__treated still__treated--card" : "still__treated"}
       />
     </div>
   );

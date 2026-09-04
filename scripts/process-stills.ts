@@ -327,7 +327,7 @@ function dither(lum: Float32Array, w: number, h: number, levels: number, algo: A
  * paint with the palette → nearest-neighbour upscale to 1280x720.
  * Returns a sharp instance holding the RGB result, ready for .webp()/.png().
  */
-async function treat(file: string, region: Region, opts: Options): Promise<Sharp> {
+async function treat(file: string, region: Region, opts: Options): Promise<{ full: Sharp; native: Sharp }> {
   const w = opts.work;
   const h = Math.round((w * 9) / 16);
 
@@ -356,7 +356,15 @@ async function treat(file: string, region: Region, opts: Options): Promise<Sharp
     rgb[i * 3 + 2] = b;
   }
 
-  return sharp(rgb, { raw: { width: w, height: h, channels: 3 } }).resize(OUT_W, OUT_H, { kernel: "nearest" });
+  const raw = { raw: { width: w, height: h, channels: 3 as const } };
+  return {
+    // 1280x720 with crisp cells: hero, facade, awards finale.
+    full: sharp(rgb, raw).resize(OUT_W, OUT_H, { kernel: "nearest" }),
+    // Native working resolution (one pixel per dither cell). Served to film
+    // cards, where a 1280px dither downscaled to ~340px produces moiré; the
+    // browser upscales this one instead (see components/Still.tsx).
+    native: sharp(rgb, raw),
+  };
 }
 
 function encodeTreated(img: Sharp, encoding: Options["encoding"]): Sharp {
@@ -468,7 +476,10 @@ async function main(): Promise<void> {
       .toFile(originalOut);
 
     const treated = await treat(fetched.file, region, opts);
-    await encodeTreated(treated, opts.encoding).toFile(treatedOut);
+    await encodeTreated(treated.full, opts.encoding).toFile(treatedOut);
+    await encodeTreated(treated.native, opts.encoding).toFile(
+      path.join(OUT_DIR, `${film.slug}-treated-sm.webp`),
+    );
 
     const result: Result = {
       slug: film.slug,
@@ -496,7 +507,7 @@ async function main(): Promise<void> {
 
   const treatedPng = async (slug: string, o: Options) => {
     const f = frames.get(slug)!;
-    return (await treat(f.file, f.region, o)).png().toBuffer();
+    return (await treat(f.file, f.region, o)).full.png().toBuffer();
   };
 
   // Every algorithm × tone count at the current working width.

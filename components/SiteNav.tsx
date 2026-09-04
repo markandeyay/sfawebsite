@@ -6,11 +6,11 @@ export function SiteNav() {
   return (
     <header className="bg-surface border-b border-deep">
       <nav
-        className="wrap flex items-center justify-between gap-6 py-4"
+        className="wrap flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3 sm:py-4"
         aria-label="Site"
       >
         <Wordmark />
-        <ul className="flex items-center gap-5 sm:gap-8">
+        <ul className="flex items-center gap-5 sm:gap-8 ms-auto">
           {NAV.map((item) => (
             <li key={item.href}>
               <Link

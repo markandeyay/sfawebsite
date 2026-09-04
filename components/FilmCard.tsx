@@ -25,7 +25,7 @@ export function FilmCard({ film, headingLevel = "h3", priority = false }: FilmCa
       aria-label={`${film.title}, directed by ${film.director}`}
     >
       <div className="relative border border-transparent group-focus-visible:border-carolina group-hover:border-deep transition-colors">
-        <Frame film={film} priority={priority} />
+        <Frame film={film} priority={priority} size="card" />
         {!film.viewable && film.still ? (
           <span className="credit credit-role absolute bottom-0 left-0 bg-surface text-cream px-2 py-1">
             Not streaming
