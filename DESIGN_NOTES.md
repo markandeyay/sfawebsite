@@ -523,6 +523,41 @@ names the five departments the awards prove existed. Adjacent-film frames
 loaded on a second capture (the first missed one to lazy loading, not a
 bug).
 
+### 4.3 Accessibility and responsive audit [13, 14.3]
+
+An audit agent ran against the finished routes with Playwright and reported
+findings only. No blockers. Raw numbers it measured:
+
+- No horizontal overflow on any route at 320, 375, 640 at 2x, or 720 at 2x.
+- Contrast on rendered colours: body 16.1:1, muted 6.5:1, gold 9.3:1,
+  carolina links 6.5:1, nav 14.7:1, the facade label over the scrim 12.2:1
+  at worst. No text sits on a still without a solid backing.
+- One h1 per route, no skipped levels. Every focusable element reached by Tab
+  in order with a 2px carolina outline; every `.reveal` element revealed
+  its frame on focus. No iframe on any route until the facade is clicked.
+  Zero console errors. Reduced motion: no animations on load, instant swap
+  on hover and focus.
+
+Fixed from its list:
+- The hero screen was a focusable div with no role or name. It is now a link
+  to the film page with an accessible name, which keeps focus reveal, tap
+  reveal, and the touch auto-reveal.
+- Winner links on the ceremony page and the homepage teaser had no link
+  affordance until hover. The badge now takes a `linked` flag that adds a
+  persistent gold underline (inside `AwardBadge`, so the gold rule holds);
+  the tally titles carry a cream underline.
+- The facade's accessible name now contains its visible label ("Play the
+  film: FDOC") for speech input.
+- Focus rings on nav links and buttons faded in over 150ms because
+  `transition-colors` includes outline colour; transitions are now limited
+  to colour, background, and border.
+- The Best Picture landmark was named after the winner; it is now named
+  "Best Picture".
+
+Left as is: the smallest text is 13px (nav, footer, buttons), at the
+threshold; the "Not streaming" card label is unreachable with the current
+data because the one non-viewable film also has no still.
+
 ## 5. Things the club needs to supply
 
 Each of these is an explicit empty state on the live site, written so it

@@ -17,7 +17,7 @@ interface BestPictureProps {
 export function BestPicture({ category, film }: BestPictureProps) {
   const href = `/films/${film.slug}`;
   return (
-    <section aria-labelledby="best-picture" className="mt-12 sm:mt-16">
+    <section aria-label="Best Picture" className="mt-12 sm:mt-16">
       <Link
         href={href}
         className="reveal block no-underline max-sm:-mx-[clamp(1rem,4vw,2.5rem)]"

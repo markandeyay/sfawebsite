@@ -29,7 +29,7 @@ export function Tally({ rows, total, sweep }: TallyProps) {
             <dt className="display-italic text-display-sm text-cream">
               <Link
                 href={`/films/${film.slug}`}
-                className="no-underline hover:underline decoration-1 underline-offset-4"
+                className="underline decoration-1 underline-offset-4 decoration-cream/50 hover:decoration-cream"
               >
                 {film.title}
               </Link>

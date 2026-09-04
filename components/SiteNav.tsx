@@ -15,7 +15,7 @@ export function SiteNav() {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="label text-cream hover:text-carolina transition-colors"
+                className="label text-cream hover:text-carolina transition-[color]"
               >
                 {item.label}
               </Link>

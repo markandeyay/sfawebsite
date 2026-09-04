@@ -39,7 +39,7 @@ export function VideoEmbed({ youtubeId, title, still }: VideoEmbedProps) {
       type="button"
       onClick={() => setPlaying(true)}
       className="reveal group relative block w-full text-left cursor-pointer bg-surface"
-      aria-label={`Play ${title}`}
+      aria-label={`Play the film: ${title}`}
     >
       <Still still={still} alt="" priority />
       <span

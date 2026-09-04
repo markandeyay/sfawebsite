@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 type Variant = "primary" | "secondary";
 
 const base =
-  "label inline-flex items-center justify-center min-h-11 px-5 py-3 no-underline transition-colors";
+  "label inline-flex items-center justify-center min-h-11 px-5 py-3 no-underline transition-[color,background-color,border-color]";
 
 const variants: Record<Variant, string> = {
   primary: "bg-cream text-base hover:bg-carolina",

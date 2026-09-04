@@ -25,6 +25,8 @@ interface CategoryProps extends BaseProps {
 
 interface WinnerProps extends BaseProps {
   kind: "winner";
+  /** Set when the badge is the content of a link: adds a persistent underline. */
+  linked?: boolean;
   /** The winning film's title, or any winner label. */
   children: ReactNode;
   /** The winning person, when the club has published one. */
@@ -74,7 +76,13 @@ export function AwardBadge(props: AwardBadgeProps) {
       <div className={`inline-flex items-center gap-2 text-gold ${className}`}>
         <Laurel side="left" size={size} />
         <div className="min-w-0">
-          <span className={`display block ${titleSize}`}>{props.children}</span>
+          <span
+            className={`display block ${titleSize} ${
+              props.linked ? "underline decoration-1 underline-offset-[0.22em] decoration-gold/60" : ""
+            }`}
+          >
+            {props.children}
+          </span>
           {props.person ? (
             <span className="credit block mt-1">{props.person}</span>
           ) : null}

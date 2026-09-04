@@ -29,11 +29,7 @@ export function AwardRow({ category, films }: AwardRowProps) {
           href={`/films/${winner.slug}`}
           className="group block w-fit no-underline"
         >
-          <AwardBadge
-            kind="winner"
-            person={category.winner.person}
-            className="group-hover:underline decoration-1 underline-offset-4"
-          >
+          <AwardBadge kind="winner" person={category.winner.person} linked>
             {winner.title}
           </AwardBadge>
         </Link>

@@ -50,8 +50,8 @@ export function AwardsTeaser({ ceremony, films }: { ceremony: Ceremony; films: M
             <div key={cat.category} className="border-t border-deep pt-4">
               <dt className="credit credit-role muted">{cat.category}</dt>
               <dd className="mt-2">
-                <Link href={`/films/${film.slug}`} className="no-underline">
-                  <AwardBadge kind="winner" size="md" person={cat.winner.person}>
+                <Link href={`/films/${film.slug}`} className="no-underline block w-fit">
+                  <AwardBadge kind="winner" size="md" person={cat.winner.person} linked>
                     {film.title}
                   </AwardBadge>
                 </Link>

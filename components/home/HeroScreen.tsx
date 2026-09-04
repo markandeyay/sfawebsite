@@ -20,7 +20,11 @@ export function HeroScreen({ film }: { film: Film }) {
       <div className="wrap">
         <div className="screen-room mx-auto max-w-3xl">
           <div className="screen-room__glow" aria-hidden="true" />
-          <ScreenAutoReveal className="screen-room__screen letterbox block">
+          <ScreenAutoReveal
+            className="screen-room__screen letterbox block"
+            href={`/films/${film.slug}`}
+            label={`Frame from ${film.title}. See the film.`}
+          >
             {film.still ? (
               <Still still={film.still} alt={`Frame from ${film.title}`} priority />
             ) : null}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, type ReactNode } from "react";
 
 /**
@@ -9,8 +10,16 @@ import { useEffect, useRef, type ReactNode } from "react";
  * Skipped entirely when the visitor prefers reduced motion; they get the
  * static treated frame, and a tap still reveals through focus-within.
  */
-export function ScreenAutoReveal({ children, className = "" }: { children: ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
+interface Props {
+  children: ReactNode;
+  className?: string;
+  /** The screen is a link to the film, so it has a role and a name. */
+  href: string;
+  label: string;
+}
+
+export function ScreenAutoReveal({ children, className = "", href, label }: Props) {
+  const ref = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -27,8 +36,8 @@ export function ScreenAutoReveal({ children, className = "" }: { children: React
   }, []);
 
   return (
-    <div ref={ref} className={`reveal ${className}`} tabIndex={0}>
+    <Link ref={ref} href={href} aria-label={label} className={`reveal ${className}`}>
       {children}
-    </div>
+    </Link>
   );
 }
