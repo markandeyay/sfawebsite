@@ -688,3 +688,25 @@ muted, so a real name would read louder than its absence.
 
 **Homepage pass 3.** Clean at both widths. Nothing removed.
 
+**Film page** (three passes by the film-page agent, then mine). Pass 1: in
+register at once; the awards list and the credit block share a 14rem label
+column so the two halves align. Pass 2: the type-only leader for At Last,
+the Gift was a 760px empty grey field at full width, loud rather than
+quiet; capped at 48rem. Slam confirmed to render no Awards heading. Pass 3:
+award labels sat low in their rows from a carried-over nudge; removed. My
+pass: the facade had two affordances, a round white play circle and a
+square label, and the circle broke the no-rounded-corners rule. Kept the
+square label only, with a small play mark, and it turns Carolina on hover.
+
+**Awards page** (five passes by the awards agent). Pass 1: finale had as
+much air below as above, so the page ended in a void; the header ran into
+the tally without a rule. Pass 2: finale padding made asymmetric; a rule
+added above the tally so header, tally, and acts share one rhythm. Pass 3:
+heading-to-first-rule gaps unified; person-level enhancement verified with
+a placeholder and reverted. Passes 4 and 5: the lede orphaned "2025." at
+1440, fixed with a non-breaking space; 320 clean.
+
+### 7.5 Deployment
+
+Pushed to `main`; Vercel rebuilt production at
+https://sfawebsite-kappa.vercel.app. Verified live after the push.
