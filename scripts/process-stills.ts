@@ -30,7 +30,8 @@
  *                          3-5 KB, while lossy is ~25x larger and smears the grain)
  *   --only=slug[,slug]     process a subset
  *   --refetch              ignore the cache and download again
- *   --sheets               also build comparison contact sheets in screenshots/dither/
+ *   --treated              also write the two-tone treated renditions (unused by the site)
+ *   --sheets               also build comparison contact sheets in screenshots/dither/ (implies --treated)
  *
  * Source list: scripts/stills-manifest.ts.
  * TODO: once content/films.json exists, read it instead of the manifest:
@@ -87,6 +88,7 @@ interface Options {
   only: string[] | null;
   refetch: boolean;
   sheets: boolean;
+  treated: boolean;
 }
 
 function parseArgs(argv: string[]): Options {
@@ -101,6 +103,7 @@ function parseArgs(argv: string[]): Options {
     only: null,
     refetch: false,
     sheets: false,
+    treated: false,
   };
   for (const arg of argv) {
     const [key, value] = arg.replace(/^--/, "").split("=");
@@ -137,6 +140,10 @@ function parseArgs(argv: string[]): Options {
         break;
       case "sheets":
         opts.sheets = true;
+        opts.treated = true;
+        break;
+      case "treated":
+        opts.treated = true;
         break;
       default:
         throw new Error(`Unknown flag: ${arg}`);
@@ -475,11 +482,15 @@ async function main(): Promise<void> {
       .webp({ quality: ORIGINAL_QUALITY, effort: 6 })
       .toFile(originalOut);
 
-    const treated = await treat(fetched.file, region, opts);
-    await encodeTreated(treated.full, opts.encoding).toFile(treatedOut);
-    await encodeTreated(treated.native, opts.encoding).toFile(
-      path.join(OUT_DIR, `${film.slug}-treated-sm.webp`),
-    );
+    // The site no longer serves treated stills (DESIGN_NOTES.md section 7).
+    // Pass --treated to write them anyway, e.g. for comparison sheets.
+    if (opts.treated) {
+      const treated = await treat(fetched.file, region, opts);
+      await encodeTreated(treated.full, opts.encoding).toFile(treatedOut);
+      await encodeTreated(treated.native, opts.encoding).toFile(
+        path.join(OUT_DIR, `${film.slug}-treated-sm.webp`),
+      );
+    }
 
     const result: Result = {
       slug: film.slug,

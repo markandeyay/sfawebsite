@@ -1,29 +1,25 @@
 import type { Metadata } from "next";
-import { Archivo, Bodoni_Moda } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE } from "@/lib/site";
 import { getHeroFilm } from "@/lib/home";
 
-// Display face. Optical size axis so the same family reads right at 14px and 128px.
-const bodoni = Bodoni_Moda({
+// Display: a tight grotesque for headlines and film titles.
+const interTight = Inter_Tight({
   subsets: ["latin"],
   weight: "variable",
-  style: ["normal", "italic"],
-  axes: ["opsz"],
-  variable: "--font-bodoni",
+  variable: "--font-inter-tight",
   display: "swap",
 });
 
-// Credits and body. The width axis gives us the condensed credit setting from
-// the same file as the body text.
-const archivo = Archivo({
+// Text: body copy, labels, credits.
+const inter = Inter({
   subsets: ["latin"],
   weight: "variable",
-  style: ["normal"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  axes: ["opsz"],
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -41,18 +37,18 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     type: "website",
     images: heroFilm.still
-      ? [{ url: heroFilm.still.treated, width: 1280, height: 720, alt: `Frame from ${heroFilm.title}` }]
+      ? [{ url: heroFilm.still.original, width: 1280, height: 720, alt: `Frame from ${heroFilm.title}` }]
       : [],
   },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${bodoni.variable} ${archivo.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-base text-cream">
+    <html lang="en" className={`${interTight.variable} ${inter.variable} h-full`}>
+      <body className="min-h-full flex flex-col bg-paper text-ink">
         <a
           href="#main"
-          className="label sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-cream focus:text-base focus:px-3 focus:py-2"
+          className="label sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-ink focus:text-white focus:px-3 focus:py-2"
         >
           Skip to content
         </a>

@@ -1,69 +1,51 @@
-import Link from "next/link";
 import type { Ceremony, Film } from "@/content/types";
-import { AwardBadge } from "@/components/AwardBadge";
-import { SectionHeading } from "@/components/SectionHeading";
-import { ButtonLink } from "@/components/Button";
+import { Frame } from "@/components/Frame";
+import { ArrowLink } from "@/components/ArrowLink";
 import { numberWord } from "./CatalogStrip";
 
 /**
- * The first award color on the page (SFA_SYSTEM_DESIGN.md 6.2). The top of the
- * ceremony, in reverse ceremony order so Best Picture leads, then a link to
- * the whole night.
+ * Feature block: still in a grey panel on one side, eyebrow, headline, and
+ * an arrow link on the other. The headline is the night's result.
  */
 export function AwardsTeaser({ ceremony, films }: { ceremony: Ceremony; films: Map<string, Film> }) {
-  const top = ceremony.categories.slice(-4).reverse();
   const counts = new Map<string, number>();
   for (const c of ceremony.categories) {
     counts.set(c.winner.filmSlug, (counts.get(c.winner.filmSlug) ?? 0) + 1);
   }
   const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   const [leadSlug, leadCount] = ranked[0] ?? [];
-  const runnerUp = ranked[1]?.[1] ?? 0;
   const lead = leadSlug ? films.get(leadSlug) : undefined;
   const total = ceremony.categories.length;
-  // A sweep worth a headline: at least twice the runner-up and five or more wins.
-  const sweep = lead && leadCount && leadCount >= 5 && leadCount >= runnerUp * 2;
+  const bestPicture = ceremony.categories.find((c) => c.category === "Best Picture");
+  const bpFilm = bestPicture ? films.get(bestPicture.winner.filmSlug) : undefined;
+  const feature = bpFilm ?? lead;
+
+  const headline =
+    lead && leadCount
+      ? `${lead.title} took ${numberWord(leadCount)} of ${numberWord(total)} awards.`
+      : `${numberWord(total, true)} awards, voted by members.`;
 
   return (
-    <section id="awards" aria-labelledby="awards-title" className="wrap py-16 sm:py-24 border-t border-deep">
-      <SectionHeading
-        id="awards-title"
-        title={`The ${ceremony.year} awards`}
-        lede={
-          <>
-            {numberWord(total, true)} categories, voted on by members and presented after the festival.
-            {sweep ? (
-              <>
-                {" "}
-                <span className="display-italic text-cream">{lead.title}</span> took{" "}
-                {numberWord(leadCount)} of them.
-              </>
-            ) : null}
-          </>
-        }
-      />
-      <dl className="mt-10 sm:mt-14 grid gap-x-12 gap-y-8 sm:grid-cols-2">
-        {top.map((cat) => {
-          const film = films.get(cat.winner.filmSlug);
-          if (!film) return null;
-          return (
-            <div key={cat.category} className="border-t border-deep pt-4">
-              <dt className="credit credit-role muted">{cat.category}</dt>
-              <dd className="mt-2">
-                <Link href={`/films/${film.slug}`} className="no-underline block w-fit">
-                  <AwardBadge kind="winner" size="md" person={cat.winner.person} linked>
-                    {film.title}
-                  </AwardBadge>
-                </Link>
-              </dd>
-            </div>
-          );
-        })}
-      </dl>
-      <div className="mt-10">
-        <ButtonLink href={`/awards/${ceremony.year}`} variant="secondary">
-          See the whole ceremony
-        </ButtonLink>
+    <section id="awards" aria-labelledby="awards-title" className="wrap py-20 sm:py-28 border-t border-rule">
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
+        {feature ? (
+          <div className="panel">
+            <Frame film={feature} />
+          </div>
+        ) : null}
+        <div>
+          <p className="eyebrow mb-4">The {ceremony.year} awards</p>
+          <h2 id="awards-title" className="display text-display-lg text-ink max-w-[12ch]">
+            {headline}
+          </h2>
+          <p className="text-body-lg mt-6 prose-block">
+            {numberWord(total, true)} categories, decided by member vote and presented after the
+            festival in May {ceremony.year}.
+          </p>
+          <div className="mt-10">
+            <ArrowLink href={`/awards/${ceremony.year}`}>See the ceremony</ArrowLink>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -13,9 +13,9 @@ pure function of two JSON files.
 2. If it won anything, add the same categories to `content/awards.json`
    under that year, and list them in the film's `awards` array. The build
    fails if the two files disagree.
-3. Run `npm run stills` to fetch the YouTube frame and write the treated
-   stills into `public/stills/`. Set `"still": null` if no frame exists.
-4. Run `npm run check` (types, lint, gold rule) and `npm run build`.
+3. Run `npm run stills` to fetch the YouTube frame and write it to
+   `public/stills/`. Set `"still": null` if no frame exists.
+4. Run `npm run check` (types, lint) and `npm run build`.
 
 Category names must match `CANONICAL_CATEGORIES` in `content/types.ts`.
 Credits are a flat list of `{ "role", "name" }` pairs in the order they
@@ -26,21 +26,20 @@ should roll.
 | Command | What it does |
 |---|---|
 | `npm run dev` | Dev server at http://localhost:3000 |
-| `npm run build` | Production build (runs the gold-rule check first) |
-| `npm run check` | Type check, lint, and gold-rule check |
+| `npm run build` | Production build |
+| `npm run check` | Type check and lint |
 | `npm run stills` | Fetch and process film stills (`--sheets` for comparison sheets, see `scripts/process-stills.ts`) |
 
 ## Where things are
 
 - `content/` — `films.json`, `awards.json`, the types, and the validator that
   fails the build on malformed content.
-- `components/` — shared components. `AwardBadge.tsx` is the only file
-  allowed to use the gold color; `scripts/check-gold.mjs` enforces that.
+- `components/` — shared components.
 - `components/home/`, `components/film/`, `components/awards/` — per-route
   pieces.
 - `app/globals.css` — the design tokens (palette, type scale) and the few
-  component-shaped rules (credit block, still reveal, hero).
-- `scripts/process-stills.ts` — the build-time dither pipeline.
+  component-shaped rules (eyebrows, arrow links, panels, credit block).
+- `scripts/process-stills.ts` — fetches and crops each film's YouTube frame.
 - `DESIGN_NOTES.md` — every design decision, what was rejected, and why.
 - `docs/` — hero and dither comparison images referenced by the notes.
 

@@ -4,47 +4,37 @@ import { Frame } from "./Frame";
 
 interface FilmCardProps {
   film: Film;
-  /** Heading level for the title so the outline stays in order. */
   headingLevel?: "h2" | "h3";
   priority?: boolean;
 }
 
 /**
- * A frame on the contact sheet. 16:9, dithered still with the reveal on
- * hover and focus, caption set like a credit line: title left, director
- * right. Award count is cream, not the award color: the first award color on the homepage
- * belongs to the awards section (SFA_SYSTEM_DESIGN.md 6.2).
+ * A still with an eyebrow and a title beneath it: the grid card. The eyebrow
+ * carries the director, then the award count for winners.
  */
 export function FilmCard({ film, headingLevel = "h3", priority = false }: FilmCardProps) {
   const Heading = headingLevel;
-  const awardCount = film.awards.length;
+  const n = film.awards.length;
+  const notes = [
+    film.director,
+    n > 0 ? (n === 1 ? "1 award" : `${n} awards`) : null,
+    !film.viewable ? "Not streaming" : null,
+  ].filter(Boolean);
   return (
     <Link
       href={`/films/${film.slug}`}
-      className="reveal group block no-underline text-cream"
+      className="group block no-underline text-ink"
       aria-label={`${film.title}, directed by ${film.director}`}
     >
-      <div className="relative border border-transparent group-focus-visible:border-carolina group-hover:border-deep transition-colors">
-        <Frame film={film} priority={priority} size="card" />
-        {!film.viewable && film.still ? (
-          <span className="credit credit-role absolute bottom-0 left-0 bg-surface text-cream px-2 py-1">
-            Not streaming
-          </span>
-        ) : null}
+      <div className="overflow-hidden">
+        <div className="transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+          <Frame film={film} priority={priority} />
+        </div>
       </div>
-      <div className="mt-3 flex items-baseline justify-between gap-4">
-        <Heading className="display text-display-sm leading-tight">
-          <span className="display-italic">{film.title}</span>
-        </Heading>
-        <p className="credit text-right shrink-0 muted">
-          {film.director}
-        </p>
-      </div>
-      {awardCount > 0 ? (
-        <p className="credit mt-1 muted">
-          {awardCount === 1 ? "1 award" : `${awardCount} awards`}, 2025
-        </p>
-      ) : null}
+      <p className="eyebrow mt-4">{notes.join(", ")}</p>
+      <Heading className="display text-display-sm mt-1 transition-[color] group-hover:text-carolina">
+        {film.title}
+      </Heading>
     </Link>
   );
 }

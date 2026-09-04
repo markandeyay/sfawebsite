@@ -615,3 +615,76 @@ argument: the current site cannot hold any of this.
    that is my best reading of the old site's vocabulary, not the club's
    words.
 8. **A domain.** The site's metadata points at the Vercel URL until then.
+
+---
+
+## 7. Second direction: the A24 register (2026-09-04)
+
+The client reviewed the first build and rejected it: "looks like AI slop".
+The instruction was to mirror the aesthetics of A24's site (a24films.com),
+recolor it for UNC, use no gradients, and avoid black-and-gold. That
+overrides four sections the brief had marked LOCKED (the palette in 5.1, the
+gold rule in 5.2, the dither system in 9, the dark ground throughout). The
+client is the author of the brief, so the override stands; sections 1 to 6
+above are kept as the record of the first direction.
+
+### 7.1 What A24's site actually does
+
+Captured at 1440 and 375 before writing anything (`a24-home-*` and
+`a24-films-*` in the session shots). The grammar:
+
+- A full-bleed still with the slate stacked as a list of titles at the
+  bottom-left in a large tight grotesque, each with a small year
+  superscript; hovering a title swaps the backdrop.
+- White sections. Feature blocks alternate an image on a light grey panel
+  with a column of small uppercase grey eyebrow, huge headline, and a long
+  thin arrow followed by an uppercase label.
+- A three-across grid of stills with an eyebrow and a title beneath each.
+- A solid dark footer band with columns of uppercase links.
+- One typeface, a tight grotesque, at two scales: enormous for headlines,
+  small uppercase for everything that is a label. No rounded corners, no
+  shadows, no decoration.
+
+### 7.2 Mapping it to UNC
+
+| A24 | SFA |
+|---|---|
+| Black type on white | UNC navy `#13294B` on white |
+| Black footer | Navy footer |
+| No accent colour | Carolina Blue `#4B9CD3` for eyebrow-level accents, hover, award labels |
+| Light grey image panels | `#F2F4F6`, a cool grey so it sits with the blue |
+| Serif A24 mark centred in the nav | "SFA" set tight in the display face, centred |
+| Neue Haas-style grotesque | Inter Tight (headlines) and Inter (text) from Google Fonts |
+
+Gold is gone entirely; awards are Carolina uppercase labels and navy titles.
+The only gradient on the site is the scrim under the hero title list, which
+is a navy-to-transparent fade for legibility, the same device A24 uses.
+
+### 7.3 What was removed from the first build
+
+- The two-tone dither and the hover reveal. Stills are now shown as shot.
+  The pipeline keeps fetching and cropping originals; treated renditions
+  are no longer written or served.
+- The gold rule and its build check.
+- The dark ground, the projector-glow hero, the laurel badges, Bodoni Moda.
+- The credit-block-as-end-credits conceit. Role and name pairs are still a
+  `dl`, but set as eyebrow and headline on thin rules, which is how A24
+  sets crew on a film page.
+
+### 7.4 Passes
+
+**Homepage pass 1** (1440 / 375). The register landed at once: hero, feature
+blocks, grid, footer. Wrong: the six-title hero list at 4.5rem overflowed
+the frame and covered the face; the long title wrapped and pushed its year
+to the far edge. Changed: list capped at 34rem wide and clamp(1.75rem,
+3.4vw, 3rem); hero taller (80svh).
+
+**Homepage pass 2.** Wrong: at 375 the "Awards 2025" nav label collided with
+the centred mark; the wrapped title's year still floated because it was a
+flex sibling. Changed: the year is an inline superscript inside the title;
+the year drops off the nav label below 40rem. Seven "Name to be supplied"
+rows at display size shouted; the placeholder now sits at body size in
+muted, so a real name would read louder than its absence.
+
+**Homepage pass 3.** Clean at both widths. Nothing removed.
+

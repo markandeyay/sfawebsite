@@ -31,33 +31,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 /**
- * The film page (SFA_SYSTEM_DESIGN.md 11.2). Sections are separated by 1px
- * deep rules, like acts, not by surface bands.
+ * The film page. Header and screen, then awards beside credits, then the
+ * neighbouring films. Sections sit on thin rules with the homepage rhythm.
  */
 export default async function FilmPage({ params }: PageProps) {
   const { slug } = await params;
   const film = getFilm(slug);
   if (!film) notFound();
   const { prev, next } = getAdjacentFilms(film.slug);
-  const rule = "border-t border-deep mt-8 pt-8 md:mt-12 md:pt-12";
+  const hasAwards = film.awards.length > 0;
 
   return (
-    <article className="wrap pt-12 md:pt-16">
-      <FilmHeader film={film} />
-      <div className="mt-8 md:mt-10">
-        <FilmFacade film={film} />
+    <article>
+      <div className="wrap pt-12 sm:pt-20 pb-16 sm:pb-24">
+        <FilmHeader film={film} />
+        <div className="mt-12 sm:mt-16">
+          <FilmFacade film={film} />
+        </div>
       </div>
-      {film.awards.length > 0 ? (
-        <div className={rule}>
-          <AwardStack film={film} />
+      <div className="wrap py-16 sm:py-24 border-t border-rule">
+        <div className="grid gap-16 lg:grid-cols-2">
+          {hasAwards ? <AwardStack film={film} /> : null}
+          <FilmCredits film={film} />
+        </div>
+      </div>
+      {prev || next ? (
+        <div className="wrap py-16 sm:py-24 border-t border-rule">
+          <AdjacentFilms prev={prev} next={next} year={film.year} />
         </div>
       ) : null}
-      <div className={rule}>
-        <FilmCredits film={film} />
-      </div>
-      <div className={rule}>
-        <AdjacentFilms prev={prev} next={next} year={film.year} />
-      </div>
     </article>
   );
 }

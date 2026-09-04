@@ -4,11 +4,11 @@ import type { ReactNode } from "react";
 type Variant = "primary" | "secondary";
 
 const base =
-  "label inline-flex items-center justify-center min-h-11 px-5 py-3 no-underline transition-[color,background-color,border-color]";
+  "label inline-flex items-center justify-center min-h-12 px-6 py-3 no-underline transition-[color,background-color,border-color]";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-cream text-base hover:bg-carolina",
-  secondary: "border border-cream text-cream hover:border-carolina hover:text-carolina",
+  primary: "bg-ink text-white hover:bg-carolina",
+  secondary: "border border-ink text-ink hover:border-carolina hover:text-carolina",
 };
 
 interface ButtonLinkProps {
@@ -19,7 +19,7 @@ interface ButtonLinkProps {
   className?: string;
 }
 
-/** Buttons are verbs that say what happens. No arrows appended. */
+/** Solid ink button. Used sparingly; most actions are arrow links. */
 export function ButtonLink({
   href,
   children,

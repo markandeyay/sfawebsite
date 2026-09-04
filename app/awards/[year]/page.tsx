@@ -25,11 +25,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!ceremony) return { title: "Ceremony not found" };
   const n = ceremony.categories.length;
   return {
-    title: `The ${ceremony.year} ceremony`,
+    title: `${ceremony.year} awards`,
     description: `Winners in all ${numberWord(n)} categories at the Student Film Association's ${ceremony.year} awards ceremony.`,
   };
 }
 
+/**
+ * The ceremony page: a header, the tally as a feature block, the three
+ * acts as rows on thin rules, and Best Picture as a type-only finale.
+ * White ground throughout; the only still on the page is in the tally.
+ */
 export default async function CeremonyPage({ params }: PageProps) {
   const { year } = await params;
   const y = parseYear(year);
@@ -44,32 +49,29 @@ export default async function CeremonyPage({ params }: PageProps) {
   const finaleFilm = finale ? films.get(finale.winner.filmSlug) : undefined;
 
   const filmsClause = `${numberWord(rows.length)} ${rows.length === 1 ? "film" : "films"}`;
-  const lede = `May ${ceremony.year}. ${capitalize(numberWord(total))} categories, ${filmsClause}${
-    swept ? ", one sweep." : "."
-  }`;
+  const lede = `${capitalize(numberWord(total))} categories, ${filmsClause}${
+    swept ? ", one sweep" : ""
+  }. Presented after the festival in May ${ceremony.year}.`;
 
   return (
-    <div className="wrap pt-16 sm:pt-24">
-      <header>
-        <h1 className="display text-display-lg text-cream">The {ceremony.year} ceremony</h1>
-        <p className="mt-4 text-body-lg muted prose-block">{lede}</p>
+    <div className="wrap">
+      <header className="pt-20 sm:pt-28">
+        <p className="eyebrow mb-4">The ceremony</p>
+        <h1 className="display text-display-xl text-ink">{ceremony.year} awards</h1>
+        <p className="text-body-lg mt-6 prose-block">{lede}</p>
       </header>
 
-      <div className="mt-12 sm:mt-16">
-        <Tally rows={rows} total={total} sweep={swept} />
-      </div>
+      <Tally rows={rows} total={total} sweep={swept} feature={finaleFilm ?? rows[0]?.film} />
 
-      <div className="mt-16 flex flex-col gap-12 sm:mt-24 sm:gap-16">
-        {actList.map((act) => (
-          <Act
-            key={act.department}
-            id={act.department}
-            title={act.title}
-            categories={act.categories}
-            films={films}
-          />
-        ))}
-      </div>
+      {actList.map((act) => (
+        <Act
+          key={act.department}
+          id={act.department}
+          title={act.title}
+          categories={act.categories}
+          films={films}
+        />
+      ))}
 
       {finale && finaleFilm ? <BestPicture category={finale} film={finaleFilm} /> : null}
     </div>

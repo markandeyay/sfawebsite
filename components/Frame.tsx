@@ -5,18 +5,16 @@ interface FrameProps {
   film: Film;
   priority?: boolean;
   className?: string;
-  /** See Still. Cards use the native-resolution rendition. */
+  /** Kept for call-site compatibility; there is one rendition now. */
   size?: "large" | "card";
 }
 
 /**
- * A film's frame. Renders the dithered Still when one exists. When
- * `film.still` is null (no frame available, e.g. the upload is private) it
- * renders a type-only 16:9 leader instead: the title in the display face on
- * a surface rectangle, with the reason in a credit line. Nothing is
- * generated in place of the missing frame (SFA_SYSTEM_DESIGN.md 9.4).
+ * A film's frame. When `film.still` is null (no frame exists, e.g. the
+ * upload is private) it renders a type-only 16:9 leader on the panel grey
+ * instead. Nothing is generated in place of a missing frame.
  */
-export function Frame({ film, priority = false, className = "", size = "large" }: FrameProps) {
+export function Frame({ film, priority = false, className = "" }: FrameProps) {
   if (film.still) {
     return (
       <Still
@@ -24,20 +22,17 @@ export function Frame({ film, priority = false, className = "", size = "large" }
         alt={`Frame from ${film.title}`}
         priority={priority}
         className={className}
-        size={size}
       />
     );
   }
   return (
     <div
-      className={`relative aspect-video bg-surface border border-deep flex flex-col justify-between p-4 sm:p-5 ${className}`}
+      className={`relative aspect-video bg-panel flex flex-col justify-between p-5 sm:p-6 ${className}`}
       role="img"
       aria-label={`${film.title}: no frame available`}
     >
-      <span className="credit credit-role muted">No frame available</span>
-      <span className="display-italic text-display-md text-cream">
-        {film.title}
-      </span>
+      <span className="eyebrow">No frame available</span>
+      <span className="display text-display-sm text-ink">{film.title}</span>
     </div>
   );
 }

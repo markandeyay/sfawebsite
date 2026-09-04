@@ -1,14 +1,10 @@
 import { SectionHeading } from "@/components/SectionHeading";
 
-/**
- * The production process. This is a real sequence, so the steps are
- * numbered; nothing else on the homepage is (SFA_SYSTEM_DESIGN.md 5.6).
- * Copy is written for a first-year with no film experience.
- */
+/** The production process, in a first-year's terms. A real sequence, so numbered. */
 const STEPS = [
   {
     title: "Pitch",
-    text: "In the fall, any UNC student brings a script or an idea. It can be a comedy, a horror, a documentary, anything up to about twenty minutes.",
+    text: "In the fall, any UNC student brings a script or an idea. Comedy, horror, documentary, anything up to about twenty minutes.",
   },
   {
     title: "Review",
@@ -30,41 +26,33 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section id="how" aria-labelledby="how-title" className="wrap py-16 sm:py-24 border-t border-deep">
-      <SectionHeading
-        id="how-title"
-        title="How a film gets made here"
-        lede="The same five steps every year. No experience is needed at step one; most members learn the rest on set."
-      />
-      <ol className="mt-10 sm:mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
+    <section id="how" aria-labelledby="how-title" className="wrap py-20 sm:py-28 border-t border-rule">
+      <SectionHeading id="how-title" eyebrow="How it works" title="How a film gets made here." />
+      <ol className="mt-12 sm:mt-16 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
         {STEPS.map((step, i) => (
-          <li key={step.title} className="border-t border-deep pt-4">
-            <span className="display text-display-md muted" aria-hidden="true">
-              {i + 1}
-            </span>
-            <h3 className="display text-display-sm mt-3">
-              <span className="sr-only">Step {i + 1}: </span>
-              {step.title}
-            </h3>
-            <p className="mt-2 muted">{step.text}</p>
+          <li key={step.title} className="border-t border-rule pt-5">
+            <p className="eyebrow">
+              <span className="sr-only">Step </span>
+              {String(i + 1).padStart(2, "0")}
+            </p>
+            <h3 className="display text-display-sm mt-3">{step.title}</h3>
+            <p className="mt-3 muted">{step.text}</p>
           </li>
         ))}
       </ol>
-      <div className="mt-14 sm:mt-20 grid gap-8 lg:grid-cols-2 lg:gap-16">
-        <div>
+      <div className="mt-16 sm:mt-20 grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="border-t border-rule pt-5">
           <h3 className="display text-display-sm">Studio films</h3>
           <p className="mt-3 muted prose-block">
-            The films pitched in the fall, chosen by the review board, and produced by
-            the club with an assigned producer and crew. Every film on this site is a
-            studio film.
+            The films pitched in the fall, chosen by the review board, and produced by the club
+            with an assigned producer and crew. Every film on this site is a studio film.
           </p>
         </div>
-        <div>
+        <div className="border-t border-rule pt-5">
           <h3 className="display text-display-sm">Independent films</h3>
           <p className="mt-3 muted prose-block">
-            Projects members start on their own, outside the greenlit slate, with the
-            club&rsquo;s people and equipment behind them. They screen alongside the
-            studio films.
+            Projects members start on their own, outside the greenlit slate, with the club&rsquo;s
+            people and equipment behind them. They screen alongside the studio films.
           </p>
         </div>
       </div>

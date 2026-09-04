@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Frame } from "@/components/Frame";
-import { SectionHeading } from "@/components/SectionHeading";
 import type { Film } from "@/content/types";
 
 interface AdjacentFilmsProps {
@@ -9,32 +8,47 @@ interface AdjacentFilmsProps {
   year: number;
 }
 
-function AdjacentLink({ film, relation }: { film: Film; relation: "Previous film" | "Next film" }) {
+/** The grid card shape with the relation as its eyebrow. */
+function AdjacentCard({ film, relation }: { film: Film; relation: "Previous film" | "Next film" }) {
   return (
     <Link
       href={`/films/${film.slug}`}
-      className="reveal group block no-underline text-cream"
+      className="group block no-underline text-ink"
       aria-label={`${relation}: ${film.title}`}
     >
-      <div className="border border-transparent group-hover:border-deep group-focus-visible:border-carolina transition-colors">
-        <Frame film={film} />
+      <div className="overflow-hidden">
+        <div className="transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+          <Frame film={film} />
+        </div>
       </div>
-      <p className="credit muted mt-3">{relation}</p>
-      <p className="display-italic text-display-sm mt-1">{film.title}</p>
+      <p className="eyebrow mt-4">{relation}</p>
+      <h3 className="display text-display-sm mt-1 transition-[color] group-hover:text-carolina">
+        {film.title}
+      </h3>
     </Link>
   );
 }
 
-/** Previous and next film on the slate. Two frames side by side; stacked on narrow screens. */
+/** Previous and next film on the slate, two cards side by side. */
 export function AdjacentFilms({ prev, next, year }: AdjacentFilmsProps) {
   if (!prev && !next) return null;
   return (
     <section aria-labelledby="more">
-      <SectionHeading id="more" title={`More from the ${year} slate`} />
-      <div className="mt-8 grid gap-10 sm:grid-cols-2 sm:gap-8">
-        {prev ? <AdjacentLink film={prev} relation="Previous film" /> : null}
-        {next ? <AdjacentLink film={next} relation="Next film" /> : null}
-      </div>
+      <h2 id="more" className="display text-display-md text-ink scroll-mt-24">
+        More from the {year} slate
+      </h2>
+      <ul className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2">
+        {prev ? (
+          <li>
+            <AdjacentCard film={prev} relation="Previous film" />
+          </li>
+        ) : null}
+        {next ? (
+          <li>
+            <AdjacentCard film={next} relation="Next film" />
+          </li>
+        ) : null}
+      </ul>
     </section>
   );
 }

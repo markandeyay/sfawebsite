@@ -1,6 +1,7 @@
 import { getCeremonies, getFilms, getFilmsForCeremony } from "@/content";
-import { getHeroFilm } from "@/lib/home";
-import { HeroScreen } from "@/components/home/HeroScreen";
+import type { Film } from "@/content/types";
+import { FEATURED_SLUGS } from "@/lib/featured";
+import { Hero, type HeroFilm } from "@/components/home/Hero";
 import { NowShowing } from "@/components/home/NowShowing";
 import { CatalogStrip } from "@/components/home/CatalogStrip";
 import { AwardsTeaser } from "@/components/home/AwardsTeaser";
@@ -9,24 +10,36 @@ import { Crew } from "@/components/home/Crew";
 import { Join } from "@/components/home/Join";
 
 /**
- * Homepage. Section order per SFA_SYSTEM_DESIGN.md 6.2: cold open, now
- * showing, the catalog, the awards, how it works, the crew, join.
- * Everything renders from content/*.json.
+ * Homepage: hero, now showing, the awards, the films, how it works, the
+ * crew, join. Everything renders from content/*.json.
  */
 export default function Home() {
   const films = getFilms();
+  const bySlug = new Map(films.map((f) => [f.slug, f]));
   const ceremony = getCeremonies().sort((a, b) => b.year - a.year)[0];
-  const ceremonyFilms = ceremony ? getFilmsForCeremony(ceremony) : new Map();
+  const ceremonyFilms = ceremony ? getFilmsForCeremony(ceremony) : new Map<string, Film>();
+
+  const heroFilms: HeroFilm[] = FEATURED_SLUGS.map((s) => bySlug.get(s))
+    .filter((f): f is Film => Boolean(f && f.still))
+    .map((f) => ({
+      slug: f.slug,
+      title: f.title,
+      year: f.year,
+      director: f.director,
+      image: f.still!.original,
+    }));
+
+  const joinFilm = bySlug.get("senior-assassin") ?? films.find((f) => f.still);
 
   return (
     <>
-      <HeroScreen film={getHeroFilm()} />
+      <Hero films={heroFilms} />
       <NowShowing />
-      <CatalogStrip films={films} />
       {ceremony ? <AwardsTeaser ceremony={ceremony} films={ceremonyFilms} /> : null}
+      <CatalogStrip films={films} />
       <HowItWorks />
       <Crew />
-      <Join />
+      <Join film={joinFilm} />
     </>
   );
 }

@@ -1,19 +1,17 @@
 import Link from "next/link";
 import { AwardBadge } from "@/components/AwardBadge";
-import { SectionHeading } from "@/components/SectionHeading";
 import { CANONICAL_CATEGORIES, type Film } from "@/content/types";
 import { countWord } from "./words";
 
 /**
- * The film's awards as a poster-style laurel row that wraps, Best Picture
- * first (DESIGN_NOTES.md 1.5, decision 7). The person line under a badge is
- * an enhancement that appears only when the club has published a name
- * (SFA_SYSTEM_DESIGN.md 7.4). Renders nothing when the film won nothing.
+ * The film's awards as a list on thin rules, Best Picture first. Each row is
+ * the category as a Carolina label and, when the club has published one,
+ * the winner's name in the display face. Renders nothing when the film won
+ * nothing.
  */
 export function AwardStack({ film }: { film: Film }) {
   if (film.awards.length === 0) return null;
 
-  // Descending ceremony order: the biggest win leads the row.
   const awards = [...film.awards].sort(
     (a, b) =>
       CANONICAL_CATEGORIES.indexOf(b.category) - CANONICAL_CATEGORIES.indexOf(a.category),
@@ -23,25 +21,25 @@ export function AwardStack({ film }: { film: Film }) {
 
   return (
     <section aria-labelledby="awards">
-      <SectionHeading
-        id="awards"
-        title="Awards"
-        lede={
-          <>
-            Winner of {countWord(n)} {noun} at{" "}
-            <Link href={`/awards/${film.year}`} className="link">
-              the {film.year} ceremony
-            </Link>
-            .
-          </>
-        }
-      />
-      <ul className="mt-8 flex flex-col items-start gap-y-4 sm:flex-row sm:flex-wrap sm:gap-x-12 sm:gap-y-6">
+      <h2 id="awards" className="display text-display-md text-ink scroll-mt-24">
+        Awards
+      </h2>
+      <p className="text-body-lg mt-5 prose-block">
+        Winner of {countWord(n)} {noun} at{" "}
+        <Link href={`/awards/${film.year}`} className="link">
+          the {film.year} ceremony
+        </Link>
+        .
+      </p>
+      <ul className="mt-10">
         {awards.map((award) => (
-          <li key={award.category} className="flex flex-col items-start">
-            <AwardBadge category={award.category} size="lg" />
+          <li
+            key={award.category}
+            className="grid gap-1 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-8 sm:items-baseline py-4 border-t border-rule"
+          >
+            <AwardBadge category={award.category} />
             {award.person ? (
-              <p className="credit text-cream mt-2 pl-8">{award.person}</p>
+              <span className="display text-display-sm text-ink">{award.person}</span>
             ) : null}
           </li>
         ))}

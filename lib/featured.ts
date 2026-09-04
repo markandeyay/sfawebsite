@@ -1,9 +1,7 @@
 /**
- * Which six films fill the homepage strip (SFA_SYSTEM_DESIGN.md 11.1, 16.6).
- * The four award winners with a usable frame, plus two non-winners whose
- * treated frames are the strongest, so the strip shows range rather than
- * only the podium. The other films are listed by name beneath the strip.
- * Order is the display order. Reasoning in DESIGN_NOTES.md.
+ * The films stacked in the homepage hero, in display order: the five award
+ * winners with a frame plus one non-winner, so the list shows range rather
+ * than only the podium. The grid below lists every film on the slate.
  */
 export const FEATURED_SLUGS = [
   "fdoc",

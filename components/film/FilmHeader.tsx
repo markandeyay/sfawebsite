@@ -1,26 +1,19 @@
 import type { Film } from "@/content/types";
 
 /**
- * Above the fold on a film page: the title in the display italic, then the
- * meta as two short prose lines in the credit setting. No dot-joined string
- * (SFA_SYSTEM_DESIGN.md 5.6). Runtime is a third line only when it exists.
+ * Above the fold on a film page: one eyebrow carrying the slate and the
+ * director, the title at the largest display size, then the logline. No
+ * dot-joined string. Runtime is a line only when the club has supplied it.
  */
 export function FilmHeader({ film }: { film: Film }) {
   return (
     <header>
-      <div className="md:flex md:items-end md:justify-between md:gap-12">
-        <h1 className="display text-display-lg text-cream">
-          <span className="display-italic">{film.title}</span>
-        </h1>
-        <div className="mt-6 md:mt-0 md:text-right md:shrink-0 md:pb-1">
-          <p className="credit muted">{film.year} slate</p>
-          <p className="credit text-cream mt-1">Directed by {film.director}</p>
-          {film.runtime !== null ? (
-            <p className="credit muted mt-1">{film.runtime} minutes</p>
-          ) : null}
-        </div>
-      </div>
+      <p className="eyebrow">
+        {film.year} slate, directed by {film.director}
+      </p>
+      <h1 className="display text-display-xl text-ink mt-4 max-w-[14ch]">{film.title}</h1>
       <p className="text-body-lg prose-block mt-6">{film.logline}</p>
+      {film.runtime !== null ? <p className="muted mt-3">{film.runtime} minutes</p> : null}
     </header>
   );
 }

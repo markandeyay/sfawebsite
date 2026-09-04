@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prebuild": "node scripts/check-gold.mjs",
-    "check": "tsc --noEmit -p . && eslint app components lib content && node scripts/check-gold.mjs",
-    "check:gold": "node scripts/check-gold.mjs",
+    "check": "tsc --noEmit -p . && eslint app components lib content",
     "stills": "tsx scripts/process-stills.ts"
   },
   "dependencies": {

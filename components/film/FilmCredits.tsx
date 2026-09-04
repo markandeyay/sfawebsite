@@ -1,5 +1,4 @@
 import { CreditBlock } from "@/components/CreditBlock";
-import { SectionHeading } from "@/components/SectionHeading";
 import type { CategoryName, Film } from "@/content/types";
 import { countWord, joinList } from "./words";
 
@@ -25,9 +24,8 @@ function uncreditedDepartments(film: Film): string[] {
 }
 
 /**
- * The end-credit block for a film (SFA_SYSTEM_DESIGN.md 5.4) with the
- * thin-credits empty state inside it: an invitation written in words, never a
- * blank (DESIGN_NOTES.md 1.4, principle 3).
+ * The credit block for a film with the thin-credits state written inside it
+ * as one quiet sentence, never a blank.
  */
 export function FilmCredits({ film }: { film: Film }) {
   const departments = uncreditedDepartments(film);
@@ -35,17 +33,19 @@ export function FilmCredits({ film }: { film: Film }) {
 
   return (
     <section aria-labelledby="credits">
-      <SectionHeading id="credits" title="Credits" />
-      <CreditBlock className="mt-8" label={`${film.title} credits`} rows={film.credits}>
-        <p className="credit muted border border-deep p-4 prose-block mt-4 sm:mx-auto">
+      <h2 id="credits" className="display text-display-md text-ink scroll-mt-24">
+        Credits
+      </h2>
+      <CreditBlock className="mt-10" label={`${film.title} credits`} rows={film.credits}>
+        <p className="muted prose-block">
           {n > 0 ? (
             <>
               The rest of this crew is uncredited. {film.title} won for {joinList(departments)},
               so at least {countWord(n)} more {n === 1 ? "name belongs" : "names belong"} here.
-              Send the full credits and they appear in this block.
+              Send the full credits and they appear here.
             </>
           ) : (
-            <>Only the director is credited so far. Send the full credits and they appear in this block.</>
+            <>Only the director is credited so far. Send the full credits and they appear here.</>
           )}
         </p>
       </CreditBlock>

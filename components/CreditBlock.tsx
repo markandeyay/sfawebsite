@@ -10,34 +10,32 @@ interface CreditBlockProps {
   rows: CreditRow[];
   /** Accessible label for the list, e.g. "FDOC credits". */
   label: string;
-  /**
-   * Optional aside rendered inside the block, spanning both columns. Used for
-   * the thin-credits empty state on film pages.
-   */
+  /** Optional aside rendered inside the block, spanning both columns. */
   children?: ReactNode;
   className?: string;
 }
 
 /**
- * An end-credit block (SFA_SYSTEM_DESIGN.md 5.4): right-aligned role,
- * left-aligned name, meeting at a center gutter, condensed sans, tight
- * leading. Stacks role over name on narrow screens instead of shrinking the
- * type. Layout lives in app/globals.css under `.credit-block`.
+ * Role and name pairs on thin rules: uppercase role in the left column,
+ * name in the display face on the right. Stacks below 40rem. Layout lives
+ * in app/globals.css under `.credit-block`.
  */
 export function CreditBlock({ rows, label, children, className = "" }: CreditBlockProps) {
   return (
     <dl className={`credit-block ${className}`} aria-label={label}>
       {rows.map((row, i) => (
         <div className="credit-block__row" key={`${row.role}-${row.name ?? i}`}>
-          <dt className="credit credit-role credit-block__role muted">{row.role}</dt>
-          <dd className="credit credit-block__name text-cream">
+          <dt className="eyebrow pt-1">{row.role}</dt>
+          <dd className="display text-display-sm text-ink">
             {row.name ?? (
-              <span className="muted italic">Name to be supplied</span>
+              <span className="muted font-sans text-body-lg font-normal tracking-normal">
+                Name to be supplied
+              </span>
             )}
           </dd>
         </div>
       ))}
-      {children ? <div className="credit-block__aside">{children}</div> : null}
+      {children ? <div className="credit-block__aside border-t border-rule pt-6">{children}</div> : null}
     </dl>
   );
 }
