@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE } from "@/lib/site";
+import { getHeroFilm } from "@/lib/home";
 
 // Display face. Optical size axis so the same family reads right at 14px and 128px.
 const bodoni = Bodoni_Moda({
@@ -26,6 +27,9 @@ const archivo = Archivo({
   display: "swap",
 });
 
+// The link preview (iMessage, Slack, and so on) shows the hero frame.
+const heroFilm = getHeroFilm();
+
 export const metadata: Metadata = {
   title: {
     default: SITE.name,
@@ -36,6 +40,9 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: SITE.name,
     type: "website",
+    images: heroFilm.still
+      ? [{ url: heroFilm.still.treated, width: 1280, height: 720, alt: `Frame from ${heroFilm.title}` }]
+      : [],
   },
 };
 
