@@ -558,6 +558,17 @@ Left as is: the smallest text is 13px (nav, footer, buttons), at the
 threshold; the "Not streaming" card label is unreachable with the current
 data because the one non-viewable film also has no still.
 
+### 4.4 Production build check
+
+The production build was served locally and every route captured again at
+1440 and 375. Visually identical to the dev captures. One difference showed
+only in production: the first three homepage cards were marked high
+priority, and Next prefetching other routes caused React to preload those
+card images on the film and awards pages, which logged "preloaded but not
+used" warnings. Cards are below the fold, so the priority flag was removed;
+all three routes now load with an empty console. The hero still and the
+film-page facade keep their priority.
+
 ## 5. Things the club needs to supply
 
 Each of these is an explicit empty state on the live site, written so it

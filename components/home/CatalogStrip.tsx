@@ -24,9 +24,9 @@ export function CatalogStrip({ films }: { films: Film[] }) {
         lede={`${numberWord(films.length, true)} films, written, shot, and cut by student crews in one school year, and screened at the festival in May ${year}. Hover or focus a frame to see it untreated.`}
       />
       <ul className="mt-10 sm:mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-        {featured.map((film, i) => (
+        {featured.map((film) => (
           <li key={film.slug}>
-            <FilmCard film={film} headingLevel="h3" priority={i < 3} />
+            <FilmCard film={film} headingLevel="h3" />
           </li>
         ))}
       </ul>
