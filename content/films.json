@@ -1,0 +1,250 @@
+[
+  {
+    "slug": "fdoc",
+    "title": "FDOC",
+    "year": 2025,
+    "track": "studio",
+    "director": "Keller Huffman",
+    "logline": "Follow a case of beer as it switches hands among a vibrant college ensemble over the course of the first day of class.",
+    "youtubeId": "2RFfhQ--oos",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/fdoc-treated.webp",
+      "original": "/stills/fdoc.webp"
+    },
+    "awards": [
+      { "category": "Best Picture", "person": null },
+      { "category": "Best Director", "person": null },
+      { "category": "Best Screenplay", "person": null },
+      { "category": "Best Editing", "person": null },
+      { "category": "Best Cinematography", "person": null },
+      { "category": "Best Sound Design", "person": null },
+      { "category": "Best Set Design", "person": null }
+    ],
+    "credits": [
+      { "role": "Director", "name": "Keller Huffman" }
+    ]
+  },
+  {
+    "slug": "silenced",
+    "title": "Silenced",
+    "year": 2025,
+    "track": "studio",
+    "director": "Peyton Jones",
+    "logline": "Big Boss throws a dinner party for his friends. All is merry, but when someone dares to speak, it quickly becomes evident why the film is a silent one.",
+    "youtubeId": "Mx3-gEfzYN4",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/silenced-treated.webp",
+      "original": "/stills/silenced.webp"
+    },
+    "awards": [
+      { "category": "Best Supporting Actress", "person": null },
+      { "category": "Best Costume Design", "person": null },
+      { "category": "Best Hair and Makeup", "person": null }
+    ],
+    "credits": [
+      { "role": "Director", "name": "Peyton Jones" }
+    ]
+  },
+  {
+    "slug": "senior-assassin",
+    "title": "Senior Assassin",
+    "year": 2025,
+    "track": "studio",
+    "director": "Carson Withers",
+    "logline": "When a game of Senior Assassin adds on a cash prize, a wannabe detective must find the mastermind who's picking off \"The Teeth.\"",
+    "youtubeId": "fEXqE4i4IpM",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/senior-assassin-treated.webp",
+      "original": "/stills/senior-assassin.webp"
+    },
+    "awards": [
+      { "category": "Best Lead Actor", "person": null },
+      { "category": "Best Supporting Actor", "person": null },
+      { "category": "Best Original Score", "person": null }
+    ],
+    "credits": [
+      { "role": "Director", "name": "Carson Withers" }
+    ]
+  },
+  {
+    "slug": "a-newby-cupids-guide-to-love-and-more",
+    "title": "A Newby Cupid's Guide to Love & More",
+    "year": 2025,
+    "track": "studio",
+    "director": "Joelle Adeleke",
+    "logline": "A pair of Cupids-in-training must help a socially awkward college student fall in love. In the process, they end up causing a series of chaotic and near-lethal romantic mishaps.",
+    "youtubeId": "RNyXv09ujv0",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/a-newby-cupids-guide-to-love-and-more-treated.webp",
+      "original": "/stills/a-newby-cupids-guide-to-love-and-more.webp"
+    },
+    "awards": [
+      { "category": "Best Lead Actress", "person": null }
+    ],
+    "credits": [
+      { "role": "Director", "name": "Joelle Adeleke" }
+    ]
+  },
+  {
+    "slug": "at-last-the-gift",
+    "title": "At Last, the Gift",
+    "year": 2025,
+    "track": "studio",
+    "director": "Christopher Cooper",
+    "logline": "Timothy Coleman disappeared thirteen months ago. Elaine Coleman is going to find him.",
+    "youtubeId": "LKPT6smWlJo",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/at-last-the-gift-treated.webp",
+      "original": "/stills/at-last-the-gift.webp"
+    },
+    "awards": [
+      { "category": "Audience Choice", "person": null }
+    ],
+    "credits": [
+      { "role": "Director", "name": "Christopher Cooper" }
+    ]
+  },
+  {
+    "slug": "how-does-it-feel",
+    "title": "How Does It Feel?",
+    "year": 2025,
+    "track": "studio",
+    "director": "Kiran Garcha",
+    "logline": "Jake is sentenced to prison for murder and undergoes a mysterious simulation as part of a rehabilitation program.",
+    "youtubeId": "Mji_606d6ZI",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/how-does-it-feel-treated.webp",
+      "original": "/stills/how-does-it-feel.webp"
+    },
+    "awards": [],
+    "credits": [
+      { "role": "Director", "name": "Kiran Garcha" }
+    ]
+  },
+  {
+    "slug": "spaghetti-and-me",
+    "title": "Spaghetti and Me",
+    "year": 2025,
+    "track": "studio",
+    "director": "Keaton Crooks",
+    "logline": "A film about insecurity, AI, and the theatre.",
+    "youtubeId": "cnp1SLmIZps",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/spaghetti-and-me-treated.webp",
+      "original": "/stills/spaghetti-and-me.webp"
+    },
+    "awards": [],
+    "credits": [
+      { "role": "Director", "name": "Keaton Crooks" }
+    ]
+  },
+  {
+    "slug": "the-tulips",
+    "title": "The Tulips",
+    "year": 2025,
+    "track": "studio",
+    "director": "Zoe Wynns",
+    "logline": "Dolores discovers a girl who's been buried alive. Now she must wrestle with whether to reveal her buried friend Tulip, while her sister becomes increasingly worried that Tulip isn't real at all.",
+    "youtubeId": "GTBtTmzMdCo",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/the-tulips-treated.webp",
+      "original": "/stills/the-tulips.webp"
+    },
+    "awards": [],
+    "credits": [
+      { "role": "Director", "name": "Zoe Wynns" }
+    ]
+  },
+  {
+    "slug": "omnes-unum",
+    "title": "Omnes Unum",
+    "year": 2025,
+    "track": "studio",
+    "director": "Ember Penney",
+    "logline": "A physics professor's entire world unravels when he learns a universal truth.",
+    "youtubeId": "bslYQmVjFkk",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/omnes-unum-treated.webp",
+      "original": "/stills/omnes-unum.webp"
+    },
+    "awards": [],
+    "credits": [
+      { "role": "Director", "name": "Ember Penney" }
+    ]
+  },
+  {
+    "slug": "slam",
+    "title": "Slam!",
+    "year": 2025,
+    "track": "studio",
+    "director": "Kolby Oglesby",
+    "logline": "A renowned slam poet returns to his old college to perform on open mic night. To his surprise, his strongest competitor is his old performance partner, who he left in the dust for fame. Only one voice will echo.",
+    "youtubeId": "1DsY62HjXWw",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/slam-treated.webp",
+      "original": "/stills/slam.webp"
+    },
+    "awards": [],
+    "credits": [
+      { "role": "Director", "name": "Kolby Oglesby" }
+    ]
+  },
+  {
+    "slug": "hard-pills-to-swallow",
+    "title": "Hard Pills to Swallow",
+    "year": 2025,
+    "track": "studio",
+    "director": "Eric Sprague",
+    "logline": "Ex-roommates Jake and Steven reunite at a party senior year. When the night takes a turn for the worst, Steven's life ends up in Jake's hands. Will he save it?",
+    "youtubeId": "NHlh36jURDg",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/hard-pills-to-swallow-treated.webp",
+      "original": "/stills/hard-pills-to-swallow.webp"
+    },
+    "awards": [],
+    "credits": [
+      { "role": "Director", "name": "Eric Sprague" }
+    ]
+  },
+  {
+    "slug": "discrete-magematics",
+    "title": "Discrete Magematics",
+    "year": 2025,
+    "track": "studio",
+    "director": "David Majernik",
+    "logline": "When an aspiring computer science major accidentally signs up for a math class run by wizards, he finds himself roped into their scheme to take down his university's computer science department.",
+    "youtubeId": "BnjpJGetkyo",
+    "viewable": true,
+    "runtime": null,
+    "still": {
+      "treated": "/stills/discrete-magematics-treated.webp",
+      "original": "/stills/discrete-magematics.webp"
+    },
+    "awards": [],
+    "credits": [
+      { "role": "Director", "name": "David Majernik" }
+    ]
+  }
+]

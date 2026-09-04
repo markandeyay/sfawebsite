@@ -1,0 +1,95 @@
+{
+  "year": 2025,
+  "categories": [
+    {
+      "category": "Best Set Design",
+      "department": "craft",
+      "winner": { "filmSlug": "fdoc", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Costume Design",
+      "department": "craft",
+      "winner": { "filmSlug": "silenced", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Hair and Makeup",
+      "department": "craft",
+      "winner": { "filmSlug": "silenced", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Sound Design",
+      "department": "craft",
+      "winner": { "filmSlug": "fdoc", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Original Score",
+      "department": "craft",
+      "winner": { "filmSlug": "senior-assassin", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Cinematography",
+      "department": "craft",
+      "winner": { "filmSlug": "fdoc", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Editing",
+      "department": "craft",
+      "winner": { "filmSlug": "fdoc", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Screenplay",
+      "department": "picture",
+      "winner": { "filmSlug": "fdoc", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Audience Choice",
+      "department": "picture",
+      "winner": { "filmSlug": "at-last-the-gift", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Supporting Actress",
+      "department": "performance",
+      "winner": { "filmSlug": "silenced", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Supporting Actor",
+      "department": "performance",
+      "winner": { "filmSlug": "senior-assassin", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Lead Actress",
+      "department": "performance",
+      "winner": { "filmSlug": "a-newby-cupids-guide-to-love-and-more", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Lead Actor",
+      "department": "performance",
+      "winner": { "filmSlug": "senior-assassin", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Director",
+      "department": "picture",
+      "winner": { "filmSlug": "fdoc", "person": null },
+      "nominees": []
+    },
+    {
+      "category": "Best Picture",
+      "department": "picture",
+      "winner": { "filmSlug": "fdoc", "person": null },
+      "nominees": []
+    }
+  ]
+}

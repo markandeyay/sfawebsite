@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prebuild": "node scripts/check-gold.mjs",
+    "check": "tsc --noEmit -p . && eslint app components lib content && node scripts/check-gold.mjs",
+    "check:gold": "node scripts/check-gold.mjs"
   },
   "dependencies": {
     "next": "16.3.4",

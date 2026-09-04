@@ -1,26 +1,216 @@
 @import "tailwindcss";
 
+/*
+  Design tokens. The palette is locked (SFA_SYSTEM_DESIGN.md 5.1).
+  `--color-*: initial` removes Tailwind's default palette so the only colors
+  that exist in this codebase are the six below. `gold` may be used by
+  components/AwardBadge.tsx and nowhere else; scripts/check-gold.mjs enforces it.
+*/
+@theme {
+  --color-*: initial;
+  --color-base: #0b0d0f;
+  --color-surface: #14181c;
+  --color-carolina: #4b9cd3;
+  --color-deep: #2a5c7d;
+  --color-gold: #d4af37;
+  --color-cream: #ede9e1;
+
+  --font-display: var(--font-bodoni), "Bodoni Moda", "Didot", Georgia, serif;
+  --font-sans: var(--font-archivo), "Archivo", "Helvetica Neue", Arial, sans-serif;
+
+  /* Type scale, hand set. Leading and tracking travel with the size. */
+  --text-display-xl: clamp(3rem, 9vw, 8rem);
+  --text-display-xl--line-height: 0.92;
+  --text-display-xl--letter-spacing: -0.025em;
+  --text-display-lg: clamp(2.5rem, 6vw, 5rem);
+  --text-display-lg--line-height: 0.95;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-md: clamp(1.75rem, 3vw, 2.5rem);
+  --text-display-md--line-height: 1.05;
+  --text-display-md--letter-spacing: -0.01em;
+  --text-display-sm: 1.375rem;
+  --text-display-sm--line-height: 1.15;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.5;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-credit: 0.9375rem;
+  --text-credit--line-height: 1.2;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.2;
+
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  /* Archivo width axis settings, used as font-stretch equivalents. */
+  --wdth-credit: 70;
+  --wdth-label: 82;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-base);
+  color: var(--color-cream);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-variation-settings: "wdth" 100;
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-carolina);
+  color: var(--color-base);
+}
+
+/* Visible focus everywhere, in Carolina. Never removed without replacement. */
+:focus-visible {
+  outline: 2px solid var(--color-carolina);
+  outline-offset: 3px;
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variation-settings: "opsz" 96;
+  }
+
+  .display-italic {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: "opsz" 96;
+  }
+
+  /* Condensed setting for credits, captions, category names, nav and buttons. */
+  .credit {
+    font-family: var(--font-sans);
+    font-size: var(--text-credit);
+    line-height: var(--text-credit--line-height);
+    font-variation-settings: "wdth" var(--wdth-credit);
+  }
+
+  .credit-role {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  .label {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    font-variation-settings: "wdth" var(--wdth-label);
+  }
+
+  .muted {
+    color: color-mix(in srgb, var(--color-cream) 62%, transparent);
+  }
+
+  .prose-block {
+    max-width: 62ch;
+  }
+
+  /* Underlined text links. Carolina, no color change on hover; the underline moves. */
+  .link {
+    color: var(--color-carolina);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-underline-offset 150ms ease;
+  }
+  .link:hover {
+    text-underline-offset: 0.32em;
+  }
+
+  /*
+    Still: two stacked frames. The treated (dithered) frame is the identity and
+    sits on top; the original frame beneath fades in when an ancestor `.reveal`
+    is hovered, focused, or given `is-revealed` by script.
+  */
+  .still {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-base);
+  }
+  .still > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .still__treated {
+    image-rendering: pixelated;
+    transition: opacity 700ms ease;
+  }
+  .reveal:hover .still__treated,
+  .reveal:focus-visible .still__treated,
+  .reveal:focus-within .still__treated,
+  .reveal.is-revealed .still__treated {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .still__treated {
+      transition: none;
+    }
+  }
+
+  /*
+    Credit block: right-aligned role, left-aligned name, meeting at a center
+    gutter. Stacks role over name below 40rem rather than shrinking the type.
+  */
+  .credit-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 0.75rem;
+  }
+  .credit-block__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 0.125rem;
+  }
+  .credit-block__role {
+    text-align: left;
+  }
+  .credit-block__name {
+    text-align: left;
+  }
+  @media (min-width: 40rem) {
+    .credit-block {
+      row-gap: 0.5rem;
+    }
+    .credit-block__row {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 1.5rem;
+      align-items: baseline;
+    }
+    .credit-block__role {
+      text-align: right;
+    }
+    .credit-block__aside {
+      grid-column: 1 / -1;
+    }
+  }
 }
