@@ -7,15 +7,15 @@ pure function of two JSON files.
 
 ## Add a film
 
-1. Add an entry to `content/films.json` (copy an existing one). Required:
-   `slug`, `title`, `year`, `track`, `director`, `logline`, `youtubeId`,
-   `viewable`, `runtime` (or `null`), `still`, `awards`, `credits`.
-2. If it won anything, add the same categories to `content/awards.json`
-   under that year, and list them in the film's `awards` array. The build
-   fails if the two files disagree.
-3. Run `npm run stills` to fetch the YouTube frame and write it to
+1. Add an entry to `content/films.json` (copy an existing one; every field
+   is required, `runtime` and `still` may be `null`).
+2. `no` is the catalog number: production order across all years. Use the
+   next number after the current highest; no gaps. See `content/types.ts`.
+3. If it won anything, add the same categories to `content/awards.json`
+   under that year and to the film's `awards` array (the build checks both).
+4. Run `npm run stills` to fetch and treat the YouTube frame into
    `public/stills/`. Set `"still": null` if no frame exists.
-4. Run `npm run check` (types, lint) and `npm run build`.
+5. Run `npm run check` (content, types, lint) and `npm run build`.
 
 Category names must match `CANONICAL_CATEGORIES` in `content/types.ts`.
 Credits are a flat list of `{ "role", "name" }` pairs in the order they

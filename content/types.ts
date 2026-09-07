@@ -16,6 +16,35 @@
  *
  * Any category string that is not in CANONICAL_CATEGORIES is rejected by the
  * validator, so the seed data cannot drift back to the source spellings.
+ *
+ * CATALOG NUMBERS (`Film.no`)
+ * ---------------------------
+ * Every film carries a catalog number: its position in production order
+ * across all years, the way every Criterion release carries a spine number.
+ * It renders as "No. 001" (`formatCatalogNumber` in ./index.ts pads it).
+ *
+ * The number is DATA, not a derivation. It is stored in films.json and is
+ * never computed from array position, year, or slug, so reordering the file
+ * or inserting a film cannot silently renumber the catalog.
+ *
+ * Status: PROVISIONAL. Only the 2025 slate is in the data. The club made
+ * roughly 20-30 films between 2020 and 2024 that are not yet imported, and
+ * production order within the 2025 slate was never published, so the twelve
+ * 2025 films are numbered 1-12 in the order the club's own site listed them
+ * (the seed table in SFA_SYSTEM_DESIGN.md 8.2: fdoc = 1 through
+ * discrete-magematics = 12).
+ *
+ * When the 2020-2024 back catalog is imported, the whole catalog is
+ * renumbered ONCE, in production order; the 2025 films then continue after
+ * the last 2024 number. After that renumbering the archive is complete and a
+ * film's number never changes again. Do not renumber for any other reason;
+ * a new film takes the next number after the current highest.
+ *
+ * Invariants enforced by the validator in ./index.ts:
+ *   - a positive integer, unique across films
+ *   - contiguous from 1 with no gaps (as many numbers as films)
+ *   - non-decreasing with `year` along the sequence (production order cannot
+ *     put a 2025 film before a 2024 one)
  */
 
 /**
@@ -73,6 +102,11 @@ export interface Credit {
  * "At Last, the Gift", whose YouTube upload is private, so YouTube serves no
  * thumbnail). Components render a type-only frame in that case; nothing is
  * generated in its place (SFA_SYSTEM_DESIGN.md 9.4).
+ *
+ * The pipeline writes a third rendition, `{slug}-treated-sm.webp`, at the
+ * dither's native resolution for card-size use. It is derived from
+ * `treated` by a fixed naming rule rather than stored here;
+ * scripts/validate-content.ts checks all three files exist on disk.
  */
 export interface Still {
   treated: string;
@@ -80,6 +114,8 @@ export interface Still {
 }
 
 export interface Film {
+  /** Catalog number, production order across all years. See the note above. */
+  no: number;
   slug: string;
   title: string;
   year: number;
@@ -111,5 +147,11 @@ export interface AwardCategory {
 
 export interface Ceremony {
   year: number;
+  /**
+   * When the ceremony was held, as prose ("May 2025"). A string because the
+   * club published the month but never the day; do not upgrade this to a
+   * date until a real one is known. Must name the ceremony year.
+   */
+  held: string;
   categories: AwardCategory[];
 }

@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "tsx scripts/validate-content.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check": "tsc --noEmit -p . && eslint app components lib content",
+    "check": "tsx scripts/validate-content.ts && tsc --noEmit -p . && eslint app components lib content",
     "stills": "tsx scripts/process-stills.ts"
   },
   "dependencies": {

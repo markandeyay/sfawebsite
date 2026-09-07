@@ -1,5 +1,6 @@
 [
   {
+    "no": 1,
     "slug": "fdoc",
     "title": "FDOC",
     "year": 2025,
@@ -27,6 +28,7 @@
     ]
   },
   {
+    "no": 2,
     "slug": "silenced",
     "title": "Silenced",
     "year": 2025,
@@ -50,6 +52,7 @@
     ]
   },
   {
+    "no": 3,
     "slug": "senior-assassin",
     "title": "Senior Assassin",
     "year": 2025,
@@ -73,6 +76,7 @@
     ]
   },
   {
+    "no": 4,
     "slug": "a-newby-cupids-guide-to-love-and-more",
     "title": "A Newby Cupid's Guide to Love & More",
     "year": 2025,
@@ -94,6 +98,7 @@
     ]
   },
   {
+    "no": 5,
     "slug": "at-last-the-gift",
     "title": "At Last, the Gift",
     "year": 2025,
@@ -112,6 +117,7 @@
     ]
   },
   {
+    "no": 6,
     "slug": "how-does-it-feel",
     "title": "How Does It Feel?",
     "year": 2025,
@@ -131,6 +137,7 @@
     ]
   },
   {
+    "no": 7,
     "slug": "spaghetti-and-me",
     "title": "Spaghetti and Me",
     "year": 2025,
@@ -150,6 +157,7 @@
     ]
   },
   {
+    "no": 8,
     "slug": "the-tulips",
     "title": "The Tulips",
     "year": 2025,
@@ -169,6 +177,7 @@
     ]
   },
   {
+    "no": 9,
     "slug": "omnes-unum",
     "title": "Omnes Unum",
     "year": 2025,
@@ -188,6 +197,7 @@
     ]
   },
   {
+    "no": 10,
     "slug": "slam",
     "title": "Slam!",
     "year": 2025,
@@ -207,6 +217,7 @@
     ]
   },
   {
+    "no": 11,
     "slug": "hard-pills-to-swallow",
     "title": "Hard Pills to Swallow",
     "year": 2025,
@@ -226,6 +237,7 @@
     ]
   },
   {
+    "no": 12,
     "slug": "discrete-magematics",
     "title": "Discrete Magematics",
     "year": 2025,
