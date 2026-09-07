@@ -1416,3 +1416,105 @@ navy on paper 14.7:1; navy-muted (68% navy) on paper 5.2:1; navy on panel
 13.6:1; paper on navy 14.7:1; paper-muted (72%) on navy 7.8:1. Carolina is
 used only as a mark, an underline, a keyline and the selection ground, none
 of which carry text.
+
+
+---
+
+## 13. Fifth direction (2026-09-07): the lot, on the stussy engine
+
+The client rejected the white register too ("it looks trash") and asked for a
+complete rebuild on the engine of their own stussy.ink (a Vite + GSAP + Lenis
+site, "Stüssy Chapel Hill Chapter"), refitted for the Student Film Association
+with a twist of its own. This section is the record of that port.
+
+### 13.1 What was ported, faithfully
+
+Everything that makes stussy.ink read as expensive, read from its source (2,988
+lines of TypeScript and CSS) rather than from memory:
+
+- The token file: newsprint paper and ink, four brand voices (Carolina, navy,
+  the one hot flare, gold as a marker only), four surface presets whose role
+  variables recolour every child, a fluid type scale from 9px micro to a 260px
+  mega, a spacing scale, four eases and five durations mirrored one-to-one in
+  `lib/fx/motion.ts`, reserved z-bands.
+- The chrome: a compositor-only atmosphere in three depths (typeset lanes,
+  a breathing drift field, occasional crossings), a static grain, the loader
+  whose counter waits for fonts and the hero image, the gooey stripe curtain,
+  a difference-blend header and chapter rail, the lagging cursor that names
+  what it is over, the page-top button.
+- The components: section heads whose rule draws out and ghost numeral
+  swings in, tilted marquee tapes at constant pixels-per-second that speed up
+  and flip to urgent under fast scrolling, media frames with arch, oval, leaf,
+  pill and stub cuts on offset colour plates that snap home on hover and fan
+  two ghost copies behind the photo, die-cut stamps, the sheen through a
+  masked wordmark, rotary badges, split-glyph reveals that settle a fraction
+  off-true.
+- The scenes: one pin per page (the slate's horizontal track with its counter
+  and bar), the manifesto that assembles on scrub with a marker wipe, the rack
+  whose stamps land, cards that deal in from a deck, columns that slide in.
+- The contracts: reduced motion means native scroll, no loader, settled
+  reveals and the pin reflowed to a grid; hidden-by-default states are set in
+  JavaScript so a JS failure leaves a readable page.
+
+Deliberately dropped: the store, the products, the Japanese kickers, the ram.
+
+### 13.2 The twist: a studio lot
+
+The subject is a film studio, so the vocabulary is the set's. The kickers are
+slug lines (`Sc. 01 ——— INT. THE SLATE — 2025`). The atmosphere streams what a
+crew says on the day (roll sound, speed, mark it, action, cut, check the gate,
+quiet on set) with the club's own facts. The doodles are a clapperboard, a
+reel, a megaphone, a director's chair, a spotlight, a ticket and a star, drawn
+with rough.js strokes so the line wobbles, plus hand-lettered words in marker
+faces. Where stussy had a mascot, the hero carries a slate card: a
+clapperboard with the cycle's key frame set into its board and the real slate
+fields (roll, scene, take) filled with the film's catalog number. The
+lookbook became the slate: every film in the order it was made, each frame a
+real still in a die-cut frame on a plate, linking to its page through the
+curtain. The drop became awards night: the winning films as a rack, each seal
+a stamp. The store became end credits on ink: the exec board as a credit
+roll. The mail line became the pitch form.
+
+### 13.3 Type and assets
+
+Barlow Condensed 800 and 400 italic (the client's own Figma stand-in for
+Futura Condensed) for display, IBM Plex Mono for kickers, Helvetica/Arial for
+body. The SFA handstyle and the full name were rasterised from Rock Salt with
+headless Chrome, trimmed to alpha, and are used as the sheen mask, the header
+mark, the curtain stamp and the footer.
+
+Codex was asked to draw the doodles and a mascot, as the client suggested.
+Its non-interactive mode has no image tool on this account (the model listed
+its tools: shell, browser, node, puppeteer, multi-agent; no image_gen) and
+the CLI fallback needs an OpenAI API key that is not present, so nothing was
+generated. The doodles are rough-stroke SVGs and hand-lettered words instead,
+which is also what the client's own notes concluded works better than AI
+doodles. No image was generated anywhere on the site; the eleven stills are
+the club's real frames, as shot.
+
+### 13.4 Engineering
+
+The host stays Next.js so the film and awards routes are static pages built
+from the JSON, and the Vercel integration keeps deploying on push. Tailwind
+is removed; the stylesheets are plain CSS in stussy's file order. The engine
+boots once per route inside a client component and tears itself down on
+navigation. Internal links are intercepted in the capture phase (before Next's
+Link handler, which respects `defaultPrevented`): the curtain covers, the
+router pushes, and the next boot lifts the curtain onto the assembled page,
+landing on the anchor if the link had one. The loader runs once per session.
+`overflow-x: clip` is set on the root as well as the body, because the tilted
+tapes and the rotated slate card paint past the viewport edge and only the
+root clip stops that becoming sideways scroll (measured: 46px before, 0 after).
+
+Verified with Playwright against the production build: the slate pin counts
+01 to 12 through its scroll range; a click on a slate frame covers, routes to
+the film page and uncovers with the hero revealed; the header link back lands
+on `/#slate` with the rail reading The slate; a same-page anchor wipes to the
+pitch; reduced motion renders the slate as a grid with every reveal settled;
+zero console errors on all three routes at 1440 and 375.
+
+### 13.5 Still owed by the club
+
+Exec-board names, semester dates, crew credits beyond the director,
+person-level winners, a frame or public upload for At Last, the Gift, the 2026
+slate, and a mail relay URL for the pitch form (docs/APPS_SCRIPT_SETUP.md).

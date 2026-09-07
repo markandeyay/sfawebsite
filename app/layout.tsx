@@ -1,26 +1,29 @@
 import type { Metadata } from "next";
-import { Archivo } from "next/font/google";
+import { Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { SiteNav } from "@/components/SiteNav";
-import { SiteFooter } from "@/components/SiteFooter";
-import SmoothScroll from "@/components/motion/SmoothScroll";
-import ScrollFlag from "@/components/motion/ScrollFlag";
-import { MOTION_HEAD_SCRIPT } from "@/lib/head-script";
+import { ChromeTop, ChromeBottom } from "@/components/engine/Chrome";
+import Engine from "@/components/engine/Engine";
 import { SITE } from "@/lib/site";
 import { getSiteKeyFilm } from "@/lib/home";
 
-// One family, one file, two voices: Archivo's width axis gives the
-// condensed voice (credits, catalog numbers) at 75% and the grotesk at 100%.
-const archivo = Archivo({
+/* The display voice: the client's own Figma stand-in for Futura Condensed.
+   800 for the headlines, 400 italic for the outlined second words. */
+const barlow = Barlow_Condensed({
   subsets: ["latin"],
-  weight: "variable",
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  weight: ["400", "700", "800"],
+  style: ["normal", "italic"],
+  variable: "--font-barlow",
   display: "swap",
 });
 
-// The link preview (iMessage, Slack, and so on) shows the cycle's key film:
-// the Best Picture winner's untreated frame.
+/* Kickers, rails, captions, the credit roll's roles. */
+const plex = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-plex",
+  display: "swap",
+});
+
 const keyFilm = getSiteKeyFilm();
 
 export const metadata: Metadata = {
@@ -41,22 +44,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${archivo.variable} h-full`} suppressHydrationWarning>
-      <head>
-        {/* Marks the root "js" (and "-no-motion" under reduced motion) before paint. */}
-        <script dangerouslySetInnerHTML={{ __html: MOTION_HEAD_SCRIPT }} />
-      </head>
-      <body className="on-base min-h-full flex flex-col">
-        <SmoothScroll />
-        <ScrollFlag />
-        <a href="#main" className="skip-link text-2">
-          Skip to content
-        </a>
-        <SiteNav />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
+    <html lang="en" className={`${barlow.variable} ${plex.variable}`} suppressHydrationWarning>
+      <body>
+        <ChromeTop />
+        <main id="main">{children}</main>
+        <ChromeBottom />
+        <Engine />
       </body>
     </html>
   );

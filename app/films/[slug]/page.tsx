@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAdjacentFilms, getCeremony, getFilm, getFilms } from "@/content";
-import { FilmHeader } from "@/components/film/FilmHeader";
-import { FilmFacade } from "@/components/film/FilmFacade";
-import { AwardStack } from "@/components/film/AwardStack";
-import { FilmCredits } from "@/components/film/FilmCredits";
-import { AdjacentFilms } from "@/components/film/AdjacentFilms";
-import { CeremonyLine } from "@/components/film/CeremonyLine";
+import { getAdjacentFilms, getCeremony, getFilm, getFilms, formatCatalogNumber } from "@/content";
+import { numberWord } from "@/lib/home";
+import { jitter } from "@/lib/hash";
+import { CatNo } from "@/components/lot/CatNo";
+import { sealLines } from "@/components/lot/seals";
+import { Media } from "@/components/lot/Media";
+import { Stamp } from "@/components/lot/Stamp";
+import { Band } from "@/components/lot/Band";
+import { Footer } from "@/components/lot/Footer";
+import { FilmScreen } from "@/components/film/FilmScreen";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const film = getFilm(slug);
   if (!film) return {};
   return {
-    title: film.title,
+    title: `${film.title} — No. ${formatCatalogNumber(film.no)}`,
     description: film.logline,
     openGraph: {
       title: film.title,
@@ -31,12 +35,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/**
- * The film page. The catalog number and title, the screen, then (only when
- * the film won) the awards as one object, the end credits, the films either
- * side of it in the catalog, and one line to the ceremony. Unequal air: the
- * header and screen sit close; each later block gets a section of space.
- */
+const TONES = [undefined, "navy", "ink", "caro", "paper", undefined, "navy"] as const;
+
+/* The film page: the catalog number as the scale moment, the title, the
+   screen, the seals, the end credits, the films either side of it on
+   the slate. Same chrome, same atmosphere, same curtain as the lot. */
 export default async function FilmPage({ params }: PageProps) {
   const { slug } = await params;
   const film = getFilm(slug);
@@ -44,30 +47,120 @@ export default async function FilmPage({ params }: PageProps) {
   const ceremony = getCeremony(film.year);
   const { prev, next } = getAdjacentFilms(film.slug);
   const slateSize = getFilms().filter((f) => f.year === film.year).length;
-  const hasAwards = film.awards.length > 0 && Boolean(ceremony);
+  const wins = film.awards.length;
+  const src = film.still ? film.still.original : null;
 
   return (
-    <article>
-      <div className="wrap pt-block">
-        <FilmHeader film={film} />
-      </div>
-      <div className="wrap mt-block">
-        <FilmFacade film={film} />
-      </div>
-      {hasAwards && ceremony ? (
-        <section aria-labelledby="awards" className="wrap mt-section hairline-t pt-block">
-          <AwardStack film={film} ceremony={ceremony} />
+    <>
+      <article className="film t-paper" id="film" data-scene data-name={film.title} data-idx={formatCatalogNumber(film.no)}>
+        <div className="film__eyebrow" data-hero-fade>
+          <span>INT. {film.title}</span><i className="ln" />
+          <span>Roll {film.year}</span><i className="ln" />
+          <span>{numberWord(slateSize, true)} on the slate</span><i className="ln" />
+          <span className="hot">{wins ? `${numberWord(wins, true)} ${wins === 1 ? "award" : "awards"}` : "Official selection"}</span>
+        </div>
+
+        <header className="film__head" data-reveal-head>
+          <span data-film-hero className="film__no"><CatNo no={film.no} big /></span>
+          <h1 className="film__ttl" data-split>{film.title}</h1>
+          <span className="film__by" data-film-hero>Directed by {film.director}</span>
+        </header>
+
+        <div className="film__grid">
+          <p className="film__log" data-film-hero>{film.logline}</p>
+          <div className="film__meta" data-film-hero>
+            <span><b>Roll</b> {film.year} slate</span>
+            <span><b>Track</b> {film.track === "studio" ? "Studio process" : "Independent"}</span>
+            {film.runtime ? <span><b>Runtime</b> {film.runtime} min</span> : null}
+            <span><b>Screened</b> SFA Film Festival, {ceremony?.held ?? `May ${film.year}`}</span>
+            {!film.viewable ? <span><b>Streaming</b> Festival only</span> : null}
+          </div>
+        </div>
+
+        <div className="film__screen" data-film-hero>
+          <FilmScreen youtubeId={film.youtubeId} title={film.title} src={src} viewable={film.viewable} />
+        </div>
+
+        <div className="film__body">
+          <section aria-labelledby="film-awards">
+            <h2 className="film__sub" id="film-awards">Awards <em>night</em></h2>
+            {wins && ceremony ? (
+              <>
+                <p className="ty-body">
+                  {numberWord(wins, true)} of the {numberWord(ceremony.categories.length)} categories at the {ceremony.year} ceremony, voted on by the members.
+                </p>
+                <div className="seals" data-seals>
+                  {film.awards.map((a, i) => {
+                    const [l1, l2] = sealLines(a.category);
+                    return (
+                      <Stamp key={a.category} tone={TONES[i % TONES.length]} rot={jitter(`seal:${film.slug}:${i}`, -12, 10)} seal>
+                        {l1}<br />{l2}
+                        {a.person ? <small>{a.person}</small> : null}
+                      </Stamp>
+                    );
+                  })}
+                </div>
+                <p className="ty-label" style={{ marginBlockStart: "var(--s5)" }}>
+                  <Link href={`/awards/${ceremony.year}`} className="u-line" data-cursor="Go">The whole {ceremony.year} ceremony</Link>
+                </p>
+              </>
+            ) : (
+              <p className="ty-body">
+                {film.title} screened at the {film.year} festival. {ceremony ? <>The night&rsquo;s {numberWord(ceremony.categories.length)} awards went elsewhere; </> : null}
+                {ceremony ? <Link href={`/awards/${ceremony.year}`} className="u-line" data-cursor="Go">see the ceremony</Link> : null}.
+              </p>
+            )}
+          </section>
+
+          <section aria-labelledby="film-credits">
+            <h2 className="film__sub" id="film-credits">End <em>credits</em></h2>
+            <dl className="roll" data-roll>
+              {film.credits.map((c, i) => (
+                <div className="roll__row" data-roll-row key={`${c.role}-${i}`}>
+                  <dt className="roll__role">{c.role}</dt>
+                  <dd className="roll__name">{c.name}</dd>
+                </div>
+              ))}
+            </dl>
+            {film.credits.length < 2 ? (
+              <p className="roll__aside" style={{ textAlign: "left", marginInline: 0 }}>
+                Only the director is credited so far.
+                {wins ? " The awards prove there was a crew behind it." : ""} Send the full credits and they roll here.
+              </p>
+            ) : null}
+          </section>
+        </div>
+
+        <section className="film__adj" aria-labelledby="film-adj">
+          <h2 className="film__sub" id="film-adj">Also on the <em>slate</em></h2>
+          <div className="film__adj-grid">
+            {[prev, next].map((f, i) =>
+              f ? (
+                <Link key={f.slug} href={`/films/${f.slug}`} className="shot" data-cursor="Watch">
+                  <Media
+                    film={f}
+                    shape={i ? "stub" : "leaf"}
+                    plate={i ? "flare" : "gold"}
+                    rot={i ? 1.2 : -1.4}
+                    plateX={i ? 14 : -14}
+                    plateY={14}
+                    cap={<><CatNo no={f.no} />{i ? "Next" : "Previous"}<span className="x">{f.director}</span></>}
+                  />
+                  <h3 className="shot__ttl">{f.title}</h3>
+                </Link>
+              ) : null,
+            )}
+          </div>
         </section>
-      ) : null}
-      <section aria-labelledby="credits" className="wrap mt-section">
-        <FilmCredits film={film} />
-      </section>
-      <section aria-labelledby="more" className="wrap mt-section">
-        <AdjacentFilms film={film} prev={prev} next={next} />
-      </section>
-      <div className="wrap mt-section">
-        <CeremonyLine film={film} ceremony={ceremony} slateSize={slateSize} />
-      </div>
-    </article>
+      </article>
+
+      <Band
+        tone="caro"
+        rot={-1.4}
+        rows={[{ speed: 0.9, items: [{ b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }, { b: "Cut" }, { em: "Check the Gate" }] }]}
+      />
+
+      <Footer year={film.year} />
+    </>
   );
 }

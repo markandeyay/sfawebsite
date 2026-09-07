@@ -1,32 +1,68 @@
-import { getFilmsInCatalogOrder } from "@/content";
+import { getFilmsInCatalogOrder, getFilm } from "@/content";
 import { getLatestCeremony, getSiteKeyFilm, summarizeCeremony } from "@/lib/home";
-import { HeroTitleCard } from "@/components/home/HeroTitleCard";
-import { NowShowing } from "@/components/home/NowShowing";
-import { Catalog } from "@/components/home/Catalog";
-import { AwardsTeaser } from "@/components/home/AwardsTeaser";
-import { HowItWorks } from "@/components/home/HowItWorks";
-import { Crew } from "@/components/home/Crew";
-import { Join } from "@/components/home/Join";
+import { Hero } from "@/components/lot/Hero";
+import { Band } from "@/components/lot/Band";
+import { Slate } from "@/components/lot/Slate";
+import { Rack } from "@/components/lot/Rack";
+import { Story } from "@/components/lot/Story";
+import { Crew } from "@/components/lot/Crew";
+import { Credits } from "@/components/lot/Credits";
+import { Pitch } from "@/components/lot/Pitch";
+import { Footer } from "@/components/lot/Footer";
 
-/**
- * Homepage: the cold open, now showing, the catalog, the awards teaser, how
- * it works, the crew, join. Everything renders from content/*.json.
- */
+/* The lot: one long scroll, every section a department. Everything
+   renders from content/*.json. */
 export default function Home() {
   const films = getFilmsInCatalogOrder();
-  const keyFilm = getSiteKeyFilm();
   const ceremony = getLatestCeremony();
-  const summary = ceremony ? summarizeCeremony(ceremony) : null;
+  if (!ceremony) throw new Error("No ceremony in content/awards.json");
+  const summary = summarizeCeremony(ceremony);
+  const keyFilm = getSiteKeyFilm();
+  const year = ceremony.year;
+
+  const storyFilm = getFilm("senior-assassin") ?? films.find((f) => f.still && f.slug !== keyFilm.slug) ?? keyFilm;
+  const crewStills = ["how-does-it-feel", "the-tulips", "hard-pills-to-swallow", "omnes-unum"]
+    .map((s) => getFilm(s))
+    .filter((f): f is NonNullable<typeof f> => Boolean(f && f.still));
 
   return (
     <>
-      <HeroTitleCard film={keyFilm} />
-      <NowShowing />
-      <Catalog films={films} />
-      {summary ? <AwardsTeaser summary={summary} /> : null}
-      <HowItWorks />
-      <Crew />
-      <Join />
+      <Hero keyFilm={keyFilm} films={films.length} awards={summary.total} />
+
+      <Band
+        tone="flare"
+        rot={-2.4}
+        rows={[
+          { speed: 1, items: [{ b: "Student Film Association" }, { em: "Roll Sound" }, { b: `${films.length} Films` }, { em: "Speed" }] },
+          { speed: -0.68, items: [{ em: "Festival in May" }, { b: `${summary.total} Awards` }, { em: "Mark It" }, { b: "Action" }] },
+        ]}
+      />
+
+      <Slate films={films} year={year} />
+
+      <Band
+        tone="paper"
+        rot={1.8}
+        rows={[{ speed: -1, items: [{ b: "Awards Night" }, { em: ceremony.held }, { b: "Best Picture" }, { em: summary.lead ? `${summary.lead.film.title} took ${summary.lead.wins}` : "Voted by the members" }] }]}
+      />
+
+      <Rack summary={summary} />
+
+      <Story film={storyFilm} />
+
+      <Crew stills={crewStills} />
+
+      <Band
+        tone="navy"
+        rot={-1.6}
+        rows={[{ speed: 0.86, items: [{ b: "Go Heels" }, { em: "Quiet on Set" }, { b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }] }]}
+      />
+
+      <Credits />
+
+      <Pitch />
+
+      <Footer year={year} />
     </>
   );
 }

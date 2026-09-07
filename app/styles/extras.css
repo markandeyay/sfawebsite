@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════════════════════════════
+   EXTRAS — the pieces SFA adds to the stussy grammar: the slate card
+   in the hero, the seal row, the pitch chooser.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── THE SLATE CARD ─────────────────────────────────────────────
+   A clapperboard carrying the cycle's key frame: the striped arm on
+   top, the board below with the frame set into it and the fields a
+   real slate carries. Sits where a mascot would. */
+.slate-card {
+  position: relative; display: grid; gap: 0;
+  transform: rotate(3deg); transform-origin: 50% 60%;
+  filter: drop-shadow(10px 12px 0 var(--carolina));
+}
+.slate-card__arm {
+  height: clamp(28px, 3.4vw, 46px);
+  background: repeating-linear-gradient(-58deg, var(--ink) 0 22px, var(--paper) 22px 44px);
+  border: 3px solid var(--ink); border-radius: 8px 8px 0 0;
+  transform: rotate(-6deg); transform-origin: 0 100%;
+  position: relative; z-index: 2;
+}
+.slate-card__board {
+  background: var(--ink); color: var(--paper);
+  border: 3px solid var(--ink); border-radius: 0 0 14px 14px;
+  padding: clamp(10px, 1.2vw, 16px);
+  display: grid; gap: clamp(8px, 1vw, 14px);
+}
+.slate-card__frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 8px; background: var(--navy); }
+.slate-card__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slate-card__fields {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(6px, 0.8vw, 12px);
+}
+.slate-card__fields div {
+  border: 1.5px solid rgba(237, 233, 225, 0.35); border-radius: 6px; padding: 0.4em 0.6em;
+  font-family: var(--f-mono); font-size: var(--t-micro); letter-spacing: var(--tr-wide); text-transform: uppercase;
+  color: rgba(237, 233, 225, 0.6); line-height: 1.5;
+}
+.slate-card__fields b { display: block; font-family: var(--f-display); font-weight: 800; font-size: clamp(16px, 1.6vw, 26px); letter-spacing: var(--tr-tight); color: var(--paper); line-height: 1; margin-block-start: 0.1em; }
+.slate-card__fields .hot b { color: var(--carolina-hi); }
+
+/* ── SEAL ROW (film page) ───────────────────────────────────────── */
+.seals { display: flex; flex-wrap: wrap; gap: var(--s4) var(--s5); align-items: center; }
+.seals .stamp { position: static; width: clamp(80px, 8vw, 116px); }
+
+/* ── CHOOSER (the pitch form's "what do you want to do") ────────── */
+.choose { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.choose label {
+  display: inline-flex; align-items: center; gap: 0.5em; padding: 0.45em 0.9em;
+  border: 1.5px solid var(--on-surface-dim); border-radius: 50vw; cursor: pointer;
+  font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase;
+  transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out), border-color var(--d2) var(--e-out);
+}
+.choose input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.choose label:has(input:checked) { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+.choose label:has(input:focus-visible) { outline: 3px solid var(--flare); outline-offset: 3px; }
+
+/* ── FILM PAGE EXTRAS ───────────────────────────────────────────── */
+.film__eyebrow {
+  display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; padding-inline: var(--margin);
+  font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-mega); text-transform: uppercase;
+  margin-block-end: var(--s7);
+}
+.film__eyebrow .ln { flex: 1; min-width: 24px; height: 1px; background: var(--ink-faint); }
+.film__eyebrow .hot { color: var(--flare); }
+.film__meta { display: grid; gap: var(--s2); font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim); }
+.film__meta b { color: var(--on-surface); font-weight: 600; }
+.film__sub { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: var(--t-d2); line-height: var(--lh-solid); letter-spacing: var(--tr-tight); margin-block-end: var(--s5); }
+.film__sub em { font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--accent); paint-order: stroke fill; }
+
+/* ── NIGHT (awards page) EXTRAS ─────────────────────────────────── */
+.night__lede { padding-inline: var(--margin); margin-block-end: var(--s8); font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: var(--t-lede); line-height: var(--lh-tight); letter-spacing: var(--tr-tight); color: var(--navy); max-width: 24ch; }
+.night__lede span { color: var(--flare); }
