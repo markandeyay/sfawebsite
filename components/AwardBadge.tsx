@@ -3,16 +3,17 @@ import type { CSSProperties } from "react";
 import { jitter } from "@/lib/hash";
 
 /**
- * THE ONLY GOLD ON THE SITE.
+ * THE WINNER MARK.
  *
- * Gold is a data type: it appears if and only if something won. This is the
- * one component allowed to reference the gold token (scripts/check-tokens.mjs
- * fails the build if the word appears anywhere else outside app/globals.css).
- * If a second place seems to need gold, that is a signal to reconsider, not
- * to add a class.
+ * The accent is a data type: a solid Carolina square appears at rest if and
+ * only if something won. This is the one component that renders the mark;
+ * everywhere else Carolina shows only on interaction (an underline on hover,
+ * the selection colour). If a second place seems to need the mark at rest,
+ * that is a signal to reconsider, not to add a class.
  *
- * The mark is a small solid square in gold before the text: the shape of an
- * award envelope's seal, and it stays a rectangle like everything else.
+ * The mark is a small solid square before the text: the shape of an award
+ * envelope's seal, and it stays a rectangle like everything else. The text
+ * stays in the surface's ink so it reads at any size.
  */
 
 type Mode = "inline" | "row" | "count";

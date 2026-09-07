@@ -6,7 +6,7 @@ type Variant = "primary" | "secondary" | "link";
 interface ButtonLinkProps {
   href: string;
   children: ReactNode;
-  /** primary: cream fill, base text. secondary: hairline outline. link: underlined, accent decoration. */
+  /** primary: navy fill, paper text. secondary: hairline outline. link: underlined, accent decoration. */
   variant?: Variant;
   /** Compact height, for the nav action. */
   small?: boolean;

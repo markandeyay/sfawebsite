@@ -36,7 +36,7 @@ const STILLS_DIR = path.join(ROOT, "public", "stills");
 const STILLS_URL_PREFIX = "/stills/";
 
 /** Renditions the pipeline writes for every film that has a frame. */
-const RENDITIONS = ["{slug}.webp", "{slug}-sm.webp", "{slug}-treated.webp", "{slug}-treated-sm.webp"] as const;
+const RENDITIONS = ["{slug}.webp", "{slug}-sm.webp"] as const;
 
 function rel(p: string): string {
   return path.relative(ROOT, p).split(path.sep).join("/");

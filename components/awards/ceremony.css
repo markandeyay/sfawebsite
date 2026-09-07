@@ -63,14 +63,17 @@
   }
 }
 
-/* --- Finale title: the one link on the page without an underline. ------ */
+/* --- Finale title: the one link on the page without an underline at rest. */
 .finale__title {
   color: var(--on-surface);
-  text-decoration: none;
-  transition: color var(--dur-1) var(--ease-out);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--focus-ring);
+  text-underline-offset: 0.08em;
+  transition: text-decoration-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .frame-trigger:hover .finale__title {
-    color: var(--accent);
+  .finale:hover .finale__title {
+    text-decoration-color: var(--accent);
   }
 }

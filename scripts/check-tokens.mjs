@@ -12,8 +12,8 @@
  *  2. literal durations (a number followed by ms or s, e.g. 300ms, 0.3s)
  *     anywhere but app/globals.css, app/motion.css and lib/motion.ts.
  *     A runtime template such as `${d}ms` is allowed: it carries no number.
- *  3. the string "gold" (case-insensitive) anywhere but
- *     components/AwardBadge.tsx and app/globals.css.
+ *  3. the string "gold" (case-insensitive) anywhere. The white register has
+ *     no gold; the winner mark is the accent (components/AwardBadge.tsx).
  *  4. Tailwind arbitrary values whose bracket contains px, rem or # ,
  *     e.g. p-[13px], text-[1.125rem], bg-[#fff].
  *  5. Tailwind utilities that bypass the motion tokens:
@@ -23,8 +23,8 @@
  *       ease-initial
  *       animate-<anything>    (the animate namespace is reset; keyframes live in motion.css)
  *       transition-[...] with a literal duration inside
- *  6. Tailwind palette utilities outside the token file and AwardBadge:
- *       (bg|text|border|decoration|outline|fill|stroke|from|to|via)-(base|surface|carolina|deep|cream|cream-muted|base-muted)
+ *  6. Tailwind palette utilities outside the token file:
+ *       (bg|text|border|decoration|outline|fill|stroke|from|to|via)-(paper|panel|navy|carolina|hairline|navy-muted|paper-muted|paper-rule)
  *     Components reference role colours only: bg-ground, text-fg,
  *     text-fg-muted, border-rule, text-accent.
  *  7. more than one addEventListener("scroll" across app/, components/, lib/.
@@ -44,8 +44,7 @@ const EXT = new Set([".ts", ".tsx", ".css", ".mjs", ".js", ".json"]);
 
 const TOKEN_FILE = "app/globals.css";
 const MOTION_FILES = new Set([TOKEN_FILE, "app/motion.css", "lib/motion.ts"]);
-const GOLD_FILES = new Set([TOKEN_FILE, "components/AwardBadge.tsx"]);
-const PALETTE_UTILITY_FILES = new Set([TOKEN_FILE, "components/AwardBadge.tsx"]);
+const PALETTE_UTILITY_FILES = new Set([TOKEN_FILE]);
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
@@ -85,9 +84,8 @@ const RULES = [
     filter: (m, line) => !/^\s*(\/\/|\*|\/\*)/.test(line) || true,
   },
   {
-    name: '"gold" outside components/AwardBadge.tsx',
+    name: '"gold" (the white register has none)',
     re: /gold/gi,
-    exempt: (rel) => GOLD_FILES.has(rel),
   },
   {
     name: "Tailwind arbitrary value with px/rem/#",
@@ -101,7 +99,7 @@ const RULES = [
   },
   {
     name: "palette utility in a component (use a role: bg-ground, text-fg, text-fg-muted, border-rule, text-accent)",
-    re: /(?<![\w-])(?:[\w-]+:)*(?:bg|text|border|decoration|outline|fill|stroke|from|to|via|ring|accent)-(?:base|surface|carolina|deep|cream|cream-muted|base-muted)(?![\w-])/g,
+    re: /(?<![\w-])(?:[\w-]+:)*(?:bg|text|border|decoration|outline|fill|stroke|from|to|via|ring|accent)-(?:paper|panel|navy|carolina|hairline|navy-muted|paper-muted|paper-rule)(?![\w-])/g,
     exempt: (rel) => PALETTE_UTILITY_FILES.has(rel),
   },
 ];

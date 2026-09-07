@@ -8,16 +8,20 @@
   Nothing below this file may invent a colour, size, spacing, easing or
   duration. Every component reads the tokens defined here, by name.
   scripts/check-tokens.mjs fails `npm run check` on a hex colour, a literal
-  ms/s duration, an arbitrary Tailwind value with px/rem/#, or the word
-  "gold" found anywhere else (components/AwardBadge.tsx excepted for gold).
+  ms/s duration, an arbitrary Tailwind value with px/rem/#, a palette
+  utility in a component, or a second scroll listener.
 
-  Third direction, 2026-09-07 (DESIGN_NOTES.md section 8).
+  Fourth direction, 2026-09-07 (DESIGN_NOTES.md section 12): the third
+  direction's engine in the white register the client asked for on
+  2026-09-04. Paper ground, UNC navy type, cool grey image panels, a navy
+  footer, and Carolina as the one accent: solid at rest only on the winner
+  mark, otherwise only on interaction (underlines, selection).
 
   Contents
     1. @theme     palette, fonts, 9 fluid type steps, closed spacing scale,
                   4 easings, 5 durations, radius 0, no shadows
     2. roles      --surface / --on-surface / --on-surface-muted / --rule /
-                  --accent, set by .on-base / .on-surface / .on-carolina;
+                  --accent, set by .on-base / .on-panel / .on-surface;
                   exposed to Tailwind as bg-ground, text-fg, text-fg-muted,
                   border-rule, text-accent (@theme inline, so they resolve
                   on the element, not on :root)
@@ -30,19 +34,18 @@
 /* 1. Tokens ------------------------------------------------------------- */
 
 @theme static {
-  /* Palette: SFA_SYSTEM_DESIGN.md 5.1. Six tokens, no seventh. The two
-     "-muted" values are alphas of cream and base, not new greys. Components
-     never use these directly (roles below); AwardBadge is the one exception
-     for gold, and the dither pipeline bakes base + carolina into the stills. */
+  /* Palette: the white register. Six values, no seventh. The "-muted" and
+     "-rule" values are mixes of navy and paper, not new greys. Components
+     never use these directly (roles below). */
   --color-*: initial;
-  --color-base: #0b0d0f;
-  --color-surface: #14181c;
+  --color-paper: #ffffff;
+  --color-panel: #f2f4f6;
+  --color-navy: #13294b;
   --color-carolina: #4b9cd3;
-  --color-deep: #2a5c7d;
-  --color-gold: #d4af37;
-  --color-cream: #ede9e1;
-  --color-cream-muted: color-mix(in srgb, var(--color-cream) 64%, transparent);
-  --color-base-muted: color-mix(in srgb, var(--color-base) 78%, transparent);
+  --color-hairline: #dfe4e9;
+  --color-navy-muted: color-mix(in srgb, var(--color-navy) 68%, var(--color-paper));
+  --color-paper-muted: color-mix(in srgb, var(--color-paper) 72%, transparent);
+  --color-paper-rule: color-mix(in srgb, var(--color-paper) 24%, transparent);
 
   /* One family, one file, two voices (width 100 and width 75). */
   --font-*: initial;
@@ -177,11 +180,11 @@
 /* 2. Surface roles ------------------------------------------------------ */
 
 :root {
-  color-scheme: dark;
-  --surface: var(--color-base);
-  --on-surface: var(--color-cream);
-  --on-surface-muted: var(--color-cream-muted);
-  --rule: var(--color-deep);
+  color-scheme: light;
+  --surface: var(--color-paper);
+  --on-surface: var(--color-navy);
+  --on-surface-muted: var(--color-navy-muted);
+  --rule: var(--color-hairline);
   --accent: var(--color-carolina);
 
   /* Physical constants: the one hairline and the one focus ring. */
@@ -194,34 +197,35 @@
   --space-stage: var(--spacing-stage);
 }
 
+/* The page: paper ground, navy type. */
 .on-base {
-  --surface: var(--color-base);
-  --on-surface: var(--color-cream);
-  --on-surface-muted: var(--color-cream-muted);
-  --rule: var(--color-deep);
+  --surface: var(--color-paper);
+  --on-surface: var(--color-navy);
+  --on-surface-muted: var(--color-navy-muted);
+  --rule: var(--color-hairline);
   --accent: var(--color-carolina);
   background-color: var(--surface);
   color: var(--on-surface);
 }
 
+/* The image panel: a cool grey field a still sits on (the A24 device). */
+.on-panel {
+  --surface: var(--color-panel);
+  --on-surface: var(--color-navy);
+  --on-surface-muted: var(--color-navy-muted);
+  --rule: var(--color-hairline);
+  --accent: var(--color-carolina);
+  background-color: var(--surface);
+  color: var(--on-surface);
+}
+
+/* The navy block: the footer. Paper type, paper hairlines at an alpha. */
 .on-surface {
-  --surface: var(--color-surface);
-  --on-surface: var(--color-cream);
-  --on-surface-muted: var(--color-cream-muted);
-  --rule: var(--color-deep);
+  --surface: var(--color-navy);
+  --on-surface: var(--color-paper);
+  --on-surface-muted: var(--color-paper-muted);
+  --rule: var(--color-paper-rule);
   --accent: var(--color-carolina);
-  background-color: var(--surface);
-  color: var(--on-surface);
-}
-
-/* Inverted: a carolina ground with base as the text. Accent becomes base,
-   because carolina-on-carolina is nothing. */
-.on-carolina {
-  --surface: var(--color-carolina);
-  --on-surface: var(--color-base);
-  --on-surface-muted: var(--color-base-muted);
-  --rule: var(--color-deep);
-  --accent: var(--color-base);
   background-color: var(--surface);
   color: var(--on-surface);
 }
@@ -229,8 +233,8 @@
 /* 3. Base --------------------------------------------------------------- */
 
 html {
-  background-color: var(--color-base);
-  color: var(--color-cream);
+  background-color: var(--color-paper);
+  color: var(--color-navy);
   -webkit-text-size-adjust: 100%;
   /* Every hash target (the skip link's #main, #films, #join, whatever comes
      next) lands clear of the sticky nav, whose min-height is spacing-16. */
@@ -249,11 +253,13 @@ body {
 
 ::selection {
   background-color: var(--accent);
-  color: var(--surface);
+  color: var(--color-navy);
 }
 
+/* The ring is the surface's own ink (navy on paper, paper on navy) so it
+   clears 3:1 everywhere; Carolina on paper would not. */
 :focus-visible {
-  outline: var(--focus-ring) solid var(--accent);
+  outline: var(--focus-ring) solid var(--on-surface);
   outline-offset: var(--focus-ring);
 }
 
@@ -365,15 +371,13 @@ iframe {
     margin-right: 0.15em;
   }
 
-  /* --- Frame: the two-layer dither reveal. Treated still at rest, the
-     untreated frame on hover, focus, focus-within, or .is-revealed. Every
-     frame is 16:9. The crossfade runs on --dur-4 / --ease-out; a card may
-     jitter the duration and delay via --reveal-dur / --reveal-delay. --- */
+  /* --- Frame: a film's still, shown as shot, always 16:9. The panel grey
+     shows through until the image arrives. --- */
   .frame {
     position: relative;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    background-color: var(--color-base);
+    background-color: var(--color-panel);
   }
   .frame img {
     position: absolute;
@@ -382,29 +386,17 @@ iframe {
     height: 100%;
     object-fit: cover;
   }
-  .frame__original {
-    opacity: 0;
-    transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-in);
+
+  /* --- Panel: the still on a cool grey field with air around it. Used for
+     the hero's key image, the film-page screen and the ceremony finale;
+     catalog cards stay bare. --- */
+  .panel {
+    background-color: var(--color-panel);
+    padding: var(--spacing-4);
   }
-  /* The triggers sit in :where() so they stay at (0,1,0) and the reduced-
-     motion rules below, at (0,2,0) and later in source, always win. */
-  :where(.frame.is-revealed, .frame:focus-visible, .frame:focus-within, .frame-trigger:focus-visible, .frame-trigger:focus-within)
-    .frame__original {
-    opacity: 1;
-    transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-out) var(--reveal-delay, 0ms);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    :where(.frame:hover, .frame-trigger:hover) .frame__original {
-      opacity: 1;
-      transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-out) var(--reveal-delay, 0ms);
-    }
-  }
-  .-no-motion .frame__original {
-    transition: none;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .frame__original {
-      transition: none;
+  @media (min-width: 40rem) {
+    .panel {
+      padding: var(--spacing-block);
     }
   }
 
@@ -417,18 +409,13 @@ iframe {
     flex-direction: column;
     justify-content: space-between;
     padding: var(--spacing-4);
-    background-color: var(--color-surface);
-    color: var(--color-cream);
-  }
-
-  /* Scrim: information, not decoration. Solid base rising under any text
-     that must sit over a dithered still. Prefer moving the text out. */
-  .scrim {
-    background-image: linear-gradient(to top, var(--color-base) 0%, transparent 100%);
+    background-color: var(--color-panel);
+    color: var(--color-navy);
   }
 
   /* --- Film card: frame, then the caption row outside the frame. The
-     whole card is one link. No scale on hover. --- */
+     whole card is one link. No scale on hover; the title takes a Carolina
+     underline. --- */
   .card {
     display: block;
     color: var(--on-surface);
@@ -448,7 +435,11 @@ iframe {
     padding-top: 0.25em;
   }
   .card__title {
-    transition: color var(--dur-1) var(--ease-out);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: var(--focus-ring);
+    text-underline-offset: 0.12em;
+    transition: text-decoration-color var(--dur-1) var(--ease-out);
   }
   .card__meta {
     display: flex;
@@ -459,7 +450,7 @@ iframe {
   }
   @media (hover: hover) and (pointer: fine) {
     .card:hover .card__title {
-      color: var(--accent);
+      text-decoration-color: var(--accent);
     }
   }
 
@@ -532,11 +523,13 @@ iframe {
     }
   }
 
-  /* --- Award badge: THE ONLY GOLD. Gold is a data type: it appears if and
-     only if something won. Condensed voice, off-true by category. --- */
+  /* --- Award badge: the winner mark. The accent is a data type: a solid
+     Carolina square appears at rest if and only if something won. The text
+     stays in the surface's ink so it reads at any size. Condensed voice,
+     off-true by category. --- */
   .award {
     display: inline-block;
-    color: var(--color-gold);
+    color: var(--on-surface);
     font-stretch: 75%;
     font-variant-numeric: tabular-nums;
     font-weight: var(--font-weight-semibold);
@@ -568,14 +561,18 @@ iframe {
     height: 0.6em;
     margin-right: 0.45em;
     vertical-align: 0.05em;
-    background-color: currentColor;
+    background-color: var(--accent);
   }
   a.award {
-    transition: color var(--dur-1) var(--ease-out);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color var(--dur-1) var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     a.award:hover {
-      color: var(--on-surface);
+      text-decoration-color: var(--accent);
     }
   }
 
@@ -595,7 +592,8 @@ iframe {
     transition:
       color var(--dur-1) var(--ease-out),
       background-color var(--dur-1) var(--ease-out),
-      border-color var(--dur-1) var(--ease-out);
+      border-color var(--dur-1) var(--ease-out),
+      box-shadow var(--dur-1) var(--ease-out);
   }
   .btn--primary {
     background-color: var(--on-surface);
@@ -612,10 +610,10 @@ iframe {
     padding: var(--spacing-1) var(--spacing-3);
   }
   @media (hover: hover) and (pointer: fine) {
+    /* A Carolina keyline inside the button; the label stays legible. */
     .btn--primary:hover {
-      background-color: var(--accent);
       border-color: var(--accent);
-      color: var(--surface); /* base on carolina; carolina on the inverted surface */
+      box-shadow: inset 0 0 0 var(--hairline) var(--accent);
     }
     .btn--secondary:hover {
       border-color: var(--on-surface);
@@ -627,12 +625,12 @@ iframe {
     text-decoration: underline;
     text-decoration-thickness: var(--hairline);
     text-underline-offset: 0.2em;
-    text-decoration-color: var(--accent);
-    transition: color var(--dur-1) var(--ease-out);
+    text-decoration-color: var(--on-surface-muted);
+    transition: text-decoration-color var(--dur-1) var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     .link:hover {
-      color: var(--accent);
+      text-decoration-color: var(--accent);
     }
   }
   /* Quiet links (the footer lists) keep a 24px target (WCAG 2.5.8) without
@@ -678,12 +676,15 @@ iframe {
     line-height: var(--text-2--line-height);
     font-weight: var(--font-weight-medium);
     color: var(--on-surface);
-    text-decoration: none;
-    transition: color var(--dur-1) var(--ease-out);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.3em;
+    transition: text-decoration-color var(--dur-1) var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     .site-nav__link:hover {
-      color: var(--accent);
+      text-decoration-color: var(--accent);
     }
   }
 
@@ -725,8 +726,8 @@ iframe {
     }
   }
 
-  /* --- Video facade: the treated still with a play label; the iframe
-     replaces it on click. --- */
+  /* --- Video facade: the still with a play label; the iframe replaces it
+     on click. --- */
   .facade {
     position: relative;
     display: block;
@@ -748,7 +749,7 @@ iframe {
   .player {
     position: relative;
     aspect-ratio: 16 / 9;
-    background-color: var(--color-base);
+    background-color: var(--color-navy);
   }
   .player > iframe {
     position: absolute;

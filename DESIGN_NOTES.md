@@ -1341,3 +1341,78 @@ Tab stops move accordingly: `/` 36 to 35, `/films/fdoc` 10 to 9,
 | `AUDIT.md` written before any changes | done | Dated against `98654b0`, before wave 2 |
 | `DESIGN_NOTES.md` records every rejected direction | done | Sections 1 to 11 |
 | `README.md` explains how to add a film in under ten lines | done | Five numbered steps, nine lines with their wraps, plus two of notes |
+
+
+---
+
+## 12. Fourth direction (2026-09-07): the engine in the white register
+
+The client saw the third direction deployed and rejected its look ("it looks
+terrible, the same as it initially did"): a dark ground with two-tone stills
+and gold reads, at a glance, as the first build they rejected on 2026-09-04.
+The lead had followed the remediation brief's locked palette over the
+2026-09-04 feedback and should have stopped to ask; given the choice, the
+client chose to keep the third direction's engine and recolour it into the
+register they asked for on 2026-09-04: white, UNC navy, Carolina, no gold,
+stills as shot. This section records that recolour. Sections 8 to 11 remain
+the record of the engine; nothing structural changed.
+
+### 12.1 Palette and roles
+
+| Token | Value | Role |
+|---|---|---|
+| `paper` | `#ffffff` | The page ground |
+| `panel` | `#f2f4f6` | The cool grey field a still sits on; the type-only leader |
+| `navy` | `#13294b` | All type on paper and panel; the footer's ground |
+| `carolina` | `#4b9cd3` | The one accent (below) |
+| `hairline` | `#dfe4e9` | Rules on paper and panel |
+| `navy-muted` / `paper-muted` / `paper-rule` | mixes of navy and paper | Muted text on each ground; rules on navy |
+
+Surfaces: `.on-base` (paper), `.on-panel` (grey), `.on-surface` (navy, the
+footer). The inverted Carolina surface from section 8 is gone: Carolina
+cannot carry text at AA on paper (2.6:1), so it is never a ground and never
+a text colour.
+
+**Carolina as a data type.** The gold rule survives with the colour swapped:
+a solid Carolina object appears at rest if and only if something won (the
+square mark in `AwardBadge`). Everywhere else Carolina appears only on
+interaction: the underline a card title, nav link, link or winner row takes
+on hover, the keyline inside a primary button on hover, and the selection
+colour. Focus rings are the surface's own ink (navy on paper, paper on
+navy), which clears 3:1 where Carolina would not. `scripts/check-tokens.mjs`
+now bans the word "gold" everywhere.
+
+### 12.2 Stills as shot, and the panel
+
+The halftone is no longer served. `Still` renders one image (the 640x360
+rendition on cards, 1280x720 elsewhere) and `Frame` has no reveal state; the
+crossfade CSS, the per-card crossfade timing (irregularity hook 2) and the
+touch gate are removed. The pipeline still writes the treated renditions
+behind `--treated` (and `--sheets`), the report in `scripts/DITHER_REPORT.md`
+and the sheets in `docs/` stay as the record, and the 22 treated files were
+removed from `public/stills`; `scripts/validate-content.ts` now requires two
+files per film.
+
+The A24 device the client asked for on 2026-09-04 returns as `.panel`: the
+still on a cool grey field with `--spacing-block` of air (one gutter step
+below 40rem). It is used in exactly three places, where a still stands alone:
+the hero's key image, the film-page screen (the play label sits at the
+still's corner inside the panel) and the ceremony finale. Catalog cards stay
+bare, as A24's own grid does.
+
+### 12.3 What did not change
+
+Catalog numbers, the credit block, the type system (Archivo, nine steps),
+the closed spacing scale, the four easings and five durations, Lenis and the
+one scroll broadcast, the reveals and the reduced-motion contract, the
+audit fixes of section 11. Every component reads role variables, so the
+recolour touched the token file, the two image components, the badge, the
+icon, three panel wrappers and comments; `npm run check` and `npm run build`
+pass unchanged.
+
+### 12.4 Contrast, from the tokens
+
+navy on paper 14.7:1; navy-muted (68% navy) on paper 5.2:1; navy on panel
+13.6:1; paper on navy 14.7:1; paper-muted (72%) on navy 7.8:1. Carolina is
+used only as a mark, an underline, a keyline and the selection ground, none
+of which carry text.

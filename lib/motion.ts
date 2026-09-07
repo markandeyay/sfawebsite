@@ -19,7 +19,7 @@ export const EASE_FN = {
   linear: (t: number): number => t,
 } as const;
 
-// Milliseconds. 1 colour/focus micro, 2 small moves, 3 reveals, 4 the dither crossfade, 5 hero orchestration.
+// Milliseconds. 1 colour/focus micro, 2 small moves, 3 reveals, 4 image and facade transitions, 5 hero orchestration.
 export const DUR = { 1: 120, 2: 240, 3: 480, 4: 800, 5: 1400 } as const;
 
 // Per-glyph stagger for SplitText, in ms. CSS derives the same value as calc(var(--dur-1) / 7.5).

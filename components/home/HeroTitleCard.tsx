@@ -11,7 +11,7 @@ import { SITE } from "@/lib/site";
 /**
  * The hero: a title card. The club's name in the display voice, on base,
  * with nothing competing; beneath it the cycle's key image (the Best
- * Picture winner, halftoned, resolving on hover and focus) as a framed
+ * Picture winner, shown as shot on a grey panel) as a framed
  * 16:9 with its catalog number and title as a caption outside the frame,
  * in the same place the card puts them.
  *
@@ -35,10 +35,12 @@ export function HeroTitleCard({ film }: { film: Film }) {
       <div className="mt-block grid gap-x-8 gap-y-6 lg:grid-cols-12 lg:items-start">
         <Link
           href={`/films/${film.slug}`}
-          className="card frame-trigger lg:col-span-8 lg:col-start-5 lg:row-start-1"
+          className="card lg:col-span-8 lg:col-start-5 lg:row-start-1"
           aria-label={`${film.title}, the film page`}
         >
-          <Frame film={film} size="full" priority />
+          <div className="panel">
+            <Frame film={film} size="full" priority decorative />
+          </div>
         </Link>
         <Reveal
           as="p"

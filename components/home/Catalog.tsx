@@ -6,7 +6,7 @@ import { numberWord } from "@/lib/home";
 
 /**
  * The catalog: every film on the slate in catalog order, one contact sheet
- * of halftoned frames with their numbers. The numbers are the story: the
+ * of frames with their numbers. The numbers are the story: the
  * club has a body of work and it is counted. Cards arrive on seeded, ragged
  * timing (brief 4.6), never on one beat.
  */

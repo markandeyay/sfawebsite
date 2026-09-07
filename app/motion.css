@@ -22,7 +22,7 @@ html.lenis body {
 }
 
 /* Reveal: defaults. Reveal.tsx overrides --enter-delay and --enter-ease inline when seeded.
-   (Named "enter", not "reveal": Frame already uses --reveal-delay for the dither crossfade, and custom properties inherit.) */
+   (Named "enter", not "reveal": FilmCard sets --reveal-delay for its own timing, and custom properties inherit.) */
 .reveal {
   --stagger: calc(var(--dur-1) / 7.5);
   --enter-delay: calc(var(--dur-1) * 0);
@@ -113,4 +113,4 @@ html.lenis body {
 }
 
 /* Hover-only motion belongs under this query, built here rather than built and hidden (brief 4.7).
-   The motion layer has no hover effect of its own; the dither crossfade lives with Frame. */
+   The motion layer has no hover effect of its own; hover states are underlines in globals.css. */

@@ -1,8 +1,8 @@
 # UNC Student Film Association
 
-The club's site as a catalog: every film carries a number, every still is a
-two-colour halftone that resolves to the real frame on hover and focus, credits
-roll as end credits, and gold appears only where something won. Three routes:
+The club's site as a catalog: every film carries a number, stills are shown as
+shot on cool grey panels, credits roll as end credits, and the one accent
+colour appears at rest only where something won. Three routes:
 the homepage, a page per film, and the awards ceremony. Next.js 16 (App
 Router), TypeScript, Tailwind v4, statically generated. There is no CMS: the
 whole site is a pure function of two JSON files.
@@ -32,7 +32,7 @@ Credits are `{ "role", "name" }` pairs in the order they should roll.
 | `npm run dev` | Dev server at http://localhost:3000 |
 | `npm run build` | Validates content, then `next build` (17 static pages) |
 | `npm run check` | Content validation (schema, cross-file, every still file on disk), `tsc --noEmit`, ESLint, and `scripts/check-tokens.mjs` (fails on a hex colour, a literal duration, the word "gold", an arbitrary px/rem value, a palette utility or a second scroll listener anywhere outside the token file) |
-| `npm run stills` | For each film writes four files to `public/stills/`: `{slug}.webp` (1280x720 frame), `{slug}-sm.webp` (640x360, for cards), `{slug}-treated.webp` (the halftone, lossless) and `{slug}-treated-sm.webp` (the halftone at its native 640x360). Idempotent; `--sheets` builds the comparison sheets |
+| `npm run stills` | For each film writes two files to `public/stills/`: `{slug}.webp` (1280x720 frame) and `{slug}-sm.webp` (640x360, for cards). Idempotent. `--treated` also writes the halftone renditions the site no longer serves; `--sheets` builds the comparison sheets |
 
 ## Where things are
 
@@ -47,7 +47,7 @@ Credits are `{ "role", "name" }` pairs in the order they should roll.
   `lib/motion.ts` mirrors the CSS easings and durations for JavaScript.
 - `content/`: `films.json`, `awards.json`, the types and the validator.
 - `scripts/`: the still pipeline, the content validator, the token check,
-  and `DITHER_REPORT.md` (why the halftone).
+  and `DITHER_REPORT.md` (the halftone comparison, kept for the record).
 - `docs/`: the comparison images the notes refer to. `DESIGN_NOTES.md` is the
   full record of every direction, rejection and pass; `AUDIT.md` is the
   diagnosis of the build this one replaced.

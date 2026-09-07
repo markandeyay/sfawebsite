@@ -6,12 +6,11 @@ interface FrameProps {
   film: Film;
   size?: StillSize;
   priority?: boolean;
-  revealed?: boolean;
   /**
    * True when a caption beside the frame already names the film (the card),
-   * so assistive tech is not told the title twice: the treated img gets an
-   * empty alt and the type-only leader is hidden. Leave false where the
-   * frame stands alone (the finale, the film-page leader).
+   * so assistive tech is not told the title twice: the img gets an empty
+   * alt and the type-only leader is hidden. Leave false where the frame
+   * stands alone (the finale, the film-page leader).
    */
   decorative?: boolean;
   className?: string;
@@ -19,20 +18,12 @@ interface FrameProps {
 }
 
 /**
- * A film's frame: the dither reveal when a still exists, otherwise the
- * type-only leader (a surface rectangle carrying the title and "No frame
+ * A film's frame: the still as shot when one exists, otherwise the
+ * type-only leader (a panel rectangle carrying the title and "No frame
  * available" in the credits voice). Nothing is generated in place of a
  * missing frame.
  */
-export function Frame({
-  film,
-  size = "card",
-  priority = false,
-  revealed = false,
-  decorative = false,
-  className = "",
-  style,
-}: FrameProps) {
+export function Frame({ film, size = "card", priority = false, decorative = false, className = "", style }: FrameProps) {
   if (film.still) {
     return (
       <Still
@@ -40,7 +31,6 @@ export function Frame({
         alt={decorative ? "" : `Frame from ${film.title}`}
         size={size}
         priority={priority}
-        revealed={revealed}
         className={className}
         style={style}
       />

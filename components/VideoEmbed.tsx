@@ -12,10 +12,9 @@ interface VideoEmbedProps {
 }
 
 /**
- * Lazy YouTube facade. At rest it is the treated still (the reveal runs on
- * hover and focus like any frame) with a solid play label at the bottom
- * left; the iframe is created only after a click, so no page ships a live
- * player. The label has a solid fill, so it is never text over dither.
+ * Lazy YouTube facade. At rest it is the still with a solid play label at
+ * the bottom left; the iframe is created only after a click, so no page
+ * ships a live player.
  * When the button unmounts, focus moves to the player that replaced it, so
  * a keyboard user's Tab sequence continues from the screen.
  */
@@ -42,7 +41,7 @@ export function VideoEmbed({ youtubeId, title, still }: VideoEmbedProps) {
   }
 
   return (
-    <button type="button" onClick={() => setPlaying(true)} className="facade frame-trigger" aria-label={`Play ${title}`}>
+    <button type="button" onClick={() => setPlaying(true)} className="facade" aria-label={`Play ${title}`}>
       <Still still={still} alt="" size="full" priority />
       <span aria-hidden="true" className="facade__play btn btn--primary">
         Play the film

@@ -10,7 +10,11 @@ import type { Film } from "@/content/types";
  */
 export function FilmFacade({ film }: { film: Film }) {
   if (film.viewable && film.still) {
-    return <VideoEmbed youtubeId={film.youtubeId} title={film.title} still={film.still} />;
+    return (
+      <div className="panel">
+        <VideoEmbed youtubeId={film.youtubeId} title={film.title} still={film.still} />
+      </div>
+    );
   }
 
   return (

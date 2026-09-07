@@ -11,11 +11,13 @@
  *      video) is skipped with a warning. A frame is never substituted.
  *   2. trims black letterbox bars (sd/hqdefault are 4:3 with the 16:9 frame inside;
  *      some films are letterboxed inside the frame itself) and centre-crops to 16:9;
- *   3. writes four renditions into public/stills:
- *        {slug}.webp             untreated frame, 1280x720, lossy q80
+ *   3. writes two renditions into public/stills (the site serves these):
+ *        {slug}.webp             the frame, 1280x720, lossy q80
  *        {slug}-sm.webp          the same frame at 640x360, for film cards (a card
  *                                renders at ~320 px, so 640 is its 2x; the 1280
  *                                file was 4x and most of every page's image bytes)
+ *      and, only with --treated (kept for the record; the site no longer
+ *      serves a treatment, DESIGN_NOTES.md section 12):
  *        {slug}-treated.webp     the duotone dither, 1280x720, lossless, every
  *                                dither cell a crisp (1280 / work) px block
  *        {slug}-treated-sm.webp  the same dither at its native working resolution
@@ -28,8 +30,8 @@
  *                                enough that either file resamples cleanly.
  *      Treated and original share dimensions so the hover/focus crossfade cannot
  *      shift layout.
- *   4. reads every treated file back and verifies it is exactly the expected
- *      size and contains only palette colours.
+ *   4. with --treated, reads every treated file back and verifies it is exactly
+ *      the expected size and contains only palette colours.
  *
  * The treatment (chosen from the comparison in scripts/DITHER_REPORT.md): a
  * rotated clustered-dot halftone screen. Luminance is normalised and tone-mapped,
@@ -71,6 +73,7 @@
  *                          2-3 colour image is 2-5 KB lossless, ~25x larger lossy)
  *   --only=slug[,slug]     process a subset
  *   --refetch              ignore the cache and download again
+ *   --treated              also write the halftone renditions (see above)
  *   --sheets               also build the comparison contact sheets in
  *                          screenshots/dither/ (gitignored; the chosen ones are
  *                          copied into docs/ by hand)
@@ -130,6 +133,7 @@ interface Options {
   only: string[] | null;
   refetch: boolean;
   sheets: boolean;
+  treated: boolean;
 }
 
 const DEFAULTS: Options = {
@@ -147,6 +151,7 @@ const DEFAULTS: Options = {
   only: null,
   refetch: false,
   sheets: false,
+  treated: false,
 };
 
 function parseArgs(argv: string[]): Options {
@@ -202,8 +207,12 @@ function parseArgs(argv: string[]): Options {
       case "refetch":
         opts.refetch = true;
         break;
+      case "treated":
+        opts.treated = true;
+        break;
       case "sheets":
         opts.sheets = true;
+        opts.treated = true;
         break;
       default:
         throw new Error(`Unknown flag: ${arg}`);
@@ -772,9 +781,12 @@ async function main(): Promise<void> {
       .toFile(originalSmOut);
 
     const phase = phaseFor(film.slug, opts.phase);
-    const treated = await treat(fetched.file, region, opts, phase);
-    await encodeTreated(fullOf(treated), opts.encoding).toFile(treatedOut);
-    await encodeTreated(nativeOf(treated), opts.encoding).toFile(smOut);
+    const skipped: Verified = { ok: true, width: 0, height: 0, colours: [] };
+    if (opts.treated) {
+      const treated = await treat(fetched.file, region, opts, phase);
+      await encodeTreated(fullOf(treated), opts.encoding).toFile(treatedOut);
+      await encodeTreated(nativeOf(treated), opts.encoding).toFile(smOut);
+    }
 
     const result: Result = {
       slug: film.slug,
@@ -783,11 +795,11 @@ async function main(): Promise<void> {
       barsTrimmed,
       originalBytes: statSync(originalOut).size,
       originalSmBytes: statSync(originalSmOut).size,
-      treatedBytes: statSync(treatedOut).size,
-      smBytes: statSync(smOut).size,
+      treatedBytes: opts.treated ? statSync(treatedOut).size : 0,
+      smBytes: opts.treated ? statSync(smOut).size : 0,
       phase,
-      full: await verifyTreated(treatedOut, OUT_W, OUT_H, ramp),
-      sm: await verifyTreated(smOut, nativeW, nativeH, ramp),
+      full: opts.treated ? await verifyTreated(treatedOut, OUT_W, OUT_H, ramp) : skipped,
+      sm: opts.treated ? await verifyTreated(smOut, nativeW, nativeH, ramp) : skipped,
     };
     results.push(result);
     console.log(
@@ -799,10 +811,10 @@ async function main(): Promise<void> {
   console.log(`\n${results.length} films processed. Fallbacks: ${fallbacks.length ? fallbacks.join(", ") : "none"}`);
   if (missing.length) console.warn(`MISSING (no output written): ${missing.join(", ")}`);
 
-  // Verification table.
-  console.log(`\nverify: treated files must be ${OUT_W}x${OUT_H} / ${nativeW}x${nativeH} and contain only ${ramp.map(hex).join(", ")}`);
+  // Verification table (treated renditions only).
+  if (opts.treated) console.log(`\nverify: treated files must be ${OUT_W}x${OUT_H} / ${nativeW}x${nativeH} and contain only ${ramp.map(hex).join(", ")}`);
   let bad = 0;
-  for (const r of results) {
+  for (const r of opts.treated ? results : []) {
     const line = (label: string, v: Verified) => `  ${r.slug.padEnd(40)} ${label.padEnd(11)} ${`${v.width}x${v.height}`.padEnd(9)} ${v.colours.join(" ")}  ${v.ok ? "ok" : "FAIL"}`;
     console.log(line("treated", r.full));
     console.log(line("treated-sm", r.sm));
