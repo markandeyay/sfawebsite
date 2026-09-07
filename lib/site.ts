@@ -34,4 +34,4 @@ export const JOIN_NAV = { label: "Join", href: "/#join" } as const;
 
 /** Footer colophon: the catalog number explained once. */
 export const COLOPHON =
-  "Catalog numbers run in production order across all years, the way a spine number does. No. 001 is the first film the club made.";
+  "Catalog numbers run in production order across all years, the way a spine number does. The 2025 slate is numbered first until the club's earlier years are added.";

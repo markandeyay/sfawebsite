@@ -1,52 +1,43 @@
-import { CreditBlock } from "@/components/CreditBlock";
-import type { CategoryName, Film } from "@/content/types";
-import { countWord, joinList } from "./words";
+import { CreditBlock, type CreditRow } from "@/components/CreditBlock";
+import type { Film } from "@/content/types";
+import { ROLE_FOR, byPrestige, joinList } from "./words";
 
 /**
- * Craft awards prove a department existed even when nobody is credited for
- * it. Acting, director, picture and audience awards do not.
- */
-const DEPARTMENT_FOR: Partial<Record<CategoryName, string>> = {
-  "Best Screenplay": "screenplay",
-  "Best Editing": "editing",
-  "Best Cinematography": "cinematography",
-  "Best Sound Design": "sound design",
-  "Best Set Design": "set design",
-  "Best Costume Design": "costume design",
-  "Best Hair and Makeup": "hair and makeup",
-  "Best Original Score": "score",
-};
-
-function uncreditedDepartments(film: Film): string[] {
-  return film.awards
-    .map((a) => DEPARTMENT_FOR[a.category])
-    .filter((d): d is string => Boolean(d));
-}
-
-/**
- * The credit block for a film with the thin-credits state written inside it
- * as one quiet sentence, never a blank.
+ * The end-credit block: the real director row, and, while that is the only
+ * credit, the invitation inside the block naming the roles the film's own
+ * awards prove existed. No reveal: credits are simply there. The aside
+ * disappears the moment the club supplies more than one credit.
  */
 export function FilmCredits({ film }: { film: Film }) {
-  const departments = uncreditedDepartments(film);
-  const n = departments.length;
+  const rows: CreditRow[] =
+    film.credits.length > 0 ? film.credits : [{ role: "Director", name: film.director }];
+  const roles = byPrestige(film.awards)
+    .map((a) => ROLE_FOR[a.category])
+    .filter((r): r is string => Boolean(r));
+  const thin = rows.length <= 1;
 
   return (
-    <section aria-labelledby="credits">
-      <h2 id="credits" className="display text-6 text-fg scroll-mt-24">
+    <div>
+      <h2 id="credits" className="display text-6 text-fg">
         Credits
       </h2>
-      <CreditBlock className="mt-8" label={`${film.title} credits`} rows={film.credits} aside={<p className="text-fg-muted measure">
-          {n > 0 ? (
-            <>
-              The rest of this crew is uncredited. {film.title} won for {joinList(departments)},
-              so at least {countWord(n)} more {n === 1 ? "name belongs" : "names belong"} here.
-              Send the full credits and they appear here.
-            </>
-          ) : (
-            <>Only the director is credited so far. Send the full credits and they appear here.</>
-          )}
-        </p>} />
-    </section>
+      <CreditBlock
+        className="mt-8"
+        headingId="credits"
+        rows={rows}
+        aside={
+          thin ? (
+            roles.length > 0 ? (
+              <>
+                Only the director is credited so far. The awards prove there was also {joinList(roles)}.
+                Send the full credits and they go here.
+              </>
+            ) : (
+              <>Only the director is credited so far. Send the full credits and they go here.</>
+            )
+          ) : undefined
+        }
+      />
+    </div>
   );
 }

@@ -1037,3 +1037,222 @@ plus one orchestrated arrival per route, built from `Reveal` delays.
 `suppressHydrationWarning` on `<html>` (the head script adds classes before React hydrates);
 `<SmoothScroll />` and `<ScrollFlag />` once in the body; `@import "./motion.css"` after the tailwind import.
 `SmoothScroll` is a no-op on a second mount.
+
+---
+
+## 9. Homepage (2026-09-07, third direction)
+
+Written by the homepage agent; merged by the lead. Hero concept captures: `docs/hero-concept-titlecard-chosen.png`, `docs/hero-concept-keyart-rejected.png`.
+
+For the lead to merge into `DESIGN_NOTES.md` section 9. Files: `app/page.tsx`,
+`components/home/{HeroTitleCard,NowShowing,Catalog,AwardsTeaser,HowItWorks,Crew,Join}.tsx`,
+`lib/home.ts`. Deleted: `components/home/Hero.tsx`, `components/home/CatalogStrip.tsx`,
+`lib/featured.ts` (the old hero's title list is gone, so nothing imports it).
+Captures: `docs/hero-concept-keyart-rejected.png`, `docs/hero-concept-titlecard-chosen.png`
+(each is 1440 beside 375, the top 1300px). The Sept 3 files `hero-concept-a-*` /
+`hero-concept-b-*` belong to the first direction (section 3) and are untouched.
+
+### 9.1 Hero: two concepts, one kept
+
+Both were built as real components against the frozen system and shot at 1440 and 375.
+
+**Title card (chosen).** The club's name at step 8 (SplitText in a Reveal, the one
+orchestrated heading), then a 12-column row: the one sentence of context and the one
+action ("Watch FDOC", primary) in columns 1-4; the key film's frame (`Frame size="full"`,
+the Best Picture winner from `getSiteKeyFilm`, halftoned, resolving on hover and focus)
+in columns 5-12, linked to the film page; beneath the frame the caption in the card's own
+grammar (`card__caption`: `CatalogNumber size="row"`, title at step 5, "Directed by" in the
+condensed voice). At 375 it stacks: name, frame, caption, sentence, action, all inside the
+first screen.
+
+**Key art (rejected).** The key still full-bleed at 70svh with a solid base band beneath it
+carrying the wordmark and "No. 001 FDOC, 2025"; a client component that resolved the
+dither once on arrival on touch devices. Rejected because:
+
+1. Full-bleed means cropping. At 375 a 16:9 film became a 2:3 slice of itself, and the
+   16px halftone screen (tuned for a 1280-wide frame) at bleed scale read as noise rather
+   than as a frame. The title card keeps every frame 16:9, which is the honest shape.
+2. At 375 the club's name, its only mark, fell below the fold.
+3. "Hero image with a heading in a band under it" is the module every template opens
+   with; recoloured, it is the generated pattern. The title card is the A24 restraint:
+   the name, one frame, one number.
+4. It needed client state (the touch reveal) for a section that should be static markup.
+
+**The arrival.** Reveal delays only: frame at 0, caption at `DUR[2]`, title glyphs from
+`DUR[3]` with the 16ms stagger. Measured from the moment `is-in` lands (Playwright,
+`scratchpad/hero-seq.mjs`): frame 0 to 1 over ~400ms, caption from ~240ms, first glyph
+from ~480ms, last glyph settled at ~1050ms. Still, then number, then name, inside
+`DUR[5]`. Nothing else on the route uses a delay; the catalog and teaser rows use seeded
+jitter only. Under reduced motion everything is simply there (rm capture identical to
+the settled state).
+
+### 9.2 Sections, and the shape each one has
+
+Not every section is heading-then-grid:
+
+- **Now showing**: a hairline strip under the hero, heading at step 6 left, the sentence
+  and the Instagram link right. No dates exist, so it says so ("Dates to be posted").
+- **The 2025 slate** (`#films`): step 7 heading, one-line lede, then all twelve films in
+  catalog order as `FilmCard`s, 4 across at 1440 (3 at lg, 2 at sm, 1 at 375). Each card is
+  a `Reveal as="li" variant="rise" seed="catalog:<slug>"` so the sheet arrives ragged.
+  Numbers read at every width (375 checked).
+- **The 2025 awards**: the first gold. The sentence is derived (`summarizeCeremony` in
+  `lib/home.ts`: total categories, distinct winning films, `held`, and a sweep line only
+  when the lead took at least half the categories and twice the runner-up; for 2025 that
+  is "FDOC took seven of them"). The rows are one per winning film: its most prestigious
+  category (ceremony order) as `AwardBadge mode="row"`, then `CatalogNumber` and the
+  linked title in the card grammar. Five rows, five films, five categories; the ceremony
+  page has the fifteen. Rows are seeded Reveals.
+- **How a film gets made here**: heading left (4 cols), the five steps right (8 cols) as
+  an ordered list with the step number in the condensed voice at step 6 (plain 1 to 5, not
+  zero-padded, so it cannot be mistaken for a catalog number). The tracks are named only
+  after the process: "A film made this way is a studio film ... the club calls those
+  independent films."
+- **Who runs it**: heading and lede, then `CreditBlock` with the seven roles the club
+  describes, every name `null` (the block's own "Name to be supplied"), the aside inside
+  the block saying what to send. No Reveal on credits.
+- **Join** (`#join`): a hairline, "No experience needed." at step 7, one sentence, the
+  one action (`JOIN_ACTION`). Bottom padding is the footer's own margin.
+
+Spacing: hero `pt-block pb-section`; the strip has no padding of its own (it belongs to
+the hero); the catalog `pt-stage pb-section` so the largest breath on the page sits
+between the cold open and the body of work; awards, how, crew `py-section`; join
+`pt-section`. Type steps in use: 8 (hero), 7 (slate, join), 6 (section headings, step
+numerals), 5 (card and row titles), 4 (ledes, sentences), 3 (body), 2 (condensed meta,
+buttons), 1 is not used on this route.
+
+### 9.3 Passes
+
+**Pass 1 (1440 + 375).** Wrong: (a) the primary button rendered cream on cream, see
+section 5; (b) the hero's sentence and action were stranded bottom-left under nothing
+while the frame sat bottom-right; (c) the now-showing heading in `max-w-title` broke into
+a three-line poem; (d) the credit block's group titles sat at the far left while the
+rows met at the centre. Changed: sentence and action moved up beside the frame, top-
+aligned; heading width released. Removed (Chanel): the three credit groups; one flat
+roll of seven roles instead.
+
+**Pass 2.** Wrong: (a) hero-to-strip and strip-to-catalog gaps were both ~192px, so the
+rhythm was flat; (b) Join at `py-stage` was a carolina field with a paragraph in one
+corner; (c) hairlines between process rows rendered in two tones (sub-pixel from fluid
+type; not fixable here, ignored). Changed: hero `pb-section`, strip `py-0`, catalog
+`pt-stage`; Join `py-section`. Removed: the stage padding on the hero's tail.
+
+**Pass 3.** Wrong: (a) the inverted Join was the CTA banner every marketing page ends
+with (the Part 1 question fails) and left a black band before the footer; (b) trying
+the hero's left column bottom-aligned with the caption pushed the action below the
+1440x900 fold, worse than before, reverted; (c) unverified: arrival timing, anchors,
+reduced motion, focus, 320. Removed: the `.on-carolina` surface. Carolina lives inside
+the stills on this route and nowhere else; the inverted surface is unused on the
+homepage and available to the awards page if it wants it. Verified (section 4).
+
+**Pass 4.** Wrong: Join's bottom padding plus the footer's margin was 256px of nothing.
+Changed: Join `pt-section` only. Final captures `p4-*` in the scratchpad.
+
+### 9.4 Verification
+
+- `npm run check` clean (content, tsc, eslint, check-tokens: 52 files).
+- `npm run build` clean.
+- Anchors under Lenis: `/#films` and `/#join` on load and via the nav links land with
+  the target's top at 64px (the nav height; `scroll-mt-16` on both sections). Lenis
+  active (`html.lenis`), no fight.
+- Reduced motion (`rm=1`): the fold is identical to the settled page; nothing hidden.
+- Focus (`#films .card`): carolina ring on the whole FDOC card, frame resolved to the
+  real still.
+- 320: the homepage's own content fits. `scrollWidth` is 332 because of the frozen
+  footer wordmark, see section 5.
+- No console errors at 1440 or 375.
+
+### 9.5 Gaps and problems in the frozen system (for the lead)
+
+1. **`a { color: inherit }` in `app/globals.css` section 3 is un-layered**, so it beats
+   every `@layer components` colour on links: `.btn--primary` (cream text on cream fill,
+   invisible), and `a.award` (a linked badge loses its gold). Workaround in my files:
+   `text-ground!` on primary `ButtonLink`s (an important role utility; remove once
+   fixed). Fix: move section 3 into `@layer base`, or drop the rule.
+2. **`.btn--primary:hover` on `.on-carolina`** sets `background: var(--accent)` (base)
+   and `color: var(--color-base)`: base on base. Moot on the homepage now that nothing
+   is inverted, but it will bite whoever inverts a section with a primary button.
+3. **`.wordmark--footer` is `white-space: nowrap`** and 316px wide at 320, so every
+   route overflows horizontally at 320 by 12px through the footer. Fix in globals
+   (`white-space: normal` on the footer size) or the footer.
+4. **`CreditBlock` requires `rows` even when `groups` is passed** (type). Harmless;
+   `rows={[]}` works.
+5. **`Reveal as="li"`** works; `Reveal` has no `key`-safe wrapper for lists, so each
+   list item is the Reveal itself. Fine, noting it.
+6. The independent-film sentence in How it works ("the club calls those independent
+   films") is the one line on the route the seed does not state outright; the seed
+   only names the two tracks. The club should confirm it or supply its own words.
+
+---
+
+## 10. Film page and awards page (2026-09-07, third direction)
+
+Written by the film-and-awards agent; merged by the lead.
+
+Against the frozen system (DESIGN_NOTES section 8) and `scratchpad/wave3-direction.md`.
+Screenshots referenced are in the session scratchpad under `shots/agentE/` (`p1-` to `p5-`, `rm-`, `w320-`, `focus-`).
+Files: `app/films/[slug]/page.tsx`, `components/film/*`, `app/awards/[year]/page.tsx`, `components/awards/*`.
+Nothing frozen was touched; `VideoEmbed` did not need editing.
+
+### 10.1 Film page: what was built
+
+- **Above the fold.** `CatalogNumber size="page"` (step 9) simply there, like a stamp; the title beneath it as the one orchestrated heading (`Reveal variant="none"` + `SplitText`, so nothing above the fold is hidden before hydration); at `lg` the meta lines ("2025 slate", "Directed by …", runtime only when known, in the condensed voice) and the logline sit as a billing block at the foot of the title in the third column. Below `lg` everything stacks.
+- **The screen.** `VideoEmbed` as is (accessible name "Play FDOC", iframe only on click). For `viewable: false` or `still: null` the system's type-only leader from `Frame` at half width with one sentence beside it: "At Last, the Gift is not streaming. It screened at the festival only." (a sentence, not a label; "festival only" is what `viewable: false` means in `content/types.ts`).
+- **Awards as one object.** Seals grouped by department, department read from the ceremony data, most prestigious group first (picture, performance, craft) and most prestigious category first inside a group; content-sized columns (`flex-wrap`, `gap-x-24`) so FDOC's seven read as a compact object beside the "Awards" heading rather than a table or a wrapping pile. `AwardBadge mode="row"` (step 4) so the seals carry at a distance; each seal is a `Reveal variant="rise"` with a seed, so seven settle raggedly. A lone group (At Last, Cupid) carries no department label. A film with no awards renders no section and no rule (verified `/films/slam`).
+- **Credits.** `CreditBlock` with the real director row, no reveal, and, while that is the only credit, the in-block invitation naming the roles the film's own awards prove existed: "Only the director is credited so far. The awards prove there was also a screenwriter, an editor, a cinematographer, a sound designer and a set designer. Send the full credits and they go here." The mapping from category to role is `ROLE_FOR` in `components/film/words.ts` (acting awards prove a cast; Best Picture, Best Director and Audience Choice prove nothing extra). The aside disappears once more than one credit exists.
+- **Also on the 2025 slate.** `getAdjacentFilms` (previous, then next, wrapping), rendered with the system's `FilmCard` so the number sits in the same place as on the homepage; each card a seeded `Reveal rise`. Heading falls back to "Next to it in the catalog" if a neighbour is from another year (it cannot happen with one slate, but the wrap will cross years later). Deduplicated for a catalog of two, hidden for a catalog of one.
+- **The last line.** One sentence derived from the data ("FDOC won seven of the fifteen awards at the 2025 ceremony." / "Slam! is one of twelve films on the 2025 slate.") and the link "See the 2025 awards" on its own line.
+- **Spacing.** Header `pt-block`, screen `mt-block` (close: the poster and the screen are one unit), then `mt-section` per block; one hairline after the screen (above Awards, inside the conditional) and the credit block's own; no rule anywhere else.
+
+### 10.2 Awards page: what was built
+
+The Academy register, in this room only: centred, heavy negative space, the largest type on the site, gold as data.
+
+- **Header.** "The 2025 awards" at step 7 (`SplitText` + `Reveal none`), then "Fifteen awards to five films, presented May 2025." (`held` from the data, counts derived).
+- **The seam.** The page has one axis, and it is the credit block's grammar turned to the awards: whatever announces sits right-aligned on the left, the film (`CatalogNumber` row size, then the linked title at step 5) sits left-aligned on the right, meeting at the centre (`.seam` in `components/awards/ceremony.css`). The tally and the fifteen winner rows share it, so the page reads as one programme.
+- **The tally.** One row per winning film, most wins first: the numeral in the condensed voice at step 8 on the left, the film on the right. The numerals are `SplitText` inside `Reveal none` with `delay = DUR[3] + i * DUR[2]`, so they arrive after the title one beat apart; assistive tech hears "7 wins" through a visually hidden unit. Section heading "Wins by film" is visually hidden.
+- **Three acts** (Craft, Performance, Picture, from `department`, ceremony order within each; `components/awards/ceremony.ts` unchanged). Winner row = `AwardBadge mode="row"` (category, person line only when present) on the left, number + linked title on the right, `Reveal rise` with a seed per category so rows settle on varied timing. No rules between rows. Nominees block renders only if the array is non-empty (it is empty). Nothing invented.
+- **Finale.** The seal, then the only still on the page (the key film, halftoned at rest, `Reveal fade`), then the catalog number, the title at step 8 as the page's one un-underlined link, then "Directed by …". The block is a `frame-trigger`, so hovering anywhere in it or focusing the title link resolves the still. `pt-stage` above; the footer's own margin closes the page.
+
+### 10.3 Rejections and decisions
+
+- **Horizontal tally rejected** (`p1-awards-2025-1440-seg0.png`): five step-9 numerals across the page with a large "wins" unit read as a scoreboard, not a ceremony, and the shrink-to-fit columns broke long titles one word per line. Replaced by the seam rows (pass 2).
+- **Step 9 for the tally numerals rejected.** Five step-9 numerals stacked are ~950px of digits at 1440. Step 8 (the same size as the finale title, one above the page title) keeps the tally the headline without becoming a wall. The lead's type table lists "tally numerals" under step 9; this is a deliberate deviation.
+- **Per-row "wins" unit removed** (Chanel, pass 1). The lede already says "fifteen awards to five films"; five numerals summing to fifteen need no unit in sight.
+- **Category printed twice per row** (the previous build: category label plus the badge) rejected: the seal is the category.
+- **Two links to the film in the finale** (frame link plus title link, or a "Watch FDOC" button) rejected: one link, the title; the wrapper is the hover/focus trigger.
+- **Laurel row for FDOC's seven** rejected without building: it fits one line only at the widest viewport and becomes the wrapping pile everywhere else; department columns are stable at every width and carry more information.
+- **Credit rows with five "Name to be supplied"** rejected in favour of the direction's single director row plus the in-block sentence naming the roles.
+
+### 10.4 Passes
+
+### Film page (`/films/fdoc`, `/films/slam`, `/films/at-last-the-gift`, `/films/a-newby-cupids-guide-to-love-and-more`)
+
+- **Pass 1** (`p1-films-fdoc-*`). Wrong: the closing sentence and its link wrapped mid-phrase inside the 60ch measure; two consecutive rule-plus-heading sections (Awards, Also on the slate) made the same rhythm twice; nothing else structural. Changed: link on its own line under the sentence. Removed: the hairline above "Also on the 2025 slate" (the cards separate themselves; the only rules left are the one after the screen and the credit block's own).
+- **Pass 2** (`p2-films-*`). Wrong: the At Last leader at two-thirds width was a 900px empty rectangle that read as a placeholder; a single-seal award stack (At Last, Cupid) carried a department heading for nothing; Slam confirmed clean (no Awards section, no orphan rule). Changed: leader at half width with the sentence beside it. Removed: the group heading when there is only one group.
+- **Pass 3** (`p3-films-*`, `focus-films-fdoc-1440-fold.png`). Verified the four routes at 1440 and 375; focus on the facade resolves the still and shows the ring; the Cupid title wraps to three balanced lines with the billing block at its foot. Nothing further changed.
+
+### Awards page (`/awards/2025`)
+
+- **Pass 1** (`p1-awards-*`). Wrong: scoreboard tally; titles collapsing to one word per line; the finale title (step 7) smaller than the tally numerals; lede orphaning "2025." at 375. Changed: seam rows for the tally at step 8, page title to step 7, finale title to step 8, `text-balance` on the lede. Removed: the five "wins" units.
+- **Pass 2** (`p2-awards-*`). Wrong: rows missing from the 1440 full-page capture (see 6); the finale's `pb-stage` doubled the footer's `mt-section` into ~320px of nothing. Removed: `pb-stage` on the finale.
+- **Pass 3** (`p3-awards-*`, `rm-awards-2025-1440-rm.png`, `w320-*`, `focus-awards-2025-1440-fold.png`). Reduced motion: every reveal settled, no transitions. Focus on a winner link: ring visible on "FDOC" in the Craft act. 320: no overflow from anything on the route (see 6 for the footer). Wrong: at 375 the act headings were centred over left-aligned stacked rows. Changed: headings centre only from 40rem, where the seam exists. Removed: the mobile centring.
+- **Pass 4.** Wrong: three different gaps under the finale (8, 2, 3). Changed: number `mt-8`, title `mt-2`, director `mt-2`. Removed: the odd gap.
+- **Pass 5** (`p5-awards-*`). Wrong: a hairline underline under a step-8 title read as a rule between the title and the director line. Removed: the underline on the finale title (`.finale__title`; hover colour and the still resolving are its hover state, the ring its focus state). All 21 reveals present at 1440 with a hydration settle before the scroll-through.
+
+### 10.5 Copy written
+
+- "2025 slate" / "Directed by Keller Huffman" (meta lines).
+- "At Last, the Gift is not streaming. It screened at the festival only."
+- "Only the director is credited so far. The awards prove there was also …. Send the full credits and they go here."
+- "Also on the 2025 slate" / "Next to it in the catalog".
+- "FDOC won seven of the fifteen awards at the 2025 ceremony." / "Slam! is one of twelve films on the 2025 slate." / "See the 2025 awards".
+- "The 2025 awards" / "Fifteen awards to five films, presented May 2025." / "Wins by film" (hidden) / "Craft", "Performance", "Picture".
+
+### 10.6 Gaps and things for the lead
+
+- **Footer overflow at 320 (frozen).** Every route, including `/`, scrolls to 332px at a 320px viewport. The cause is `SiteFooter`'s `Wordmark size="footer"` (`.wordmark` is `white-space: nowrap`; "Student Film Association" at text-6 is 316px in a 288px column). Fix in the frozen shell: allow the footer wordmark to wrap (`white-space: normal` for `.wordmark--footer`) or use the initials below 24rem as the nav does.
+- **Capture script races hydration.** `shot.mjs` begins its scroll-through the moment `networkidle` fires, before `Reveal` effects have attached observers, so reveals near the top of a page are scrolled past unobserved and show as missing in full-page captures (`p2-`, `p3-awards-2025-1440-seg0.png`). A 400ms settle after load makes all 21 reveals fire under the same 720px jumps (`scratchpad/revealcheck.mjs`). I used a copy, `scratchpad/shotE.mjs`, with a 500ms settle after `goto`; the homepage agent's captures may show the same artefact.
+- **Route-local CSS.** `components/awards/ceremony.css` (the seam, the tally rows, the finale title) is imported by the ceremony page only, tokens only. If the seam is wanted elsewhere it belongs in `globals.css`.
+- **Type-step deviation.** Tally numerals at step 8, not the step 9 the type table suggests (see 3).
+- **Content the club should supply**: person-level winners (the row and the seal already render the person line when present), runtimes, credits beyond the director, a frame for At Last, the Gift.

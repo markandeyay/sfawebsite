@@ -1,14 +1,18 @@
 import { SectionHeading } from "@/components/SectionHeading";
 
-/** The production process, in a first-year's terms. A real sequence, so numbered. */
+/**
+ * How a film gets made here, as a numbered sequence. The numbering is
+ * honest: this is the order it happens in. The two tracks are named only
+ * after the process has been described in plain words.
+ */
 const STEPS = [
   {
     title: "Pitch",
-    text: "In the fall, any UNC student brings a script or an idea. Comedy, horror, documentary, anything up to about twenty minutes.",
+    text: "In the fall, any UNC student brings a script or an idea. Any genre, up to about twenty minutes.",
   },
   {
     title: "Review",
-    text: "A script review board reads every pitch and greenlights the slate: the films the club can make well that year.",
+    text: "A script review board reads every pitch and greenlights the ones the club can make well that year.",
   },
   {
     title: "Crew up",
@@ -16,45 +20,40 @@ const STEPS = [
   },
   {
     title: "Shoot",
-    text: "Spring semester is production. Crews write, shoot, and cut with the club's equipment and the guilds behind them.",
+    text: "Spring is production. Crews shoot and cut with the club's equipment and the guilds behind them.",
   },
   {
     title: "Screen",
-    text: "Every film premieres at the SFA Film Festival in May. The awards ceremony follows, and members vote.",
+    text: "Every film premieres at the SFA Film Festival in May. The awards follow, voted on by the members.",
   },
 ] as const;
 
 export function HowItWorks() {
   return (
-    <section id="how" aria-labelledby="how-title" className="wrap py-section sm:py-section border-t border-rule">
-      <SectionHeading id="how-title" title="How a film gets made here." />
-      <ol className="mt-12 sm:mt-16 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-5">
-        {STEPS.map((step, i) => (
-          <li key={step.title} className="border-t border-rule pt-4">
-            <p className="condensed text-2 text-fg-muted">
-              <span className="sr-only">Step </span>
-              {String(i + 1).padStart(2, "0")}
-            </p>
-            <h3 className="display text-5 mt-3">{step.title}</h3>
-            <p className="mt-3 text-fg-muted">{step.text}</p>
-          </li>
-        ))}
-      </ol>
-      <div className="mt-16 sm:mt-16 grid gap-8 lg:grid-cols-2 lg:gap-16">
-        <div className="border-t border-rule pt-4">
-          <h3 className="display text-5">Studio films</h3>
-          <p className="mt-3 text-fg-muted measure">
-            The films pitched in the fall, chosen by the review board, and produced by the club
-            with an assigned producer and crew. Every film on this site is a studio film.
-          </p>
-        </div>
-        <div className="border-t border-rule pt-4">
-          <h3 className="display text-5">Independent films</h3>
-          <p className="mt-3 text-fg-muted measure">
-            Projects members start on their own, outside the greenlit slate, with the club&rsquo;s
-            people and equipment behind them. They screen alongside the studio films.
-          </p>
-        </div>
+    <section aria-labelledby="how-title" className="wrap py-section">
+      <div className="grid gap-x-8 gap-y-12 lg:grid-cols-12">
+        <SectionHeading id="how-title" title="How a film gets made here" className="lg:col-span-4" />
+        <ol className="lg:col-span-8 hairline-t">
+          {STEPS.map((step, i) => (
+            <li key={step.title} className="hairline-b py-6 grid gap-x-8 gap-y-2 grid-cols-[auto_minmax(0,1fr)]">
+              <span className="condensed text-6 text-fg-muted w-12" aria-hidden="true">
+                {i + 1}
+              </span>
+              <div>
+                <h3 className="display text-5">
+                  <span className="sr-only">Step {i + 1}: </span>
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-fg-muted measure">{step.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="lg:col-span-8 lg:col-start-5 text-4 measure">
+          A film made this way is a studio film, and every film on this site is one. Members also
+          make films outside the slate on their own initiative; the club calls those independent
+          films.
+        </p>
       </div>
     </section>
   );

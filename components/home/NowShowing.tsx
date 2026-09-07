@@ -1,46 +1,29 @@
-import { SectionHeading } from "@/components/SectionHeading";
 import { ButtonLink } from "@/components/Button";
 import { JOIN_ACTION } from "@/lib/site";
 
 /**
- * Current cycle. The club has not supplied dates, so every date is an
- * explicit "to be announced" and the action is the interest link.
+ * The current cycle. The club has published no dates, so the section is an
+ * invitation rather than a calendar: it says when the next slate begins in
+ * the terms the club uses, admits the dates are not posted, and points at
+ * the one action that is never stale.
  */
-const SCHEDULE = [
-  { label: "Pitches open", value: "Fall semester, date to be announced" },
-  { label: "Review board decisions", value: "Date to be announced" },
-  { label: "Festival and awards", value: "May, date to be announced" },
-] as const;
-
 export function NowShowing() {
   return (
-    <section id="now-showing" aria-labelledby="now-showing-title" className="wrap py-section sm:py-section">
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
-        <SectionHeading
-          id="now-showing-title"
-          title="Pitches open this fall."
-          lede="Any UNC student can bring a script or an idea. No film experience is needed; most members arrive with none."
-        />
-        <div className="lg:pt-10">
-          <dl>
-            {SCHEDULE.map((row) => (
-              <div
-                key={row.label}
-                className="grid gap-1 sm:grid-cols-2 sm:gap-8 py-4 border-t border-rule"
-              >
-                <dt className="condensed text-2 text-fg-muted pt-1">{row.label}</dt>
-                <dd className="text-fg">{row.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-6 text-fg-muted text-2">
-            The 2026 slate screened in May 2026 and will be added when the club supplies it.
+    <section aria-labelledby="now-title" className="wrap">
+      <div className="hairline-t pt-6 grid gap-x-8 gap-y-4 lg:grid-cols-12">
+        <h2 id="now-title" className="display text-6 lg:col-span-7">
+          Pitches for the next slate open in the fall.
+        </h2>
+        <div className="lg:col-span-5 lg:pt-2">
+          <p className="text-4 text-fg-muted measure">
+            Dates to be posted. Any UNC student can bring a script or an idea; most members arrive
+            with no film experience at all.
           </p>
-          <div className="mt-8">
+          <p className="mt-4">
             <ButtonLink variant="link" href={JOIN_ACTION.href} external>
               {JOIN_ACTION.label}
             </ButtonLink>
-          </div>
+          </p>
         </div>
       </div>
     </section>

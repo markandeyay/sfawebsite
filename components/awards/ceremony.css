@@ -1,0 +1,76 @@
+/*
+  The ceremony page's own layout. Imported by app/awards/[year]/page.tsx
+  only. Tokens only; nothing here invents a colour, size, spacing, easing or
+  duration (app/globals.css is the source).
+
+  One axis: the seam. It is the credit block's grammar turned to the awards.
+  Whatever announces (the tally numeral, the seal) sits right-aligned on the
+  left; the film (catalog number, then title) sits left-aligned on the
+  right; they meet at the centre. The tally and the fifteen winner rows
+  share it, so the page reads as one programme rather than a table under a
+  chart. Below 40rem a winner row stacks, seal over film; a tally row keeps
+  the numeral beside the film.
+*/
+
+/* --- The seam. ---------------------------------------------------------- */
+.seam {
+  display: grid;
+  row-gap: var(--spacing-2);
+}
+.seam__film {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--spacing-4);
+  row-gap: var(--spacing-1);
+  min-width: 0;
+}
+.seam__nominees {
+  flex-basis: 100%;
+}
+@media (min-width: 40rem) {
+  .seam {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--spacing-8);
+    align-items: baseline;
+  }
+  .seam__lead {
+    text-align: right;
+  }
+}
+
+/* --- Tally rows: the numeral beside the film at every width. ----------- */
+.tally {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+.tally .seam {
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--spacing-6);
+  align-items: baseline;
+}
+.tally__count {
+  white-space: nowrap;
+}
+@media (min-width: 40rem) {
+  .tally .seam {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--spacing-8);
+  }
+}
+
+/* --- Finale title: the one link on the page without an underline. ------ */
+.finale__title {
+  color: var(--on-surface);
+  text-decoration: none;
+  transition: color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .frame-trigger:hover .finale__title {
+    color: var(--accent);
+  }
+}

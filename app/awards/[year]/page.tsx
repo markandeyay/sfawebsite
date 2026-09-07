@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCeremonies, getCeremony, getFilmsForCeremony } from "@/content";
+import { Reveal } from "@/components/motion/Reveal";
+import { SplitText } from "@/components/motion/SplitText";
 import { Tally } from "@/components/awards/Tally";
 import { Act } from "@/components/awards/Act";
 import { BestPicture } from "@/components/awards/BestPicture";
-import { acts, capitalize, numberWord, sweep, tally } from "@/components/awards/ceremony";
+import { acts, capitalize, numberWord, tally } from "@/components/awards/ceremony";
+import "@/components/awards/ceremony.css";
 
 interface PageProps {
   params: Promise<{ year: string }>;
@@ -25,15 +28,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!ceremony) return { title: "Ceremony not found" };
   const n = ceremony.categories.length;
   return {
-    title: `${ceremony.year} awards`,
-    description: `Winners in all ${numberWord(n)} categories at the Student Film Association's ${ceremony.year} awards ceremony.`,
+    title: `The ${ceremony.year} awards`,
+    description: `Winners in all ${numberWord(n)} categories at the Student Film Association's ${ceremony.year} awards, presented ${ceremony.held}.`,
   };
 }
 
 /**
- * The ceremony page: a header, the tally as a feature block, the three
- * acts as rows on thin rules, and Best Picture as a type-only finale.
- * White ground throughout; the only still on the page is in the tally.
+ * The ceremony page: the one room on the site with the Academy register.
+ * Centred, heavy negative space, the largest type on the site. The title,
+ * when it was held, the tally as the night's headline, the three acts in
+ * ceremony order, and Best Picture as the finale with the only still.
  */
 export default async function CeremonyPage({ params }: PageProps) {
   const { year } = await params;
@@ -44,29 +48,27 @@ export default async function CeremonyPage({ params }: PageProps) {
   const films = getFilmsForCeremony(ceremony);
   const total = ceremony.categories.length;
   const rows = tally(ceremony, films);
-  const swept = sweep(rows, total);
   const { acts: actList, finale } = acts(ceremony);
   const finaleFilm = finale ? films.get(finale.winner.filmSlug) : undefined;
-
-  const filmsClause = `${numberWord(rows.length)} ${rows.length === 1 ? "film" : "films"}`;
-  const lede = `${capitalize(numberWord(total))} categories, ${filmsClause}${
-    swept ? ", one sweep" : ""
-  }. Presented after the festival in May ${ceremony.year}.`;
+  const lede = `${capitalize(numberWord(total))} awards to ${numberWord(rows.length)} ${
+    rows.length === 1 ? "film" : "films"
+  }, presented ${ceremony.held}.`;
 
   return (
     <div className="wrap">
-      <header className="pt-section sm:pt-section">
-        <p className="condensed text-2 text-fg-muted mb-4">The ceremony</p>
-        <h1 className="display text-8 text-fg">{ceremony.year} awards</h1>
-        <p className="text-4 mt-6 measure">{lede}</p>
+      <header className="pt-stage text-center">
+        <Reveal as="h1" variant="none" className="display text-7 text-fg">
+          <SplitText text={`The ${ceremony.year} awards`} seed={`ceremony:${ceremony.year}`} />
+        </Reveal>
+        <p className="text-4 text-fg-muted mt-6 text-balance">{lede}</p>
       </header>
 
-      <Tally rows={rows} total={total} sweep={swept} feature={finaleFilm ?? rows[0]?.film} />
+      <Tally rows={rows} />
 
       {actList.map((act) => (
         <Act
           key={act.department}
-          id={act.department}
+          id={`act-${act.department}`}
           title={act.title}
           categories={act.categories}
           films={films}

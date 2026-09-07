@@ -1,11 +1,12 @@
-import type { Film } from "@/content/types";
 import { Frame } from "@/components/Frame";
 import { VideoEmbed } from "@/components/VideoEmbed";
+import type { Film } from "@/content/types";
 
 /**
  * The screen, at the full width of the wrap. A lazy YouTube facade when the
- * film can be embedded and a frame exists; otherwise the type-only leader
- * from Frame with one sentence saying why.
+ * film can be embedded and a frame exists (accessible name "Play <title>",
+ * iframe only on click). Otherwise the type-only leader from Frame at half
+ * width, with one sentence beside it saying why nothing plays.
  */
 export function FilmFacade({ film }: { film: Film }) {
   if (film.viewable && film.still) {
@@ -13,23 +14,24 @@ export function FilmFacade({ film }: { film: Film }) {
   }
 
   return (
-    <div className="max-w-measure">
-      <Frame film={film} priority />
-      <p className="text-fg-muted mt-4">
+    <div className="grid gap-6 lg:grid-cols-2 lg:gap-x-12 lg:items-end">
+      <Frame film={film} size="full" priority />
+      <p className="text-fg-muted max-w-short">
         {film.viewable ? (
           <>
-            No frame from this film is available yet.{" "}
+            No frame from this film is available.{" "}
             <a
               href={`https://www.youtube.com/watch?v=${film.youtubeId}`}
               className="link"
               target="_blank"
               rel="noreferrer"
             >
-              Watch it on YouTube
+              Watch {film.title} on YouTube
             </a>
+            .
           </>
         ) : (
-          "This film is not streaming right now."
+          <>{film.title} is not streaming. It screened at the festival only.</>
         )}
       </p>
     </div>

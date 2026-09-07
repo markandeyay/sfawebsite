@@ -1,51 +1,55 @@
-import type { Ceremony, Film } from "@/content/types";
-import { Frame } from "@/components/Frame";
+import Link from "next/link";
+import { AwardBadge } from "@/components/AwardBadge";
 import { ButtonLink } from "@/components/Button";
-import { numberWord } from "./CatalogStrip";
+import { CatalogNumber } from "@/components/CatalogNumber";
+import { Reveal } from "@/components/motion/Reveal";
+import { numberWord, type CeremonySummary } from "@/lib/home";
 
 /**
- * Feature block: still in a grey panel on one side, condensed text-2 text-fg-muted, headline, and
- * an arrow link on the other. The headline is the night's result.
+ * The awards teaser: the first award colour on the page. One sentence says the
+ * night's result, derived from awards.json; one row per winning film shows
+ * its top category as a badge beside its catalog number; one link goes to
+ * the ceremony. The ceremony page has the full fifteen; this does not.
  */
-export function AwardsTeaser({ ceremony, films }: { ceremony: Ceremony; films: Map<string, Film> }) {
-  const counts = new Map<string, number>();
-  for (const c of ceremony.categories) {
-    counts.set(c.winner.filmSlug, (counts.get(c.winner.filmSlug) ?? 0) + 1);
-  }
-  const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  const [leadSlug, leadCount] = ranked[0] ?? [];
-  const lead = leadSlug ? films.get(leadSlug) : undefined;
-  const total = ceremony.categories.length;
-  const bestPicture = ceremony.categories.find((c) => c.category === "Best Picture");
-  const bpFilm = bestPicture ? films.get(bestPicture.winner.filmSlug) : undefined;
-  const feature = bpFilm ?? lead;
-
-  const headline =
-    lead && leadCount
-      ? `${lead.title} took ${numberWord(leadCount)} of ${numberWord(total)} awards.`
-      : `${numberWord(total, true)} awards, voted by members.`;
+export function AwardsTeaser({ summary }: { summary: CeremonySummary }) {
+  const { ceremony, total, filmCount, lead, sweep, highlights } = summary;
+  const result = `${numberWord(total, true)} awards, voted on by the members, went to ${numberWord(filmCount)} films in ${ceremony.held}.`;
+  const sweepLine = sweep && lead ? ` ${lead.film.title} took ${numberWord(lead.wins)} of them.` : "";
 
   return (
-    <section id="awards" aria-labelledby="awards-title" className="wrap py-section sm:py-section border-t border-rule">
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 lg:items-center">
-        {feature ? (
-          <div className="panel">
-            <Frame film={feature} />
-          </div>
-        ) : null}
-        <div>
-          <p className="condensed text-2 text-fg-muted mb-4">The {ceremony.year} awards</p>
-          <h2 id="awards-title" className="display text-7 text-fg max-w-title">
-            {headline}
+    <section aria-labelledby="awards-title" className="wrap py-section">
+      <div className="grid gap-x-8 gap-y-12 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <h2 id="awards-title" className="display text-6">
+            The {ceremony.year} awards
           </h2>
-          <p className="text-4 mt-6 measure">
-            {numberWord(total, true)} categories, decided by member vote and presented after the
-            festival in May {ceremony.year}.
+          <p className="mt-4 text-4 measure">
+            {result}
+            {sweepLine}
           </p>
-          <div className="mt-8">
-            <ButtonLink variant="link" href={`/awards/${ceremony.year}`}>See the ceremony</ButtonLink>
-          </div>
+          <ButtonLink href={`/awards/${ceremony.year}`} variant="secondary" className="mt-8">
+            See the ceremony
+          </ButtonLink>
         </div>
+        <ol className="lg:col-span-7" aria-label="Top award by film">
+          {highlights.map(({ film, category }) => (
+            <Reveal
+              as="li"
+              key={film.slug}
+              seed={`teaser:${film.slug}`}
+              variant="fade"
+              className="hairline-t py-4 grid gap-x-8 gap-y-2 sm:grid-cols-2"
+            >
+              <AwardBadge mode="row" category={category} />
+              <span className="card__caption" style={{ paddingTop: 0 }}>
+                <CatalogNumber no={film.no} size="row" />
+                <Link href={`/films/${film.slug}`} className="display text-5 card__title no-underline">
+                  {film.title}
+                </Link>
+              </span>
+            </Reveal>
+          ))}
+        </ol>
       </div>
     </section>
   );

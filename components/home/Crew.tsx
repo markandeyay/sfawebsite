@@ -1,35 +1,37 @@
-import { CreditBlock } from "@/components/CreditBlock";
+import { CreditBlock, type CreditRow } from "@/components/CreditBlock";
 import { SectionHeading } from "@/components/SectionHeading";
 
 /**
- * The exec board as role and name pairs. The club has not supplied a
- * roster, so names render as an explicit "to be supplied" state. Role
- * labels follow the structure the club describes; no names are invented.
+ * The exec board as an end-credit block. The club has not supplied a
+ * roster, so every name is the block's own "to be supplied" state and the
+ * aside says what to send. The roles are the ones the club describes: an
+ * officer board, a board of executive producers, and the department guilds.
+ * No names are invented. Credits get no reveal; they are simply there.
  */
-const ROLES = [
-  "President",
-  "Vice president",
-  "Treasurer",
-  "Executive producers",
-  "Screenwriting guild",
-  "Editing guild",
-  "Acting guild",
+const BOARD: CreditRow[] = [
+  { role: "President", name: null },
+  { role: "Vice president", name: null },
+  { role: "Treasurer", name: null },
+  { role: "Executive producers", name: null },
+  { role: "Screenwriting guild lead", name: null },
+  { role: "Editing guild lead", name: null },
+  { role: "Acting guild lead", name: null },
 ];
 
 export function Crew() {
   return (
-    <section id="crew" aria-labelledby="crew-title" className="wrap py-section sm:py-section border-t border-rule">
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
-        <SectionHeading
-          id="crew-title"
-          title="Who runs it."
-          lede="The officer board runs the club, executive producers run the slate, and the guilds run the departments."
-        />
-        <CreditBlock label="Executive board" rows={ROLES.map((role) => ({ role, name: null }))} aside={<p className="text-fg-muted text-2 measure">
-            Names go here as the club supplies them. Each one becomes a link to that
-            member&rsquo;s credits across every film they worked on.
-          </p>} />
-      </div>
+    <section aria-labelledby="crew-title" className="wrap py-section">
+      <SectionHeading
+        id="crew-title"
+        title="Who runs it"
+        lede="An officer board runs the club, a board of executive producers runs the slate, and guilds run the departments."
+      />
+      <CreditBlock
+        className="mt-block"
+        headingId="crew-title"
+        rows={BOARD}
+        aside="Names go here when the club sends them: the current officers, the executive producers, and a lead for each guild."
+      />
     </section>
   );
 }

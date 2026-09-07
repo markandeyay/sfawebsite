@@ -252,8 +252,11 @@ body {
   outline-offset: var(--focus-ring);
 }
 
-a {
-  color: inherit;
+/* Layered so component link colours (.btn, .link, .award) win over it. */
+@layer base {
+  a {
+    color: inherit;
+  }
 }
 
 img,
@@ -608,7 +611,7 @@ iframe {
     .btn--primary:hover {
       background-color: var(--accent);
       border-color: var(--accent);
-      color: var(--color-base);
+      color: var(--surface); /* base on carolina; carolina on the inverted surface */
     }
     .btn--secondary:hover {
       border-color: var(--on-surface);
@@ -690,6 +693,7 @@ iframe {
   .wordmark--footer {
     font-size: var(--text-6);
     letter-spacing: var(--text-6--letter-spacing);
+    white-space: normal; /* two lines at 320 rather than a 12px overflow */
   }
   .wordmark--hero {
     font-size: var(--text-8);

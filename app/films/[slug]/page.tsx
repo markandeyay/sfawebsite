@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAdjacentFilms, getFilm, getFilms } from "@/content";
+import { getAdjacentFilms, getCeremony, getFilm, getFilms } from "@/content";
 import { FilmHeader } from "@/components/film/FilmHeader";
 import { FilmFacade } from "@/components/film/FilmFacade";
 import { AwardStack } from "@/components/film/AwardStack";
 import { FilmCredits } from "@/components/film/FilmCredits";
 import { AdjacentFilms } from "@/components/film/AdjacentFilms";
+import { CeremonyLine } from "@/components/film/CeremonyLine";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -31,35 +32,42 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 /**
- * The film page. Header and screen, then awards beside credits, then the
- * neighbouring films. Sections sit on thin rules with the homepage rhythm.
+ * The film page. The catalog number and title, the screen, then (only when
+ * the film won) the awards as one object, the end credits, the films either
+ * side of it in the catalog, and one line to the ceremony. Unequal air: the
+ * header and screen sit close; each later block gets a section of space.
  */
 export default async function FilmPage({ params }: PageProps) {
   const { slug } = await params;
   const film = getFilm(slug);
   if (!film) notFound();
+  const ceremony = getCeremony(film.year);
   const { prev, next } = getAdjacentFilms(film.slug);
-  const hasAwards = film.awards.length > 0;
+  const slateSize = getFilms().filter((f) => f.year === film.year).length;
+  const hasAwards = film.awards.length > 0 && Boolean(ceremony);
 
   return (
     <article>
-      <div className="wrap pt-block sm:pt-section pb-section sm:pb-24">
+      <div className="wrap pt-block">
         <FilmHeader film={film} />
-        <div className="mt-12 sm:mt-16">
-          <FilmFacade film={film} />
-        </div>
       </div>
-      <div className="wrap py-section sm:py-section border-t border-rule">
-        <div className="grid gap-16 lg:grid-cols-2">
-          {hasAwards ? <AwardStack film={film} /> : null}
-          <FilmCredits film={film} />
-        </div>
+      <div className="wrap mt-block">
+        <FilmFacade film={film} />
       </div>
-      {prev || next ? (
-        <div className="wrap py-section sm:py-section border-t border-rule">
-          <AdjacentFilms prev={prev} next={next} year={film.year} />
-        </div>
+      {hasAwards && ceremony ? (
+        <section aria-labelledby="awards" className="wrap mt-section hairline-t pt-block">
+          <AwardStack film={film} ceremony={ceremony} />
+        </section>
       ) : null}
+      <section aria-labelledby="credits" className="wrap mt-section">
+        <FilmCredits film={film} />
+      </section>
+      <section aria-labelledby="more" className="wrap mt-section">
+        <AdjacentFilms film={film} prev={prev} next={next} />
+      </section>
+      <div className="wrap mt-section">
+        <CeremonyLine film={film} ceremony={ceremony} slateSize={slateSize} />
+      </div>
     </article>
   );
 }
