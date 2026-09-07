@@ -1,5 +1,5 @@
 import { SectionHeading } from "@/components/SectionHeading";
-import { ArrowLink } from "@/components/ArrowLink";
+import { ButtonLink } from "@/components/Button";
 import { JOIN_ACTION } from "@/lib/site";
 
 /**
@@ -14,11 +14,10 @@ const SCHEDULE = [
 
 export function NowShowing() {
   return (
-    <section id="now-showing" aria-labelledby="now-showing-title" className="wrap py-20 sm:py-28">
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+    <section id="now-showing" aria-labelledby="now-showing-title" className="wrap py-section sm:py-section">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
         <SectionHeading
           id="now-showing-title"
-          eyebrow="Now showing"
           title="Pitches open this fall."
           lede="Any UNC student can bring a script or an idea. No film experience is needed; most members arrive with none."
         />
@@ -27,20 +26,20 @@ export function NowShowing() {
             {SCHEDULE.map((row) => (
               <div
                 key={row.label}
-                className="grid gap-1 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-8 py-4 border-t border-rule"
+                className="grid gap-1 sm:grid-cols-2 sm:gap-8 py-4 border-t border-rule"
               >
-                <dt className="eyebrow pt-1">{row.label}</dt>
-                <dd className="text-ink">{row.value}</dd>
+                <dt className="condensed text-2 text-fg-muted pt-1">{row.label}</dt>
+                <dd className="text-fg">{row.value}</dd>
               </div>
             ))}
           </dl>
-          <p className="mt-6 muted text-[0.9375rem]">
+          <p className="mt-6 text-fg-muted text-2">
             The 2026 slate screened in May 2026 and will be added when the club supplies it.
           </p>
-          <div className="mt-10">
-            <ArrowLink href={JOIN_ACTION.href} external>
+          <div className="mt-8">
+            <ButtonLink variant="link" href={JOIN_ACTION.href} external>
               {JOIN_ACTION.label}
-            </ArrowLink>
+            </ButtonLink>
           </div>
         </div>
       </div>

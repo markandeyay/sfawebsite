@@ -13,9 +13,9 @@ export function FilmFacade({ film }: { film: Film }) {
   }
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-measure">
       <Frame film={film} priority />
-      <p className="muted mt-4">
+      <p className="text-fg-muted mt-4">
         {film.viewable ? (
           <>
             No frame from this film is available yet.{" "}

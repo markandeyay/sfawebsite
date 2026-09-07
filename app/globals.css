@@ -1,221 +1,744 @@
 @import "tailwindcss";
+@import "./motion.css";
 
 /*
-  Design tokens, second direction (see DESIGN_NOTES.md section 7).
-  White ground, UNC navy for type, Carolina Blue as the single accent.
-  No gold, no dark ground, no image treatment.
+  ==========================================================================
+  SINGLE SOURCE OF TRUTH.
+
+  Nothing below this file may invent a colour, size, spacing, easing or
+  duration. Every component reads the tokens defined here, by name.
+  scripts/check-tokens.mjs fails `npm run check` on a hex colour, a literal
+  ms/s duration, an arbitrary Tailwind value with px/rem/#, or the word
+  "gold" found anywhere else (components/AwardBadge.tsx excepted for gold).
+
+  Third direction, 2026-09-07 (DESIGN_NOTES.md section 8).
+
+  Contents
+    1. @theme     palette, fonts, 9 fluid type steps, closed spacing scale,
+                  4 easings, 5 durations, radius 0, no shadows
+    2. roles      --surface / --on-surface / --on-surface-muted / --rule /
+                  --accent, set by .on-base / .on-surface / .on-carolina;
+                  exposed to Tailwind as bg-ground, text-fg, text-fg-muted,
+                  border-rule, text-accent (@theme inline, so they resolve
+                  on the element, not on :root)
+    3. base       html, body, selection, focus
+    4. voices     .display, .condensed
+    5. components the CSS behind the shared components
+  ==========================================================================
 */
-@theme {
+
+/* 1. Tokens ------------------------------------------------------------- */
+
+@theme static {
+  /* Palette: SFA_SYSTEM_DESIGN.md 5.1. Six tokens, no seventh. The two
+     "-muted" values are alphas of cream and base, not new greys. Components
+     never use these directly (roles below); AwardBadge is the one exception
+     for gold, and the dither pipeline bakes base + carolina into the stills. */
   --color-*: initial;
-  --color-white: #ffffff;
-  --color-paper: #ffffff;
-  --color-panel: #f2f4f6;
-  --color-rule: #dfe4e9;
-  --color-ink: #13294b;
-  --color-muted: #6b7a8c;
+  --color-base: #0b0d0f;
+  --color-surface: #14181c;
   --color-carolina: #4b9cd3;
-  --color-navy: #13294b;
+  --color-deep: #2a5c7d;
+  --color-gold: #d4af37;
+  --color-cream: #ede9e1;
+  --color-cream-muted: color-mix(in srgb, var(--color-cream) 64%, transparent);
+  --color-base-muted: color-mix(in srgb, var(--color-base) 78%, transparent);
 
-  --font-display: var(--font-inter-tight), "Inter Tight", "Helvetica Neue", Arial, sans-serif;
-  --font-sans: var(--font-inter), "Inter", "Helvetica Neue", Arial, sans-serif;
+  /* One family, one file, two voices (width 100 and width 75). */
+  --font-*: initial;
+  --font-sans: var(--font-archivo), Archivo, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-sans);
 
-  --text-display-xl: clamp(3.25rem, 8vw, 7.5rem);
-  --text-display-xl--line-height: 0.92;
-  --text-display-xl--letter-spacing: -0.035em;
-  --text-display-lg: clamp(2.75rem, 5.5vw, 5.25rem);
-  --text-display-lg--line-height: 0.95;
-  --text-display-lg--letter-spacing: -0.03em;
-  --text-display-md: clamp(2rem, 3.6vw, 3.25rem);
-  --text-display-md--line-height: 1;
-  --text-display-md--letter-spacing: -0.025em;
-  --text-display-sm: clamp(1.375rem, 2vw, 1.75rem);
-  --text-display-sm--line-height: 1.1;
-  --text-display-sm--letter-spacing: -0.02em;
-  --text-body-lg: 1.125rem;
-  --text-body-lg--line-height: 1.5;
-  --text-body: 1rem;
-  --text-body--line-height: 1.55;
-  --text-credit: 0.9375rem;
-  --text-credit--line-height: 1.3;
-  --text-label: 0.75rem;
-  --text-label--line-height: 1.2;
+  --font-weight-*: initial;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
+  /* Type: nine fluid steps, 24rem -> 90rem viewport, leading and tracking
+     set per step. text-1 .. text-9 are the only sizes on the site. */
+  --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
+
+  --text-1: clamp(0.75rem, 0.727rem + 0.095vw, 0.8125rem);
+  --text-1--line-height: 1.4;
+  --text-1--letter-spacing: 0.01em;
+
+  --text-2: clamp(0.875rem, 0.852rem + 0.095vw, 0.9375rem);
+  --text-2--line-height: 1.35;
+  --text-2--letter-spacing: 0;
+
+  --text-3: clamp(1rem, 0.977rem + 0.095vw, 1.0625rem);
+  --text-3--line-height: 1.55;
+  --text-3--letter-spacing: 0;
+
+  --text-4: clamp(1.125rem, 1.08rem + 0.189vw, 1.25rem);
+  --text-4--line-height: 1.45;
+  --text-4--letter-spacing: -0.005em;
+
+  --text-5: clamp(1.375rem, 1.239rem + 0.568vw, 1.75rem);
+  --text-5--line-height: 1.12;
+  --text-5--letter-spacing: -0.015em;
+  --text-5--font-weight: 600;
+
+  --text-6: clamp(1.75rem, 1.477rem + 1.136vw, 2.5rem);
+  --text-6--line-height: 1.02;
+  --text-6--letter-spacing: -0.025em;
+  --text-6--font-weight: 600;
+
+  --text-7: clamp(2.5rem, 1.955rem + 2.273vw, 4rem);
+  --text-7--line-height: 0.96;
+  --text-7--letter-spacing: -0.03em;
+  --text-7--font-weight: 700;
+
+  --text-8: clamp(3.5rem, 2.409rem + 4.545vw, 6.5rem);
+  --text-8--line-height: 0.9;
+  --text-8--letter-spacing: -0.035em;
+  --text-8--font-weight: 700;
+
+  --text-9: clamp(5rem, 2.455rem + 10.606vw, 12rem);
+  --text-9--line-height: 0.85;
+  --text-9--letter-spacing: -0.02em;
+  --text-9--font-weight: 700;
+
+  /* Spacing: geometric from 4px, closed. The numeric multiplier is off, so
+     p-5, mt-7, gap-10 do not exist. Three fluid rhythm tokens on top. */
+  --spacing: initial;
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-24: 6rem;
+  --spacing-32: 8rem;
+  --spacing-gutter: clamp(1rem, 3vw, 2.5rem);
+  --spacing-block: clamp(2rem, 5vw, 4rem);
+  --spacing-section: clamp(4rem, 10vw, 8rem);
+  --spacing-stage: clamp(6rem, 15vw, 12rem);
+
+  /* Measures. */
+  --container-*: initial;
+  --container-wrap: 90rem;
+  --container-measure: 60ch;
+  --container-short: 34ch;
+  --container-title: 14ch;
+
+  /* There is no light above the page. */
   --radius-*: initial;
-  --radius-none: 0;
-  --radius-full: 9999px;
   --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --animate-*: initial;
+  --perspective-*: initial;
+
+  /* Motion: exactly four easings and five durations. Mirrored one-to-one in
+     lib/motion.ts (EASE, EASE_FN, DUR); change both or neither. */
+  --ease-*: initial;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-linear: linear;
+
+  --dur-1: 120ms;
+  --dur-2: 240ms;
+  --dur-3: 480ms;
+  --dur-4: 800ms;
+  --dur-5: 1400ms;
+
+  --default-transition-duration: var(--dur-1);
+  --default-transition-timing-function: var(--ease-out);
 }
+
+/* Role colours as utilities. `inline` makes bg-ground emit
+   background-color: var(--surface), resolved on the element, so a section
+   that sets .on-surface recolours every child without a modifier. */
+@theme inline {
+  --color-ground: var(--surface);
+  --color-fg: var(--on-surface);
+  --color-fg-muted: var(--on-surface-muted);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+}
+
+/* Tokenised transition durations: dur-1 .. dur-5. Tailwind's duration-<n>
+   is banned by the check script because it takes any number. */
+@utility dur-* {
+  transition-duration: --value(--dur- *);
+}
+
+/* 2. Surface roles ------------------------------------------------------ */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+  --surface: var(--color-base);
+  --on-surface: var(--color-cream);
+  --on-surface-muted: var(--color-cream-muted);
+  --rule: var(--color-deep);
+  --accent: var(--color-carolina);
+
+  /* Physical constants: the one hairline and the one focus ring. */
+  --hairline: 1px;
+  --focus-ring: 2px;
+
+  /* Aliases for hand-written CSS. */
+  --space-section: var(--spacing-section);
+  --space-block: var(--spacing-block);
+  --space-stage: var(--spacing-stage);
 }
 
+.on-base {
+  --surface: var(--color-base);
+  --on-surface: var(--color-cream);
+  --on-surface-muted: var(--color-cream-muted);
+  --rule: var(--color-deep);
+  --accent: var(--color-carolina);
+  background-color: var(--surface);
+  color: var(--on-surface);
+}
+
+.on-surface {
+  --surface: var(--color-surface);
+  --on-surface: var(--color-cream);
+  --on-surface-muted: var(--color-cream-muted);
+  --rule: var(--color-deep);
+  --accent: var(--color-carolina);
+  background-color: var(--surface);
+  color: var(--on-surface);
+}
+
+/* Inverted: a carolina ground with base as the text. Accent becomes base,
+   because carolina-on-carolina is nothing. */
+.on-carolina {
+  --surface: var(--color-carolina);
+  --on-surface: var(--color-base);
+  --on-surface-muted: var(--color-base-muted);
+  --rule: var(--color-deep);
+  --accent: var(--color-base);
+  background-color: var(--surface);
+  color: var(--on-surface);
+}
+
+/* 3. Base --------------------------------------------------------------- */
+
 html {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background-color: var(--color-base);
+  color: var(--color-cream);
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: var(--font-sans);
-  font-size: var(--text-body);
-  line-height: var(--text-body--line-height);
-  font-feature-settings: "kern" 1, "liga" 1, "cv11" 1;
+  font-size: var(--text-3);
+  line-height: var(--text-3--line-height);
+  letter-spacing: var(--text-3--letter-spacing);
+  font-feature-settings: "kern" 1, "liga" 1;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--color-carolina);
-  color: var(--color-white);
+  background-color: var(--accent);
+  color: var(--surface);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-carolina);
-  outline-offset: 3px;
+  outline: var(--focus-ring) solid var(--accent);
+  outline-offset: var(--focus-ring);
 }
+
+a {
+  color: inherit;
+}
+
+img,
+video,
+iframe {
+  display: block;
+}
+
+/* 4. Voices ------------------------------------------------------------- */
+
+@layer components {
+  /* The display voice. Direction 1 (chosen): Archivo itself, width 100, set
+     large and tight. Weight and tracking come from the type step. */
+  .display {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  /* The condensed voice: credits and catalog numbers. Same file, width 75,
+     tabular figures so numbers line up in columns. */
+  .condensed {
+    font-stretch: 75%;
+    font-variant-numeric: tabular-nums;
+    text-wrap: pretty;
+  }
+
+  /* Body copy never runs past 60ch. */
+  .measure {
+    max-width: var(--container-measure);
+    text-wrap: pretty;
+  }
+}
+
+/* 5. Components --------------------------------------------------------- */
 
 @layer components {
   .wrap {
     width: 100%;
-    max-width: 90rem;
+    max-width: var(--container-wrap);
     margin-inline: auto;
-    padding-inline: clamp(1rem, 3vw, 2.75rem);
+    padding-inline: var(--spacing-gutter);
   }
 
-  .display {
-    font-family: var(--font-display);
-    font-weight: 500;
+  .hairline-t {
+    border-top: var(--hairline) solid var(--rule);
+  }
+  .hairline-b {
+    border-bottom: var(--hairline) solid var(--rule);
   }
 
-  /* Small uppercase label: eyebrows, nav, arrow links. */
-  .label {
-    font-family: var(--font-sans);
-    font-size: var(--text-label);
-    line-height: var(--text-label--line-height);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-weight: 500;
+  .skip-link {
+    position: fixed;
+    top: var(--spacing-2);
+    left: var(--spacing-2);
+    z-index: 50;
+    padding: var(--spacing-2) var(--spacing-3);
+    background-color: var(--on-surface);
+    color: var(--surface);
+    transform: translateY(-200%);
+  }
+  .skip-link:focus-visible {
+    transform: none;
   }
 
-  .eyebrow {
-    font-family: var(--font-sans);
-    font-size: var(--text-label);
-    line-height: var(--text-label--line-height);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--color-muted);
+  /* --- Catalog number: "No. 007". The most repeated element on the site.
+     Same face, same treatment at every size. Sits a fraction off-true
+     (--tilt, --nudge from lib/hash by number) like a stamped number. --- */
+  .catno {
+    display: inline-block;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: var(--on-surface-muted);
+    transform: rotate(var(--tilt, 0deg)) translateY(var(--nudge, 0em));
+    transform-origin: left baseline;
+  }
+  .catno__label {
+    font-stretch: 100%;
+    font-weight: var(--font-weight-medium);
+  }
+  .catno__digits {
+    font-stretch: 75%;
+    font-weight: var(--font-weight-semibold);
+  }
+  .catno--card,
+  .catno--row {
+    font-size: var(--text-2);
+    line-height: var(--text-2--line-height);
+    letter-spacing: var(--text-2--letter-spacing);
+  }
+  .catno--page {
+    font-size: var(--text-9);
+    line-height: var(--text-9--line-height);
+    letter-spacing: var(--text-9--letter-spacing);
+    color: var(--on-surface);
+  }
+  .catno--page .catno__label {
+    font-size: 0.32em;
+    font-weight: var(--font-weight-semibold);
+    vertical-align: 1.1em;
+    margin-right: 0.15em;
   }
 
-  .credit {
-    font-family: var(--font-sans);
-    font-size: var(--text-credit);
-    line-height: var(--text-credit--line-height);
-  }
-  .credit-role {
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-size: var(--text-label);
-    font-weight: 500;
-  }
-
-  .muted {
-    color: var(--color-muted);
-  }
-
-  .prose-block {
-    max-width: 60ch;
-  }
-
-  .link {
-    color: var(--color-ink);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--color-carolina);
-  }
-  .link:hover {
-    color: var(--color-carolina);
-  }
-
-  /* Long-arrow action link (A24 register). */
-  .arrow-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 1.25rem;
-    color: var(--color-ink);
-    text-decoration: none;
-  }
-  .arrow-link__arrow {
-    width: 3.25rem;
-    height: 0.75rem;
-    flex: none;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 1.25;
-    transition: transform 200ms ease;
-  }
-  .arrow-link:hover {
-    color: var(--color-carolina);
-  }
-  .arrow-link:hover .arrow-link__arrow {
-    transform: translateX(0.375rem);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .arrow-link__arrow {
-      transition: none;
-    }
-    .arrow-link:hover .arrow-link__arrow {
-      transform: none;
-    }
-  }
-
-  /* A film frame: a plain 16:9 still. */
-  .still {
+  /* --- Frame: the two-layer dither reveal. Treated still at rest, the
+     untreated frame on hover, focus, focus-within, or .is-revealed. Every
+     frame is 16:9. The crossfade runs on --dur-4 / --ease-out; a card may
+     jitter the duration and delay via --reveal-dur / --reveal-delay. --- */
+  .frame {
     position: relative;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    background: var(--color-panel);
+    background-color: var(--color-base);
   }
-  .still > img {
+  .frame > img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  .frame__original {
+    opacity: 0;
+    transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-in);
+  }
+  .frame.is-revealed .frame__original,
+  .frame:focus-visible .frame__original,
+  .frame:focus-within .frame__original,
+  .frame-trigger:focus-visible .frame__original,
+  .frame-trigger:focus-within .frame__original {
+    opacity: 1;
+    transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-out) var(--reveal-delay, 0ms);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .frame:hover .frame__original,
+    .frame-trigger:hover .frame__original {
+      opacity: 1;
+      transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-out) var(--reveal-delay, 0ms);
+    }
+  }
+  .-no-motion .frame__original {
+    transition: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .frame__original {
+      transition: none;
+    }
+  }
+
+  /* Type-only leader for a film with no frame (private upload). Nothing is
+     generated in its place. */
+  .leader {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--spacing-4);
+    background-color: var(--color-surface);
+    color: var(--color-cream);
+  }
+
+  /* Scrim: information, not decoration. Solid base rising under any text
+     that must sit over a dithered still. Prefer moving the text out. */
+  .scrim {
+    background-image: linear-gradient(to top, var(--color-base) 0%, transparent 100%);
+  }
+
+  /* --- Film card: frame, then the caption row outside the frame. The
+     whole card is one link. No scale on hover. --- */
+  .card {
     display: block;
+    color: var(--on-surface);
+    text-decoration: none;
+  }
+  .card__caption {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--spacing-4);
+    row-gap: var(--spacing-1);
+    align-items: baseline;
+    padding-top: var(--spacing-3);
+  }
+  .card__caption > .catno {
+    grid-row: 1 / span 2;
+    align-self: start;
+    padding-top: 0.25em;
+  }
+  .card__title {
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--spacing-1) var(--spacing-4);
+    color: var(--on-surface-muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover .card__title {
+      color: var(--accent);
+    }
   }
 
-  /* Image panel: still on a light grey field with padding. */
-  .panel {
-    background: var(--color-panel);
-    padding: clamp(1.5rem, 6vw, 5rem);
+  /* --- Credit block: role right, name left, meeting at a centre gutter.
+     Condensed voice, tight leading, hairline above. Stacks below 40rem. --- */
+  .credits {
+    border-top: var(--hairline) solid var(--rule);
+    padding-top: var(--spacing-6);
+    font-stretch: 75%;
+    font-variant-numeric: tabular-nums;
+    font-size: var(--text-3);
+    line-height: 1.15;
+    letter-spacing: 0;
   }
-
-  /* Credit block: role and name pairs. Stacks below 40rem. */
-  .credit-block {
+  .credits__group + .credits__group {
+    border-top: var(--hairline) solid var(--rule);
+    margin-top: var(--spacing-6);
+    padding-top: var(--spacing-6);
+  }
+  .credits__group-title {
+    color: var(--on-surface-muted);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--spacing-3);
+  }
+  .credits__row {
     display: grid;
-    grid-template-columns: 1fr;
-    row-gap: 1rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--spacing-6);
+    padding-block: var(--spacing-1);
   }
-  .credit-block__row {
-    display: grid;
-    grid-template-columns: 1fr;
-    row-gap: 0.25rem;
-    padding-block: 0.875rem;
-    border-top: 1px solid var(--color-rule);
+  .credits__role {
+    text-align: right;
+    color: var(--on-surface-muted);
+    font-weight: var(--font-weight-regular);
   }
-  @media (min-width: 40rem) {
-    .credit-block {
+  .credits__name {
+    text-align: left;
+    color: var(--on-surface);
+    font-weight: var(--font-weight-semibold);
+  }
+  .credits__name--missing {
+    color: var(--on-surface-muted);
+    font-weight: var(--font-weight-regular);
+    font-style: italic;
+  }
+  .credits__aside {
+    margin-top: var(--spacing-6);
+    font-stretch: 100%;
+    font-variant-numeric: normal;
+    font-size: var(--text-3);
+    line-height: var(--text-3--line-height);
+    color: var(--on-surface-muted);
+    max-width: var(--container-measure);
+    margin-inline: auto;
+    text-align: center;
+    text-wrap: pretty;
+  }
+  @media (max-width: 39.999rem) {
+    .credits__row {
+      grid-template-columns: minmax(0, 1fr);
       row-gap: 0;
+      padding-block: var(--spacing-2);
     }
-    .credit-block__row {
-      grid-template-columns: minmax(0, 14rem) 1fr;
-      column-gap: 2rem;
-      align-items: baseline;
+    .credits__role {
+      text-align: left;
+      font-size: var(--text-2);
     }
-    .credit-block__aside {
-      grid-column: 1 / -1;
+    .credits__aside {
+      text-align: left;
     }
+  }
+
+  /* --- Award badge: THE ONLY GOLD. Gold is a data type: it appears if and
+     only if something won. Condensed voice, off-true by category. --- */
+  .award {
+    display: inline-block;
+    color: var(--color-gold);
+    font-stretch: 75%;
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-semibold);
+    transform: rotate(var(--tilt, 0deg));
+    transform-origin: left baseline;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .award--inline,
+  .award--count {
+    font-size: var(--text-2);
+    line-height: var(--text-2--line-height);
+    letter-spacing: 0;
+  }
+  .award--row {
+    font-size: var(--text-4);
+    line-height: 1.15;
+    letter-spacing: 0;
+  }
+  .award__person {
+    display: block;
+    color: var(--on-surface);
+    font-weight: var(--font-weight-regular);
+    white-space: normal;
+  }
+  .award__mark {
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.45em;
+    vertical-align: 0.05em;
+    background-color: currentColor;
+  }
+  a.award {
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    a.award:hover {
+      color: var(--on-surface);
+    }
+  }
+
+  /* --- Buttons and links. Sentence case, no arrows, no icons. Hover
+     changes colour only, on --dur-1 / --ease-out. --- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--spacing-12);
+    padding: var(--spacing-3) var(--spacing-6);
+    font-size: var(--text-2);
+    line-height: var(--text-2--line-height);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    border: var(--hairline) solid transparent;
+    transition:
+      color var(--dur-1) var(--ease-out),
+      background-color var(--dur-1) var(--ease-out),
+      border-color var(--dur-1) var(--ease-out);
+  }
+  .btn--primary {
+    background-color: var(--on-surface);
+    color: var(--surface);
+    border-color: var(--on-surface);
+  }
+  .btn--secondary {
+    background-color: transparent;
+    color: var(--on-surface);
+    border-color: var(--rule);
+  }
+  .btn--small {
+    min-height: var(--spacing-8);
+    padding: var(--spacing-1) var(--spacing-3);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn--primary:hover {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: var(--color-base);
+    }
+    .btn--secondary:hover {
+      border-color: var(--on-surface);
+    }
+  }
+
+  .link {
+    color: var(--on-surface);
+    text-decoration: underline;
+    text-decoration-thickness: var(--hairline);
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--accent);
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .link:hover {
+      color: var(--accent);
+    }
+  }
+  .link--quiet {
+    color: var(--on-surface-muted);
+    text-decoration-color: var(--rule);
+  }
+
+  /* --- Site nav: near-zero chrome. A hairline appears only once the page
+     has scrolled (data-scrolled on <html>, set by components/motion/ScrollFlag). --- */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: var(--surface);
+    border-bottom: var(--hairline) solid transparent;
+    transition: border-color var(--dur-2) var(--ease-out);
+  }
+  html[data-scrolled] .site-nav {
+    border-bottom-color: var(--rule);
+  }
+  .site-nav__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-6);
+    min-height: var(--spacing-16);
+  }
+  .site-nav__links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-6);
+  }
+  .site-nav__link {
+    font-size: var(--text-2);
+    line-height: var(--text-2--line-height);
+    font-weight: var(--font-weight-medium);
+    color: var(--on-surface);
+    text-decoration: none;
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .site-nav__link:hover {
+      color: var(--accent);
+    }
+  }
+
+  /* --- Wordmark: the club name in the display voice. Initials below 40rem
+     in the nav only. --- */
+  .wordmark {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--on-surface);
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .wordmark--nav {
+    font-size: var(--text-4);
+  }
+  .wordmark--footer {
+    font-size: var(--text-6);
+    letter-spacing: var(--text-6--letter-spacing);
+  }
+  .wordmark--hero {
+    font-size: var(--text-8);
+    letter-spacing: var(--text-8--letter-spacing);
+    line-height: var(--text-8--line-height);
+    white-space: normal;
+  }
+  .wordmark__short {
+    display: none;
+  }
+  @media (max-width: 39.999rem) {
+    .wordmark--nav .wordmark__long {
+      display: none;
+    }
+    .wordmark--nav .wordmark__short {
+      display: inline;
+    }
+  }
+
+  /* --- Video facade: the treated still with a play label; the iframe
+     replaces it on click. --- */
+  .facade {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+  }
+  .facade__play {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+  .player {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background-color: var(--color-base);
+  }
+  .player > iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
   }
 }

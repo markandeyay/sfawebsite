@@ -43,20 +43,20 @@ export default async function FilmPage({ params }: PageProps) {
 
   return (
     <article>
-      <div className="wrap pt-12 sm:pt-20 pb-16 sm:pb-24">
+      <div className="wrap pt-block sm:pt-section pb-section sm:pb-24">
         <FilmHeader film={film} />
         <div className="mt-12 sm:mt-16">
           <FilmFacade film={film} />
         </div>
       </div>
-      <div className="wrap py-16 sm:py-24 border-t border-rule">
+      <div className="wrap py-section sm:py-section border-t border-rule">
         <div className="grid gap-16 lg:grid-cols-2">
           {hasAwards ? <AwardStack film={film} /> : null}
           <FilmCredits film={film} />
         </div>
       </div>
       {prev || next ? (
-        <div className="wrap py-16 sm:py-24 border-t border-rule">
+        <div className="wrap py-section sm:py-section border-t border-rule">
           <AdjacentFilms prev={prev} next={next} year={film.year} />
         </div>
       ) : null}

@@ -1,56 +1,71 @@
+import Link from "next/link";
+import type { CSSProperties } from "react";
+import { jitter } from "@/lib/hash";
+
 /**
- * An award, set as type. No gold, no laurels: a small uppercase label in
- * Carolina Blue for a category, or the winner's title in the display face.
- * The prop shape is shared by the film page and the ceremony page.
+ * THE ONLY GOLD ON THE SITE.
+ *
+ * Gold is a data type: it appears if and only if something won. This is the
+ * one component allowed to reference the gold token (scripts/check-tokens.mjs
+ * fails the build if the word appears anywhere else outside app/globals.css).
+ * If a second place seems to need gold, that is a signal to reconsider, not
+ * to add a class.
+ *
+ * The mark is a small solid square in gold before the text: the shape of an
+ * award envelope's seal, and it stays a rectangle like everything else.
  */
-import type { ReactNode } from "react";
 
-type Size = "sm" | "md" | "lg";
+type Mode = "inline" | "row" | "count";
 
-interface BaseProps {
-  size?: Size;
+interface AwardBadgeProps {
+  /** The category name, e.g. "Best Cinematography". Required unless mode is "count". */
+  category?: string;
+  /** The winning person, when the club has published one. */
+  person?: string | null;
+  /** How many wins, for mode "count". */
+  count?: number;
+  /** inline: on a film page list; row: an award row on the ceremony page; count: "7 wins" on cards and teasers. */
+  mode?: Mode;
+  /** Render as a link to this href (the film page, usually). */
+  href?: string;
+  /** Set when the badge is the content of a surrounding link, so it takes hover styling from it. */
+  linked?: boolean;
   className?: string;
 }
 
-interface CategoryProps extends BaseProps {
-  kind?: "category";
-  category: string;
+/**
+ * Engineered irregularity, hook 3: each badge sits off-true within
+ * +/-0.6deg, from its category name, so a column of winners on the ceremony
+ * page reads as fifteen stamped seals rather than one repeated row.
+ */
+export function awardTilt(seed: string): CSSProperties {
+  return { "--tilt": `${jitter(`award:${seed}`, -0.6, 0.6).toFixed(2)}deg` } as CSSProperties;
 }
 
-interface WinnerProps extends BaseProps {
-  kind: "winner";
-  children: ReactNode;
-  /** The winning person, when the club has published one. */
-  person?: string | null;
-  /** Set when the badge is the content of a link. */
-  linked?: boolean;
-}
-
-export type AwardBadgeProps = CategoryProps | WinnerProps;
-
-export function AwardBadge(props: AwardBadgeProps) {
-  const size = props.size ?? "md";
-  const className = props.className ?? "";
-
-  if (props.kind === "winner") {
-    const titleSize =
-      size === "lg" ? "text-display-md" : size === "md" ? "text-display-sm" : "text-[1.125rem]";
+export function AwardBadge({ category, person, count, mode = "inline", href, linked = false, className = "" }: AwardBadgeProps) {
+  const text =
+    mode === "count"
+      ? `${count ?? 0} ${count === 1 ? "win" : "wins"}`
+      : (category ?? "");
+  const seed = mode === "count" ? `count:${count ?? 0}` : text;
+  const cls = `award award--${mode} ${linked ? "award--linked" : ""} ${className}`;
+  const body = (
+    <>
+      <span className="award__mark" aria-hidden="true" />
+      {text}
+      {mode !== "count" && person ? <span className="award__person">{person}</span> : null}
+    </>
+  );
+  if (href) {
     return (
-      <span className={`block ${className}`}>
-        <span
-          className={`display block text-ink ${titleSize} ${
-            props.linked ? "transition-[color] group-hover:text-carolina" : ""
-          }`}
-        >
-          {props.children}
-        </span>
-        {props.person ? <span className="credit block mt-1 muted">{props.person}</span> : null}
-      </span>
+      <Link href={href} className={cls} style={awardTilt(seed)}>
+        {body}
+      </Link>
     );
   }
-
-  const textSize = size === "lg" ? "text-[0.8125rem]" : "text-label";
   return (
-    <span className={`label ${textSize} text-carolina ${className}`}>{props.category}</span>
+    <span className={cls} style={awardTilt(seed)}>
+      {body}
+    </span>
   );
 }

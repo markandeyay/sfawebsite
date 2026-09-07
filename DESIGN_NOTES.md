@@ -710,3 +710,233 @@ a placeholder and reverted. Passes 4 and 5: the lede orphaned "2025." at
 
 Pushed to `main`; Vercel rebuilt production at
 https://sfawebsite-kappa.vercel.app. Verified live after the push.
+
+## 8. Third direction (2026-09-07): the brief's four moves
+
+The client rejected the second direction as "generic vibe-coded slop".
+`REMEDIATION_BRIEF.md` is the response; `AUDIT.md` is the diagnosis. This
+section is the design-system record for Wave 2. Sections 1 to 7 stay as the
+record of the two earlier directions.
+
+### 8.1 Why the second direction failed
+
+From `AUDIT.md` section 6. The token file was tidy (eight type sizes, six
+colours, no stray hex) and that was not the problem. The system reproduced a
+borrowed grammar (eyebrow, headline, long arrow, grey panel, Inter Tight)
+that, detached from A24's content, is the template every generated marketing
+page converges on, recoloured to the equally common white/navy/blue/Inter
+cluster. Nothing on any route was specific to a film club: no catalog
+numbers, no image treatment (the dither pipeline existed and was switched
+off, so twelve mixed thumbnails read as a YouTube playlist), no end-credit
+block (roles were eyebrow/headline rows), no gold (a win and a hover state
+were the same Carolina). Motion was eighteen framework-default 150ms
+transitions and native scroll. Section padding was four values with no rule
+behind the choice, and the accent was on eyebrows, hovers, links, focus,
+selection and award labels alike.
+
+### 8.2 Tokens
+
+`app/globals.css` is the single source of truth; `scripts/check-tokens.mjs`
+(run by `npm run check`) fails on a hex colour, a literal ms/s duration, the
+word "gold", a Tailwind arbitrary value with px/rem/#, a `duration-*` /
+`delay-*` / `animate-*` / `ease-[...]` utility, a palette utility used
+outside the token file, or a second `scroll` listener. Tailwind's numeric
+spacing multiplier is off (`--spacing: initial`), so `p-5`, `mt-7`, `gap-10`
+do not exist.
+
+**Colours.** Six palette tokens (SFA_SYSTEM_DESIGN 5.1, locked) plus two
+alphas. Components never use palette utilities; they use the role utilities,
+which resolve on the element (`@theme inline`) so one class on a section
+recolours every child.
+
+| Palette token | Value | Notes |
+|---|---|---|
+| `--color-base` | `#0B0D0F` | Page ground; the dark tone in every still |
+| `--color-surface` | `#14181C` | Footer, leaders, raised blocks |
+| `--color-carolina` | `#4B9CD3` | Accent; the light tone in every still. 6.5:1 on base |
+| `--color-deep` | `#2A5C7D` | Hairlines only. Never text |
+| `--color-gold` | `#D4AF37` | `AwardBadge` only. 9.3:1 on base, 8.5:1 on surface |
+| `--color-cream` | `#EDE9E1` | All text. 15:1 on base |
+| `--color-cream-muted` | cream at 64% | Secondary text. 6.9:1 on base |
+| `--color-base-muted` | base at 78% | Secondary text on a carolina ground. 4.9:1 |
+
+| Role variable | Utility | `.on-base` (default) | `.on-surface` | `.on-carolina` |
+|---|---|---|---|---|
+| `--surface` | `bg-ground` | base | surface | carolina |
+| `--on-surface` | `text-fg` | cream | cream | base |
+| `--on-surface-muted` | `text-fg-muted` | cream-muted | cream-muted | base-muted |
+| `--rule` | `border-rule` | deep | deep | deep |
+| `--accent` | `text-accent` | carolina | carolina | base |
+
+**Type.** Nine fluid steps, `clamp()` between a 24rem and a 90rem viewport,
+leading, tracking and (from step 5) weight set per step in the theme.
+Utilities `text-1` .. `text-9`.
+
+| Step | Size | Leading | Tracking | Weight | Used for |
+|---|---|---|---|---|---|
+| 1 | 0.75 to 0.8125rem | 1.4 | 0.01em | 400 | captions, the smallest label |
+| 2 | 0.875 to 0.9375rem | 1.35 | 0 | 400 | credits, catalog number on cards and rows, nav links, buttons, footer |
+| 3 | 1 to 1.0625rem | 1.55 | 0 | 400 | body, credit block names |
+| 4 | 1.125 to 1.25rem | 1.45 | -0.005em | 400 | lede, logline, award row badge |
+| 5 | 1.375 to 1.75rem | 1.12 | -0.015em | 600 | card titles, winner titles |
+| 6 | 1.75 to 2.5rem | 1.02 | -0.025em | 600 | section headings, footer wordmark |
+| 7 | 2.5 to 4rem | 0.96 | -0.03em | 700 | page titles |
+| 8 | 3.5 to 6.5rem | 0.9 | -0.035em | 700 | display: hero wordmark, film title |
+| 9 | 5 to 12rem | 0.85 | -0.02em | 700 | scale moments, condensed voice: catalog number on the film page, tally numerals |
+
+**Spacing.** Geometric from 4px, closed: `1` 0.25rem, `2` 0.5, `3` 0.75,
+`4` 1, `6` 1.5, `8` 2, `12` 3, `16` 4, `24` 6, `32` 8 (plus `0`). Fluid
+rhythm: `gutter` clamp(1rem, 3vw, 2.5rem) (the wrap's side padding),
+`block` clamp(2rem, 5vw, 4rem) (sub-blocks), `section` clamp(4rem, 10vw,
+8rem) (ordinary sections), `stage` clamp(6rem, 15vw, 12rem) (hero and
+finale: section x 1.5). Hierarchy through unequal padding. Measures:
+`max-w-wrap` 90rem, `max-w-measure` 60ch, `max-w-short` 34ch, `max-w-title`
+14ch. Radius 0 everywhere; no shadows; the one hairline is `--hairline`
+(1px) and the one focus ring `--focus-ring` (2px), both defined once.
+
+**Easings (exactly four)** and **durations (exactly five)**, mirrored
+one-to-one in `lib/motion.ts` (`EASE`, `EASE_FN`, `DUR`). Tailwind's
+`ease-out` / `ease-in` / `ease-in-out` / `ease-linear` map to these;
+durations are `dur-1` .. `dur-5` (a custom utility; `duration-<n>` is
+banned because it takes any number). Bare `transition` utilities default to
+`--dur-1` / `--ease-out`.
+
+| Token | Value | Use |
+|---|---|---|
+| `--ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | expo-out: arrivals, reveals, hover-in |
+| `--ease-in` | `cubic-bezier(0.7, 0, 0.84, 0)` | expo-in: exits, hover-out |
+| `--ease-in-out` | `cubic-bezier(0.83, 0, 0.17, 1)` | state changes that go and come back |
+| `--ease-linear` | `linear` | continuous motion only |
+| `--dur-1` | 120ms | colour and focus micro-changes |
+| `--dur-2` | 240ms | small moves (the nav hairline) |
+| `--dur-3` | 480ms | reveals |
+| `--dur-4` | 800ms | the dither crossfade |
+| `--dur-5` | 1400ms | hero orchestration |
+
+### 8.3 Type system, and the rejected display direction
+
+**Archivo**, one variable file loaded once with the width axis
+(`next/font/google`, `axes: ["wdth"]`). Two voices from one family:
+
+- Width 100: interface and body. 400 body, 500 labels, 600 to 700 display.
+- Width 75 (`.condensed`, `font-stretch: 75%`, tabular figures): credits and
+  catalog numbers. Widths 68, 75 and 82 were set side by side on a credit
+  block, a `No. 007` at step 9 and a `No. 031` at step 2 (bottom of the
+  comparison page). 68 squeezed the credits at text size; 82 was barely
+  distinct from the body voice. 75 is the condensed width that still reads
+  as the same family.
+
+**Direction 1 (chosen): Archivo itself as display.** Width 100, 600 to 700,
+large and tight (tracking -0.025 to -0.035em, leading 0.9 to 1.02).
+`docs/type-direction-chosen.png`.
+
+**Direction 2 (rejected): a serif for display.** Two faces were built so the
+rejection is of the idea, not of one font: Instrument Serif (the default
+reach of every dark editorial layout) and Newsreader (a transitional face
+with an optical-size axis, chosen precisely because it is not Instrument or
+Bodoni). `docs/type-direction-rejected.png`. Rejected because:
+
+1. The catalog number is the most repeated element on the site. In
+   Direction 1 its condensed digits, the credit block and the display share
+   one skeleton, so number, card, credits and heading read as one system.
+   In both serif directions the number in serif and the credits in
+   condensed grotesk are two systems meeting on every card.
+2. Direction 2a is the Instrument-Serif-on-black template the brief names as
+   the risk (3.2); it cannot be told apart from it at a glance.
+3. Direction 2b avoids that but puts the ceremonial register on every page.
+   The brief reserves the Academy register for the awards page alone (Part
+   2, The Academy); the ceremony can reach it through step 8 and 9 scale,
+   negative space and gold, without a second face.
+4. The halftone stills plus a heavy grotesk read as printed matter, a
+   contact sheet with a stamped number. The serif reads as an invitation,
+   which is the wrong object for eleven of the twelve films.
+
+The wordmark is the club's name, "Student Film Association", in the display
+voice (initials only in the nav below 40rem). There is no logo.
+
+### 8.4 The four components, and the shell they depend on
+
+**`CatalogNumber` `{ no, size: "card" | "row" | "page" }`.** Renders
+`No. 007`: "No." in the grotesk at 500, a thin space, the digits condensed
+at 600 with tabular figures. Card and row are step 2 in `--on-surface-muted`;
+page is step 9 in `--on-surface` with "No." reduced to 0.32em and raised to
+the cap line. Never carolina, never gold. Accessible name "Catalog number
+7" (visually hidden text; the visible parts are `aria-hidden`). Tilt: 8.5.
+
+**`FilmCard` `{ film, headingLevel?, priority? }`.** A 16:9 `Frame` (the
+640x360 treated rendition at rest; the 1280 original on hover, focus and
+focus-within), then a caption row outside the frame: the catalog number at
+the start, the title in step 5, and beneath the title in the condensed
+voice the director, "Festival only" when `viewable` is false, and the win
+count in gold if the film won. The whole card is one link with the focus
+ring on it; hover changes the title colour only. No scale. A film with
+`still: null` gets the type-only leader (a surface rectangle, "No frame
+available" in the credits voice, the title in step 5). Timing jitter: 8.5.
+
+**`CreditBlock` `{ rows | groups, aside?, headingId? | label? }`.** A
+`role="group"` of `<dl>`s. Two equal columns meeting at a centre gutter of
+`--spacing-6`; role right-aligned in `--on-surface-muted` at 400, name
+left-aligned at 600; condensed voice, step 3, leading 1.15; a hairline
+above the block and between groups. A missing name renders "Name to be
+supplied" in italic muted, never a blank. The `aside` (the invitation to
+send credits) sits inside the block in the body voice, centred, no box.
+Below 40rem the row stacks, role over name, still condensed.
+
+**`AwardBadge` `{ category?, person?, count?, mode: "inline" | "row" |
+"count", href?, linked? }`.** The only file containing the word gold. The
+mark is a small solid gold square before the text (an envelope seal; a
+rectangle like everything else), the category in the condensed voice at
+600, the person on a second line in cream at 400 when published. `inline`
+is step 2 (film page lists), `row` is step 4 (ceremony rows), `count`
+renders "7 wins" / "1 win" for cards and teasers. Gold on base is 9.3:1.
+Tilt: 8.5.
+
+The shell: **`Still` / `Frame`** (two stacked `<img>`, plain `<img>` so the
+lossless two-colour webp is never recompressed; crossfade on `--dur-4`,
+`--ease-out` in and `--ease-in` out; hover only under `(hover: hover) and
+(pointer: fine)`; `.is-revealed` for route agents; instant under
+`.-no-motion` and `prefers-reduced-motion`), **`SiteNav`** (sticky, the
+wordmark and three links on the page's own ground; a hairline appears only
+under `html[data-scrolled]`), **`SiteFooter`** (`.on-surface`, real links,
+the colophon "Catalog numbers run in production order across all years"),
+**`ButtonLink`** (primary cream fill, secondary hairline, link underlined in
+the accent; sentence case, no arrows, no icons; hover changes colour only on
+`--dur-1`), **`SectionHeading`** (title and one optional sentence, no
+eyebrow), **`Wordmark`**, **`VideoEmbed`** (the treated still with a solid
+"Play the film" label, `aria-label="Play FDOC"`; the iframe is created on
+click). `ArrowLink` is deleted.
+
+### 8.5 Engineered irregularity hooks (brief 4.6)
+
+All from `lib/hash.ts` (FNV-1a, deterministic, so server and client agree),
+never `Math.random`. Each is a custom property on the element; the CSS reads it.
+
+| Where | Property | Range | Seed |
+|---|---|---|---|
+| `CatalogNumber` | `--tilt` | -0.6 to +0.6deg | `catno:<no>` |
+| `CatalogNumber` | `--nudge` (baseline) | -0.02 to +0.02em | `catno:<no>:y` |
+| `FilmCard` | `--reveal-dur` | 0.85x to 1.15x of `--dur-4` (680 to 920ms) | `card:<slug>` |
+| `FilmCard` | `--reveal-delay` | 0 to 90ms | `card:<slug>:delay` |
+| `AwardBadge` | `--tilt` | -0.6 to +0.6deg | `award:<category>` or `award:count:<n>` |
+| stills | halftone screen phase | per film | the pipeline (8.6) |
+
+The motion agent adds per-glyph rotation and baseline offset on split
+headlines and per-element reveal delays and easings (8.7).
+
+### 8.6 The halftone
+
+Every still is a two-colour print at rest: base and carolina, a rotated
+clustered-dot halftone screen at a 16px pitch with a per-film phase offset
+so no two stills share a grain alignment, written at build time by
+`scripts/process-stills.ts` as `{slug}-treated.webp` (1280x720, lossless),
+`{slug}-treated-sm.webp` (640x360, for cards) and `{slug}.webp` (the
+original). The choice over Bayer and Floyd-Steinberg, the contact sheets and
+the serving rules (no `image-rendering: pixelated`; text over a treated
+still always has a scrim) are in `scripts/DITHER_REPORT.md`. Carolina is
+inside the artwork, which is where UNC lives on this site.
+
+### 8.7 Motion
+
+Merged by the lead from `docs/motion-notes.md`: Lenis (the one dependency
+added this wave, by the motion agent), the single scroll broadcast, the
+reveal contract, the reduced-motion contract, and what was not ported.

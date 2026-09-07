@@ -33,11 +33,10 @@ export function FilmCredits({ film }: { film: Film }) {
 
   return (
     <section aria-labelledby="credits">
-      <h2 id="credits" className="display text-display-md text-ink scroll-mt-24">
+      <h2 id="credits" className="display text-6 text-fg scroll-mt-24">
         Credits
       </h2>
-      <CreditBlock className="mt-10" label={`${film.title} credits`} rows={film.credits}>
-        <p className="muted prose-block">
+      <CreditBlock className="mt-8" label={`${film.title} credits`} rows={film.credits} aside={<p className="text-fg-muted measure">
           {n > 0 ? (
             <>
               The rest of this crew is uncredited. {film.title} won for {joinList(departments)},
@@ -47,8 +46,7 @@ export function FilmCredits({ film }: { film: Film }) {
           ) : (
             <>Only the director is credited so far. Send the full credits and they appear here.</>
           )}
-        </p>
-      </CreditBlock>
+        </p>} />
     </section>
   );
 }

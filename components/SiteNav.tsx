@@ -1,37 +1,33 @@
 import Link from "next/link";
+import { NAV, JOIN_NAV } from "@/lib/site";
+import { ButtonLink } from "./Button";
 import { Wordmark } from "./Wordmark";
-import { NAV } from "@/lib/site";
 
 /**
- * Three-part bar: section links left, the mark centered, the one action
- * right. White ground, ink type. It is not overlaid on the hero, so it
- * stays legible over any still.
+ * Chrome reduced to almost nothing: the mark at the left, two links and one
+ * action at the right, on the page's own ground. No rule until the page has
+ * scrolled; components/motion/ScrollFlag sets data-scrolled on <html> and
+ * app/globals.css draws the hairline.
  */
 export function SiteNav() {
   return (
-    <header className="bg-paper">
-      <nav
-        className="wrap grid grid-cols-[1fr_auto_1fr] items-center py-5 sm:py-6"
-        aria-label="Site"
-      >
-        <ul className="flex items-center gap-5 sm:gap-8">
-          {NAV.filter((i) => i.label !== "Join").map((item) => (
+    <header className="site-nav">
+      <nav className="wrap site-nav__bar" aria-label="Site">
+        <Wordmark size="nav" />
+        <ul className="site-nav__links">
+          {NAV.map((item) => (
             <li key={item.href}>
-              <Link href={item.href} className="label text-ink no-underline transition-[color] hover:text-carolina">
-                {item.label.replace(/ \d{4}$/, "")}
-                {/\d{4}$/.test(item.label) ? (
-                  <span className="hidden sm:inline"> {item.label.slice(-4)}</span>
-                ) : null}
+              <Link href={item.href} className="site-nav__link">
+                {item.label}
               </Link>
             </li>
           ))}
+          <li>
+            <ButtonLink href={JOIN_NAV.href} variant="secondary" small>
+              {JOIN_NAV.label}
+            </ButtonLink>
+          </li>
         </ul>
-        <Wordmark />
-        <div className="justify-self-end">
-          <Link href="/#join" className="label text-ink no-underline transition-[color] hover:text-carolina">
-            Join
-          </Link>
-        </div>
       </nav>
     </header>
   );

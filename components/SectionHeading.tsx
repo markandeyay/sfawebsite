@@ -2,34 +2,24 @@ import type { ReactNode } from "react";
 
 interface SectionHeadingProps {
   title: ReactNode;
-  /** Small uppercase label above the heading. */
-  eyebrow?: ReactNode;
   /** One plain sentence under the heading. */
   lede?: ReactNode;
   id?: string;
-  as?: "h1" | "h2";
-  size?: "lg" | "md";
+  as?: "h1" | "h2" | "h3";
+  /** Type step: 6 for section headings, 7 for page titles. */
+  step?: 6 | 7;
   className?: string;
 }
 
-/** Eyebrow, a large tight headline, and optionally one sentence. */
-export function SectionHeading({
-  title,
-  eyebrow,
-  lede,
-  id,
-  as = "h2",
-  size = "lg",
-  className = "",
-}: SectionHeadingProps) {
+/** A heading that stands alone. No eyebrow above it, ever. */
+export function SectionHeading({ title, lede, id, as = "h2", step = 6, className = "" }: SectionHeadingProps) {
   const Tag = as;
   return (
     <div className={className}>
-      {eyebrow ? <p className="eyebrow mb-4">{eyebrow}</p> : null}
-      <Tag id={id} className={`display text-ink scroll-mt-24 ${size === "lg" ? "text-display-lg" : "text-display-md"}`}>
+      <Tag id={id} className={`display text-${step} scroll-mt-16`}>
         {title}
       </Tag>
-      {lede ? <p className="text-body-lg mt-5 prose-block">{lede}</p> : null}
+      {lede ? <p className="text-4 measure mt-4">{lede}</p> : null}
     </div>
   );
 }

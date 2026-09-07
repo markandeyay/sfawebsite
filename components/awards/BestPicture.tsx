@@ -1,5 +1,5 @@
 import type { AwardCategory, Film } from "@/content/types";
-import { ArrowLink } from "@/components/ArrowLink";
+import { ButtonLink } from "@/components/Button";
 
 interface BestPictureProps {
   category: AwardCategory;
@@ -14,16 +14,16 @@ interface BestPictureProps {
 export function BestPicture({ category, film }: BestPictureProps) {
   const href = `/films/${film.slug}`;
   return (
-    <section aria-labelledby="best-picture" className="border-t border-rule pt-24 pb-20 sm:pt-40 sm:pb-28">
-      <p className="eyebrow mb-4">{category.category}</p>
-      <h2 id="best-picture" className="display text-display-lg text-ink scroll-mt-24">
+    <section aria-labelledby="best-picture" className="border-t border-rule pt-section pb-section sm:pt-section sm:pb-section">
+      <p className="condensed text-2 text-fg-muted mb-4">{category.category}</p>
+      <h2 id="best-picture" className="display text-7 text-fg scroll-mt-24">
         {film.title}
       </h2>
-      <p className="text-body-lg mt-6 muted">Directed by {film.director}</p>
-      <div className="mt-10">
-        <ArrowLink href={href}>
+      <p className="text-4 mt-6 text-fg-muted">Directed by {film.director}</p>
+      <div className="mt-8">
+        <ButtonLink variant="link" href={href}>
           {film.viewable ? "Watch" : "See"} {film.title}
-        </ArrowLink>
+        </ButtonLink>
       </div>
     </section>
   );

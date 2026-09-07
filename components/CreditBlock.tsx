@@ -2,40 +2,61 @@ import type { ReactNode } from "react";
 
 export interface CreditRow {
   role: string;
-  /** null renders an explicit "to be supplied" state, never a blank. */
+  /** null renders an explicit "to be supplied" state in the same voice, never a blank. */
   name: string | null;
 }
 
-interface CreditBlockProps {
+export interface CreditGroup {
+  /** Optional heading for the group, e.g. "Cast". */
+  title?: string;
   rows: CreditRow[];
-  /** Accessible label for the list, e.g. "FDOC credits". */
-  label: string;
-  /** Optional aside rendered inside the block, spanning both columns. */
-  children?: ReactNode;
+}
+
+interface CreditBlockProps {
+  /** The rows, in source order. Ignored when `groups` is given. */
+  rows: CreditRow[];
+  /** Grouped rows, separated by a hairline. */
+  groups?: CreditGroup[];
+  /** The empty-state invitation, rendered inside the block in the body voice. */
+  aside?: ReactNode;
+  /** id of the heading that names this block (aria-labelledby). */
+  headingId?: string;
+  /** Accessible name when there is no heading. */
+  label?: string;
   className?: string;
 }
 
-/**
- * Role and name pairs on thin rules: uppercase role in the left column,
- * name in the display face on the right. Stacks below 40rem. Layout lives
- * in app/globals.css under `.credit-block`.
- */
-export function CreditBlock({ rows, label, children, className = "" }: CreditBlockProps) {
+function Row({ row, index }: { row: CreditRow; index: number }) {
   return (
-    <dl className={`credit-block ${className}`} aria-label={label}>
-      {rows.map((row, i) => (
-        <div className="credit-block__row" key={`${row.role}-${row.name ?? i}`}>
-          <dt className="eyebrow pt-1">{row.role}</dt>
-          <dd className="display text-display-sm text-ink">
-            {row.name ?? (
-              <span className="muted font-sans text-body-lg font-normal tracking-normal">
-                Name to be supplied
-              </span>
-            )}
-          </dd>
-        </div>
+    <div className="credits__row" key={`${row.role}-${row.name ?? index}`}>
+      <dt className="credits__role">{row.role}</dt>
+      <dd className={row.name ? "credits__name" : "credits__name credits__name--missing"}>
+        {row.name ?? "Name to be supplied"}
+      </dd>
+    </div>
+  );
+}
+
+/**
+ * The end-credit block. Role right-aligned, name left-aligned, meeting at a
+ * centre gutter; condensed voice, leading 1.15, a hairline above. Used for
+ * the exec board and at the bottom of every film page. Stacks (role over
+ * name, still condensed) below 40rem. Layout is in app/globals.css under
+ * .credits.
+ */
+export function CreditBlock({ rows, groups, aside, headingId, label, className = "" }: CreditBlockProps) {
+  const list = groups ?? [{ rows }];
+  return (
+    <div className={`credits ${className}`} role="group" aria-labelledby={headingId} aria-label={headingId ? undefined : label}>
+      {list.map((group, gi) => (
+        <dl className="credits__group" key={group.title ?? gi}>
+          {group.title ? <div className="credits__group-title">{group.title}</div> : null}
+          {group.rows.map((row, i) => (
+            <Row row={row} index={i} key={`${row.role}-${row.name ?? i}`} />
+          ))}
+        </dl>
       ))}
-      {children ? <div className="credit-block__aside border-t border-rule pt-6">{children}</div> : null}
-    </dl>
+      {aside ? <div className="credits__aside">{aside}</div> : null}
+    </div>
   );
 }

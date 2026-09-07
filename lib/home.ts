@@ -1,13 +1,19 @@
-import { getCeremonies, getFilm } from "@/content";
-import type { Film } from "@/content/types";
+import { getCeremonies, getKeyFilm } from "@/content";
+import type { Ceremony, Film } from "@/content/types";
 
-/** The Best Picture winner of the most recent ceremony: the hero frame. */
-export function getHeroFilm(): Film {
-  const ceremonies = getCeremonies().sort((a, b) => b.year - a.year);
-  for (const c of ceremonies) {
-    const bp = c.categories.find((cat) => cat.category === "Best Picture");
-    const film = bp ? getFilm(bp.winner.filmSlug) : undefined;
-    if (film?.still) return film;
-  }
-  throw new Error("No Best Picture winner with a still found for the hero.");
+/** The most recent ceremony in the data. */
+export function getLatestCeremony(): Ceremony | undefined {
+  return getCeremonies().sort((a, b) => b.year - a.year)[0];
+}
+
+/**
+ * The site's key film: the Best Picture winner of the latest ceremony
+ * (Cannes gives each edition one piece of key art). Used for the hero and
+ * for the link-preview image. Can have `still: null`; callers decide the
+ * type-only fallback.
+ */
+export function getSiteKeyFilm(): Film {
+  const ceremony = getLatestCeremony();
+  if (!ceremony) throw new Error("No ceremony in content/awards.json; the site needs at least one.");
+  return getKeyFilm(ceremony);
 }

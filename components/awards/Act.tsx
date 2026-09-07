@@ -14,11 +14,11 @@ interface ActProps {
  */
 export function Act({ id, title, categories, films }: ActProps) {
   return (
-    <section aria-labelledby={id} className="border-t border-rule py-16 sm:py-24">
-      <h2 id={id} className="display text-display-md text-ink scroll-mt-24">
+    <section aria-labelledby={id} className="border-t border-rule py-section sm:py-section">
+      <h2 id={id} className="display text-6 text-fg scroll-mt-24">
         {title}
       </h2>
-      <dl className="mt-8 sm:mt-10">
+      <dl className="mt-8 sm:mt-8">
         {categories.map((c) => (
           <AwardRow key={c.category} category={c} films={films} />
         ))}

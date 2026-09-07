@@ -18,20 +18,17 @@ const ROLES = [
 
 export function Crew() {
   return (
-    <section id="crew" aria-labelledby="crew-title" className="wrap py-20 sm:py-28 border-t border-rule">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-16">
+    <section id="crew" aria-labelledby="crew-title" className="wrap py-section sm:py-section border-t border-rule">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
         <SectionHeading
           id="crew-title"
-          eyebrow="The crew"
           title="Who runs it."
           lede="The officer board runs the club, executive producers run the slate, and the guilds run the departments."
         />
-        <CreditBlock label="Executive board" rows={ROLES.map((role) => ({ role, name: null }))}>
-          <p className="muted text-[0.9375rem] prose-block">
+        <CreditBlock label="Executive board" rows={ROLES.map((role) => ({ role, name: null }))} aside={<p className="text-fg-muted text-2 measure">
             Names go here as the club supplies them. Each one becomes a link to that
             member&rsquo;s credits across every film they worked on.
-          </p>
-        </CreditBlock>
+          </p>} />
       </div>
     </section>
   );

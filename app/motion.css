@@ -1,0 +1,116 @@
+/*
+  Motion CSS. Owned by the motion agent; imported by app/globals.css after the tailwind import.
+  References ONLY tokens defined in app/globals.css: --dur-1..5, --ease-*, --spacing-*.
+  No literal durations in this file (scripts/check-tokens greps for them); the stagger and the
+  zero delay are derived from --dur-1.
+*/
+
+/* Lenis needs these four rules; copied from lenis/dist/lenis.css (1.3.26) so no second stylesheet ships.
+   lenis-smooth is only present while a smooth scroll is in flight, so iframes stay clickable at rest. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Reveal: defaults. Reveal.tsx overrides --enter-delay and --enter-ease inline when seeded.
+   (Named "enter", not "reveal": Frame already uses --reveal-delay for the dither crossfade, and custom properties inherit.) */
+.reveal {
+  --stagger: calc(var(--dur-1) / 7.5);
+  --enter-delay: calc(var(--dur-1) * 0);
+  --enter-ease: var(--ease-out);
+}
+
+/* Hidden state exists only once the head script has confirmed JS runs (.js on <html>).
+   Server markup carries no hidden state, so without JS the page is fully readable. */
+.js .reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+.js .reveal--rise {
+  transform: translateY(var(--spacing-3));
+}
+.js .reveal--none,
+.js .reveal:has(.split-glyph) {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition-property: opacity, transform;
+  transition-duration: var(--dur-3);
+  transition-timing-function: var(--enter-ease);
+  transition-delay: var(--enter-delay);
+}
+/* SplitText: words never break across lines; glyphs rest slightly off-true (engineered irregularity). */
+.split-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+.split-glyph {
+  display: inline-block;
+  transform: rotate(var(--rot, 0deg)) translateY(var(--dy, 0em));
+}
+.js .reveal .split-glyph {
+  opacity: 0;
+  transform: translateY(0.35em) rotate(var(--rot, 0deg));
+  will-change: opacity, transform;
+}
+.js .reveal.is-in .split-glyph {
+  opacity: 1;
+  transform: rotate(var(--rot, 0deg)) translateY(var(--dy, 0em));
+  transition-property: opacity, transform;
+  transition-duration: var(--dur-3);
+  transition-timing-function: var(--enter-ease);
+  transition-delay: calc(var(--enter-delay) + min(var(--i, 0), 40) * var(--stagger));
+}
+
+/* Settled: Reveal.tsx adds is-settled when the transition is done, releasing the compositor layers.
+   Placed after the glyph rules so it wins at equal specificity. */
+.reveal.is-settled,
+.reveal.is-settled .split-glyph {
+  will-change: auto;
+}
+
+/* Reduced motion (brief 4.3, 4.7): the -no-motion root class is the contract; the media query
+   covers the case where the head script did not run. Everything is forced to its settled state.
+   Glyphs keep their resting tilt: it is static, not motion. */
+.-no-motion .reveal,
+.-no-motion .reveal .split-glyph {
+  opacity: 1 !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+.-no-motion .reveal {
+  transform: none !important;
+}
+.-no-motion .reveal .split-glyph {
+  transform: rotate(var(--rot, 0deg)) translateY(var(--dy, 0em)) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal .split-glyph {
+    opacity: 1 !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+  .reveal {
+    transform: none !important;
+  }
+  .reveal .split-glyph {
+    transform: rotate(var(--rot, 0deg)) translateY(var(--dy, 0em)) !important;
+  }
+}
+
+/* Hover-only motion belongs under this query, built here rather than built and hidden (brief 4.7).
+   The motion layer has no hover effect of its own; the dither crossfade lives with Frame. */

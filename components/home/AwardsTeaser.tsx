@@ -1,10 +1,10 @@
 import type { Ceremony, Film } from "@/content/types";
 import { Frame } from "@/components/Frame";
-import { ArrowLink } from "@/components/ArrowLink";
+import { ButtonLink } from "@/components/Button";
 import { numberWord } from "./CatalogStrip";
 
 /**
- * Feature block: still in a grey panel on one side, eyebrow, headline, and
+ * Feature block: still in a grey panel on one side, condensed text-2 text-fg-muted, headline, and
  * an arrow link on the other. The headline is the night's result.
  */
 export function AwardsTeaser({ ceremony, films }: { ceremony: Ceremony; films: Map<string, Film> }) {
@@ -26,24 +26,24 @@ export function AwardsTeaser({ ceremony, films }: { ceremony: Ceremony; films: M
       : `${numberWord(total, true)} awards, voted by members.`;
 
   return (
-    <section id="awards" aria-labelledby="awards-title" className="wrap py-20 sm:py-28 border-t border-rule">
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
+    <section id="awards" aria-labelledby="awards-title" className="wrap py-section sm:py-section border-t border-rule">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 lg:items-center">
         {feature ? (
           <div className="panel">
             <Frame film={feature} />
           </div>
         ) : null}
         <div>
-          <p className="eyebrow mb-4">The {ceremony.year} awards</p>
-          <h2 id="awards-title" className="display text-display-lg text-ink max-w-[12ch]">
+          <p className="condensed text-2 text-fg-muted mb-4">The {ceremony.year} awards</p>
+          <h2 id="awards-title" className="display text-7 text-fg max-w-title">
             {headline}
           </h2>
-          <p className="text-body-lg mt-6 prose-block">
+          <p className="text-4 mt-6 measure">
             {numberWord(total, true)} categories, decided by member vote and presented after the
             festival in May {ceremony.year}.
           </p>
-          <div className="mt-10">
-            <ArrowLink href={`/awards/${ceremony.year}`}>See the ceremony</ArrowLink>
+          <div className="mt-8">
+            <ButtonLink variant="link" href={`/awards/${ceremony.year}`}>See the ceremony</ButtonLink>
           </div>
         </div>
       </div>

@@ -19,8 +19,8 @@ interface TallyProps {
  */
 export function Tally({ rows, total, sweep, feature }: TallyProps) {
   return (
-    <section aria-labelledby="tally-title" className="mt-16 sm:mt-24 border-t border-rule py-16 sm:py-24">
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
+    <section aria-labelledby="tally-title" className="mt-16 sm:mt-24 border-t border-rule py-section sm:py-section">
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 lg:items-center">
         {feature ? (
           <Link
             href={`/films/${feature.slug}`}
@@ -31,29 +31,29 @@ export function Tally({ rows, total, sweep, feature }: TallyProps) {
           </Link>
         ) : null}
         <div>
-          <h2 id="tally-title" className="display text-display-md text-ink">
+          <h2 id="tally-title" className="display text-6 text-fg">
             Wins by film
           </h2>
-          <dl className="mt-8 sm:mt-10">
+          <dl className="mt-8 sm:mt-8">
             {rows.map(({ film, count }) => (
               <div
                 key={film.slug}
                 className="flex items-baseline justify-between gap-6 py-4 border-t border-rule"
               >
-                <dt className="display text-display-sm text-ink min-w-0">
+                <dt className="display text-5 text-fg min-w-0">
                   <Link
                     href={`/films/${film.slug}`}
-                    className="no-underline transition-[color] hover:text-carolina"
+                    className="no-underline transition-[color] hover:text-accent"
                   >
                     {film.title}
                   </Link>
                 </dt>
-                <dd className="display text-display-md text-ink tabular-nums">{count}</dd>
+                <dd className="display text-6 text-fg tabular-nums">{count}</dd>
               </div>
             ))}
           </dl>
           {sweep ? (
-            <p className="mt-6 muted text-[0.9375rem]">
+            <p className="mt-6 text-fg-muted text-2">
               {sweep.film.title} took {numberWord(sweep.count)} of {numberWord(total)} categories.
             </p>
           ) : null}

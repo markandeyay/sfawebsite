@@ -6,9 +6,9 @@ import { SectionHeading } from "@/components/SectionHeading";
 export function CatalogStrip({ films }: { films: Film[] }) {
   const year = films[0]?.year;
   return (
-    <section id="films" aria-labelledby="films-title" className="wrap py-20 sm:py-28 border-t border-rule">
+    <section id="films" aria-labelledby="films-title" className="wrap py-section sm:py-section border-t border-rule">
       <SectionHeading id="films-title" title={`${year} films`} />
-      <ul className="mt-12 sm:mt-16 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-12 sm:mt-16 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {films.map((film) => (
           <li key={film.slug}>
             <FilmCard film={film} headingLevel="h3" />

@@ -21,25 +21,25 @@ export function AwardStack({ film }: { film: Film }) {
 
   return (
     <section aria-labelledby="awards">
-      <h2 id="awards" className="display text-display-md text-ink scroll-mt-24">
+      <h2 id="awards" className="display text-6 text-fg scroll-mt-24">
         Awards
       </h2>
-      <p className="text-body-lg mt-5 prose-block">
+      <p className="text-4 mt-4 measure">
         Winner of {countWord(n)} {noun} at{" "}
         <Link href={`/awards/${film.year}`} className="link">
           the {film.year} ceremony
         </Link>
         .
       </p>
-      <ul className="mt-10">
+      <ul className="mt-8">
         {awards.map((award) => (
           <li
             key={award.category}
-            className="grid gap-1 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-8 sm:items-baseline py-4 border-t border-rule"
+            className="grid gap-1 sm:grid-cols-2 sm:gap-8 sm:items-baseline py-4 border-t border-rule"
           >
             <AwardBadge category={award.category} />
             {award.person ? (
-              <span className="display text-display-sm text-ink">{award.person}</span>
+              <span className="display text-5 text-fg">{award.person}</span>
             ) : null}
           </li>
         ))}

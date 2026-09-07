@@ -1,18 +1,34 @@
 import Link from "next/link";
+import { SITE } from "@/lib/site";
+
+interface WordmarkProps {
+  size?: "nav" | "footer" | "hero";
+  /** Render as text rather than a link (the hero, where it is the h1). */
+  asText?: boolean;
+  className?: string;
+}
 
 /**
- * There is no logo. The mark is the club's initials set tight in the
- * display face, the way a studio mark sits in the centre of a nav bar. The
- * full name appears in the hero and the footer.
+ * There is no logo. The mark is the club's name in the display voice, tight
+ * and heavy, the way A24's mark barely announces itself. In the nav it
+ * shortens to the initials below 40rem so three links still fit.
  */
-export function Wordmark({ size = "nav" }: { size?: "nav" | "footer" }) {
-  const cls =
-    size === "footer"
-      ? "display text-[2rem] leading-none tracking-[-0.04em] text-white no-underline"
-      : "display text-[1.5rem] leading-none tracking-[-0.04em] text-ink no-underline";
+export function Wordmark({ size = "nav", asText = false, className = "" }: WordmarkProps) {
+  const cls = `wordmark wordmark--${size} ${className}`;
+  const inner = (
+    <>
+      <span className="wordmark__long">{SITE.wordmark}</span>
+      <span className="wordmark__short" aria-hidden="true">
+        {SITE.initials}
+      </span>
+    </>
+  );
+  if (asText) {
+    return <span className={cls}>{inner}</span>;
+  }
   return (
-    <Link href="/" className={cls} aria-label="Student Film Association, home">
-      SFA
+    <Link href="/" className={cls} aria-label={`${SITE.wordmark}, home`}>
+      {inner}
     </Link>
   );
 }

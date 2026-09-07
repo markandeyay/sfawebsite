@@ -55,10 +55,10 @@ export default async function CeremonyPage({ params }: PageProps) {
 
   return (
     <div className="wrap">
-      <header className="pt-20 sm:pt-28">
-        <p className="eyebrow mb-4">The ceremony</p>
-        <h1 className="display text-display-xl text-ink">{ceremony.year} awards</h1>
-        <p className="text-body-lg mt-6 prose-block">{lede}</p>
+      <header className="pt-section sm:pt-section">
+        <p className="condensed text-2 text-fg-muted mb-4">The ceremony</p>
+        <h1 className="display text-8 text-fg">{ceremony.year} awards</h1>
+        <p className="text-4 mt-6 measure">{lede}</p>
       </header>
 
       <Tally rows={rows} total={total} sweep={swept} feature={finaleFilm ?? rows[0]?.film} />
