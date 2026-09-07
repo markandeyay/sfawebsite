@@ -9,7 +9,7 @@ import { JOIN_ACTION } from "@/lib/site";
  */
 export function Join() {
   return (
-    <section id="join" aria-labelledby="join-title" className="wrap pt-section scroll-mt-16">
+    <section id="join" aria-labelledby="join-title" className="wrap pt-section">
       <div className="hairline-t pt-block">
         <h2 id="join-title" className="display text-7 max-w-title">
           No experience needed.

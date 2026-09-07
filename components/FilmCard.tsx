@@ -35,7 +35,7 @@ export function FilmCard({ film, headingLevel = "h3", priority = false }: FilmCa
   const wins = film.awards.length;
   return (
     <Link href={`/films/${film.slug}`} className="card frame-trigger" style={cardRevealTiming(film.slug)}>
-      <Frame film={film} size="card" priority={priority} />
+      <Frame film={film} size="card" priority={priority} decorative />
       <span className="card__caption">
         <CatalogNumber no={film.no} size="card" />
         <Heading className="card__title display text-5">{film.title}</Heading>

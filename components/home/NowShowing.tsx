@@ -1,11 +1,10 @@
-import { ButtonLink } from "@/components/Button";
-import { JOIN_ACTION } from "@/lib/site";
-
 /**
  * The current cycle. The club has published no dates, so the section is an
  * invitation rather than a calendar: it says when the next slate begins in
- * the terms the club uses, admits the dates are not posted, and points at
- * the one action that is never stale.
+ * the terms the club uses and admits the dates are not posted. It carries
+ * no action of its own: the nav's Join and the page's closing section
+ * already hold the one action, and a third copy was the marketing default
+ * (removed in the final pass, DESIGN_NOTES.md 11).
  */
 export function NowShowing() {
   return (
@@ -18,11 +17,6 @@ export function NowShowing() {
           <p className="text-4 text-fg-muted measure">
             Dates to be posted. Any UNC student can bring a script or an idea; most members arrive
             with no film experience at all.
-          </p>
-          <p className="mt-4">
-            <ButtonLink variant="link" href={JOIN_ACTION.href} external>
-              {JOIN_ACTION.label}
-            </ButtonLink>
           </p>
         </div>
       </div>

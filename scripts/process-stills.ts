@@ -11,8 +11,11 @@
  *      video) is skipped with a warning. A frame is never substituted.
  *   2. trims black letterbox bars (sd/hqdefault are 4:3 with the 16:9 frame inside;
  *      some films are letterboxed inside the frame itself) and centre-crops to 16:9;
- *   3. writes three renditions into public/stills:
+ *   3. writes four renditions into public/stills:
  *        {slug}.webp             untreated frame, 1280x720, lossy q80
+ *        {slug}-sm.webp          the same frame at 640x360, for film cards (a card
+ *                                renders at ~320 px, so 640 is its 2x; the 1280
+ *                                file was 4x and most of every page's image bytes)
  *        {slug}-treated.webp     the duotone dither, 1280x720, lossless, every
  *                                dither cell a crisp (1280 / work) px block
  *        {slug}-treated-sm.webp  the same dither at its native working resolution
@@ -706,6 +709,7 @@ interface Result {
   source: string;
   barsTrimmed: number;
   originalBytes: number;
+  originalSmBytes: number;
   treatedBytes: number;
   smBytes: number;
   phase: Phase;
@@ -752,6 +756,7 @@ async function main(): Promise<void> {
     frames.set(film.slug, { file: fetched.file, region });
 
     const originalOut = path.join(OUT_DIR, `${film.slug}.webp`);
+    const originalSmOut = path.join(OUT_DIR, `${film.slug}-sm.webp`);
     const treatedOut = path.join(OUT_DIR, `${film.slug}-treated.webp`);
     const smOut = path.join(OUT_DIR, `${film.slug}-treated-sm.webp`);
 
@@ -760,6 +765,11 @@ async function main(): Promise<void> {
       .resize(OUT_W, OUT_H, { fit: "cover" })
       .webp({ quality: ORIGINAL_QUALITY, effort: 6 })
       .toFile(originalOut);
+    await sharp(fetched.file)
+      .extract(region)
+      .resize(nativeW, nativeH, { fit: "cover" })
+      .webp({ quality: ORIGINAL_QUALITY, effort: 6 })
+      .toFile(originalSmOut);
 
     const phase = phaseFor(film.slug, opts.phase);
     const treated = await treat(fetched.file, region, opts, phase);
@@ -772,6 +782,7 @@ async function main(): Promise<void> {
       source: `${fetched.width}x${fetched.height}`,
       barsTrimmed,
       originalBytes: statSync(originalOut).size,
+      originalSmBytes: statSync(originalSmOut).size,
       treatedBytes: statSync(treatedOut).size,
       smBytes: statSync(smOut).size,
       phase,
@@ -780,7 +791,7 @@ async function main(): Promise<void> {
     };
     results.push(result);
     console.log(
-      `  ${film.slug.padEnd(40)} ${fetched.variant.padEnd(14)} ${result.source.padEnd(9)} bars=${String(barsTrimmed).padStart(3)}  original=${kb(result.originalBytes).padStart(8)}  treated=${kb(result.treatedBytes).padStart(7)}  sm=${kb(result.smBytes).padStart(6)}`,
+      `  ${film.slug.padEnd(40)} ${fetched.variant.padEnd(14)} ${result.source.padEnd(9)} bars=${String(barsTrimmed).padStart(3)}  original=${kb(result.originalBytes).padStart(8)}  original-sm=${kb(result.originalSmBytes).padStart(7)}  treated=${kb(result.treatedBytes).padStart(7)}  sm=${kb(result.smBytes).padStart(6)}`,
     );
   }
 

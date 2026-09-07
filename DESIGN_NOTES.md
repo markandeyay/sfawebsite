@@ -781,7 +781,7 @@ Utilities `text-1` .. `text-9`.
 | 5 | 1.375 to 1.75rem | 1.12 | -0.015em | 600 | card titles, winner titles |
 | 6 | 1.75 to 2.5rem | 1.02 | -0.025em | 600 | section headings, footer wordmark |
 | 7 | 2.5 to 4rem | 0.96 | -0.03em | 700 | page titles |
-| 8 | 3.5 to 6.5rem | 0.9 | -0.035em | 700 | display: hero wordmark, film title |
+| 8 | 3 to 6.5rem (anchored at 20rem since 11.1 G1; was 3.5rem at 24rem) | 0.9 | -0.035em | 700 | display: hero wordmark, film title |
 | 9 | 5 to 12rem | 0.85 | -0.02em | 700 | scale moments, condensed voice: catalog number on the film page, tally numerals |
 
 **Spacing.** Geometric from 4px, closed: `1` 0.25rem, `2` 0.5, `3` 0.75,
@@ -1256,3 +1256,88 @@ The Academy register, in this room only: centred, heavy negative space, the larg
 - **Route-local CSS.** `components/awards/ceremony.css` (the seam, the tally rows, the finale title) is imported by the ceremony page only, tokens only. If the seam is wanted elsewhere it belongs in `globals.css`.
 - **Type-step deviation.** Tally numerals at step 8, not the step 9 the type table suggests (see 3).
 - **Content the club should supply**: person-level winners (the row and the seal already render the person line when present), runtimes, credits beyond the director, a frame for At Last, the Gift.
+
+## 11. Audit, remediation, final pass (2026-09-07)
+
+Written by the remediation agent after the auditor's pass over the third
+direction (findings G1 to G12, measured against the production build with
+Playwright and Chrome). Every finding was fixed; nothing was left. Scripts and
+raw results in the session scratchpad: `agentH-probe.mjs` / `agentH-probe.json`
+(after the fixes), `agentH-lcp.mjs`, `agentH-final.mjs` / `agentH-final.json`
+(after the removals); captures `shots/agentH/h1-*` (after the fixes) and
+`h2-*` (final).
+
+### 11.1 Findings
+
+| Id | Sev. | Finding | Fix | Evidence after |
+|---|---|---|---|---|
+| G1 | major | Horizontal scroll at 320 on `/films/discrete-magematics`: "Magematics" nowrap at the step-8 floor (56px) is 308px in a 288px column | Step 8 alone re-anchored at 20rem: `--text-8: clamp(3rem, 2rem + 5vw, 6.5rem)` (`app/globals.css`). The auditor's floor of 3rem on its own would not have done it: the 24rem-anchored line still gives 53px at 320, 292px for the word | 48px at 320, 50.75px at 375, 104px at 1440 (unchanged); scrollWidth == clientWidth on all 14 routes at 320, 375, 640, 720 and 1440 |
+| G2 | major | Every card downloaded its untreated 1280x720 original at rest, on touch too (351 KB of the homepage's 445 KB of images) | A fourth rendition, `{slug}-sm.webp` (640x360, the card's 2x), from `scripts/process-stills.ts` (idempotent: the 33 existing files were byte-identical after the run) and required by `scripts/validate-content.ts`; `components/Still.tsx` serves it for `size="card"` and wraps the original in `<picture><source media="(hover: hover) and (pointer: fine)">`, so where nothing can hover the second layer falls back to the treated file the browser already has (`revealed` bypasses the gate) | `/` images 444,913 to 283,991 B at 1440 and to 93,780 B at 375 (page 759 to 599 / 409 KB); `/films/fdoc` 132,223 to 93,619 / 23,865 B. Hover on a card resolves `fdoc-sm.webp` (natural 640); a touch context requests no original |
+| G3 | minor | The dither crossfade still ran (0.7 to 0.8s) under reduced motion: the `:hover` / `:focus-within` rules at (0,3,0) beat the `-no-motion` override | Trigger selectors wrapped in `:where()` so they stay at (0,1,0) and the reduced-motion rules win | `reducedMotion: reduce`, focus a card: opacity 1 after one frame, transition `none`; the facade likewise |
+| G4 | minor | The homepage LCP (the hero still) was gated on hydration by a `Reveal fade` | The hero frame is a plain link; the caption and the name keep their delays | LCP = FCP: 56ms warm / 380ms cold at 1440 (was 776 / 1592); 48ms warm at 375 (was 692) |
+| G5 | minor | The skip link landed the h1 under the sticky nav (33px covered at 375) | `scroll-padding-top: var(--spacing-16)` on `html`; the per-section `scroll-mt-16` on `#films`, `#join` and `SectionHeading` dropped | After Tab + Enter: h1 top 128 (1440) / 96 (375) against nav bottom 65; `/#films` and `/#join` land at 64 |
+| G6 | minor | Focus was dropped when the facade became the iframe | `VideoEmbed` focuses the iframe by ref when `playing` flips | Enter on `.facade`: `activeElement` is the iframe "FDOC (YouTube)" |
+| G7 | minor | Card links announced the title twice ("Frame from FDOC Catalog number 1 FDOC ...") | `Frame` gained `decorative` (alt "" on the still, `aria-hidden` on the type-only leader), set by `FilmCard` only | link "Catalog number 1 FDOC Keller Huffman 7 wins"; "Catalog number 5 At Last, the Gift Christopher Cooper Festival only 1 win". The hero link, facade, finale and film-page leader keep their names |
+| G8 | minor | Below lg, Tab reached "Watch FDOC" (y 568) before the frame above it (y 230) | DOM order is now the stacked order (frame, caption, sentence and action) with explicit grid placement at lg (`lg:col-start-1 lg:row-start-1` on the text column) instead of `order-last` | 375: frame (y 220) then Watch FDOC (559). Deliberate trade-off: at 1440 the frame (right) now precedes the button (left); both sit in the first screen, so no scrolling is involved |
+| G9 | minor | `SplitText` exposed its text only as `aria-label` on a role-less span; the tally numerals were not voiced outside a naming context | `SplitText` renders a visually hidden text node, then the glyph words in an `aria-hidden` wrapper; `aria-label` dropped | Tally rows read "7 wins Catalog number 1 FDOC"; the headings "Student Film Association", "FDOC", "The 2025 awards" are unchanged |
+| G10 | minor | Catalog tilts were effectively two values (+0.41..0.46 for 001-009, -0.26..-0.28 for 010-012): FNV-1a's weak final-byte avalanche | murmur3 finalizer in `lib/hash.ts` `hash01` | Tilts 0.40 0.34 0.52 -0.50 0.21 -0.02 0.41 0.28 -0.02 -0.35 0.14 0.53; win counts -0.49 / -0.05 / 0.33; seals spread -0.55..0.48. Every seeded value on the site changed with it (card crossfade timing, reveal delays and eases, glyph tilts), so the figures quoted in 9.1 and 9.4 are superseded. The stills' halftone phases use the pipeline's own hash and did not change |
+| G11 | minor | Nav and footer text links were 15-19px tall (WCAG 2.5.8 by the spacing exception only) | `.site-nav__link` and `.link--quiet` are `inline-flex` with `min-height: var(--spacing-6)`; footer lists `gap-1` so the pitch barely moves | Films 37x24, Awards 51x24; footer links 26px tall (25 at 375), pitch 30px (was 27); underline intact |
+| G12 | minor | Seven external links opened a new tab with no indication | `target="_blank"` and `rel="noreferrer"` removed from `ButtonLink`, `SiteFooter` and `FilmFacade`; there is no page state to keep | 0 `[target="_blank"]` on any route |
+
+Two literal delays became tokens on the way: the `Reveal` settle guard's
+`+ 200` is `DUR[2]`, and the tally numerals' delay is capped at `DUR[5]` so no
+numeral waits past the orchestration budget however many films win. `picture`
+joined `img, video, iframe { display: block }`; `.frame > img` became
+`.frame img` for the `<picture>` wrapper.
+
+### 11.2 Chanel's rule: one thing off each page
+
+- **`/`: the "Message the club on Instagram" link in the Now showing strip.**
+  The identical action (same label, same href) is the page's closing button in
+  Join, and the nav's Join already points there; a third copy was the
+  marketing default of a call to action in every section. The strip is now
+  the heading and the sentence.
+- **`/films/[slug]`: the "See the 2025 awards" link under the last sentence.**
+  The nav's Awards link is on screen at the same moment and goes to the same
+  page, and for a film that won nothing a link to the ceremony was a "related
+  link" by habit. The derived sentence ("FDOC won seven of the fifteen awards
+  at the 2025 ceremony." / "Slam! is one of twelve films on the 2025 slate.")
+  stands alone as the end card.
+- **`/awards/2025`: the catalog number in the finale.** A step-2 "No. 001"
+  centred between a 1360px still and a step-8 title was a seventh of the
+  title's size and read as a stray meta line; the film's number is already on
+  its tally row and on each of its winner rows. The finale is the seal, the
+  still, the title and the director. The auditor's count of catalog numbers
+  (12 cards, 14 winner rows, 5 tally rows, every film page) is unchanged.
+
+Tab stops move accordingly: `/` 36 to 35, `/films/fdoc` 10 to 9,
+`/awards/2025` 11 unchanged.
+
+### 11.3 Definition of done (REMEDIATION_BRIEF.md Part 7)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Catalog numbers on every film, production order, consistent | done | `CatalogNumber` on 12/12 cards, 14 winner rows, 5 tally rows, every film page; `no` 1-12 from `content/films.json`, validated contiguous |
+| Build-time dither pipeline, stills inspected, committed | done | `scripts/process-stills.ts`; 44 files in `public/stills` (11 films x 4; the twelfth has no frame by design); `scripts/DITHER_REPORT.md`, `docs/dither-*.png`; all 11 treated stills looked at again in `shots/agentH` |
+| Credit block on the film page and the exec board | done | `components/CreditBlock.tsx` via `components/film/FilmCredits.tsx` and `components/home/Crew.tsx` |
+| `gold` referenced in exactly one component | done, precisely | `grep -rniw gold app components lib content` hits `components/AwardBadge.tsx` (comments; it renders `.award`) and `app/globals.css` (the `--color-gold` token and the one `.award { color: var(--color-gold) }` rule). So the rule holds with the token definition and its single consuming rule living in the token file; exactly one component renders `.award`. Compiled CSS contains "gold" twice; `scripts/check-tokens.mjs` fails on a third file |
+| Token file; hex grep outside it returns nothing | done | 0 hex in `app/`, `components/`, `lib/`, `content/` outside `app/globals.css`. Outside the scanned tree, `scripts/process-stills.ts` (`PALETTE`) and `app/icon.svg` carry base and carolina because the pipeline and the favicon have no CSS to read |
+| At least eight fluid type steps in active use | done | Eight of nine: `text-2` x10 (+5 `var(--text-2)`), `text-3` x2 (+3), `text-4` x9 (+2), `text-5` x7, `text-6` x7 (+1), `text-7` x2, `text-8` x4 (+1), `text-9` x1 (+1) across `app/` and `components/`. `text-1` (captions) is defined and not yet used; the smallest text on the site is step 2 |
+| Exactly four easings and five durations defined and used | done, one reserved | Defined once in `app/globals.css` (4 `--ease-*`, 5 `--dur-*`), mirrored in `lib/motion.ts`. Used: `--ease-out` x14, `--ease-in` x1, `--ease-in-out` x1 (the seeded Reveal pick); `--dur-1` x12, `--dur-2` x1 CSS + 3 JS, `--dur-3` x2 + 3, `--dur-4` x3 + 1, `--dur-5` x1 JS (the tally cap). `--ease-linear` is defined and unused: it is for continuous motion and the site has none (brief 4.8). The one duration outside the tokens is Lenis's `duration: 1.05` (seconds), the value brief 4.3 prescribes |
+| Smooth scroll with a native fallback under reduced motion | done | `components/motion/SmoothScroll.tsx`; under `-no-motion` Lenis is never created (`html.lenis` absent, `window.lenisVersion` undefined) and `lib/scroll.ts` attaches its native listener |
+| One scroll handler for the whole page | done | `grep addEventListener('scroll')`: 1, in `lib/scroll.ts` (Lenis owns the native one while it runs); 1 `new IntersectionObserver`, in `components/motion/Reveal.tsx` |
+| Zero all-caps tracked-out eyebrows | done | 0 `text-transform: uppercase` elements on any route (auditor); the small labels left are sentence-case list headings |
+| Zero middle-dot meta strings | done | 0 on any route |
+| Zero arrows appended to link text | done | 0 arrow characters, 0 SVG arrows; `ArrowLink` deleted in wave 2 |
+| Not every section uses the same entrance | done | Hero: the frame is simply there, the caption fades, the name arrives glyph by glyph; catalog and adjacent cards rise on seeded timing; teaser rows fade; process, crew, credits and join have no reveal; awards: numerals staggered, rows rise, the finale fades |
+| Not every surface shares one radius and one shadow | done | Radius 0 and no shadow anywhere (`--radius-*: initial`, `--shadow-*: initial`); surfaces differ by tone (base, surface), hairline and unequal air (`block`, `section`, `stage`), not by a card treatment |
+| Engineered irregularity in at least two places | done | Six: catalog tilt and nudge, badge tilt, card crossfade duration and delay, reveal delay and ease, glyph rotation and baseline, halftone phase per still |
+| Every route correct at 375, no horizontal scroll at 320 | done | 14 routes x 320 / 375 / 640 / 720 / 1440: scrollWidth == clientWidth (`agentH-final.json`, `overflow`) |
+| Keyboard navigable, visible focus, reveal on focus | done | Every stop matches `:focus-visible` with the 2px carolina ring; focusing a card, the hero link, the facade or the finale title resolves the still (re-checked after G3) |
+| Reduced-motion path implemented and tested | done | Root `js -no-motion`, 0 running transitions, 0 animations, reveals settled, crossfade instant (G3) |
+| No text over dither without a scrim | done | The facade label has a solid cream fill; every caption sits outside its frame; the leader's text sits on the solid surface tone |
+| Build clean, no type errors, no console errors | done | `npm run check` clean (content, tsc, eslint, check-tokens 52 files); `next build` 17 pages; 0 console errors or warnings on 5 routes x 3 widths |
+| Deployed and loading on a cold visit | done for the committed build | `curl` https://sfawebsite-kappa.vercel.app: 200 in 0.17s, cold; this pass deploys on the lead's next push to `main` |
+| `AUDIT.md` written before any changes | done | Dated against `98654b0`, before wave 2 |
+| `DESIGN_NOTES.md` records every rejected direction | done | Sections 1 to 11 |
+| `README.md` explains how to add a film in under ten lines | done | Five numbered steps, nine lines with their wraps, plus two of notes |

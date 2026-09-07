@@ -10,6 +10,7 @@ interface ButtonLinkProps {
   variant?: Variant;
   /** Compact height, for the nav action. */
   small?: boolean;
+  /** An off-site href: a plain anchor, no prefetch. Opens in the same tab; there is no page state to keep. */
   external?: boolean;
   className?: string;
 }
@@ -28,7 +29,7 @@ export function ButtonLink({ href, children, variant = "primary", small = false,
   const cls = `${CLASS[variant]} ${small && variant !== "link" ? "btn--small" : ""} ${className}`;
   if (external) {
     return (
-      <a href={href} className={cls} target="_blank" rel="noreferrer">
+      <a href={href} className={cls}>
         {children}
       </a>
     );

@@ -13,15 +13,16 @@
  *      problem throws a ContentError naming the file, the path, and what is
  *      wrong. That module is pure (no fs), which is why this script exists.
  *
- *   2. On-disk checks. Every film with a non-null `still` must have all three
+ *   2. On-disk checks. Every film with a non-null `still` must have all four
  *      renditions the image pipeline writes to public/stills:
  *
  *        {slug}.webp             the untreated frame (the hover/focus reward)
+ *        {slug}-sm.webp          the same frame at card size (640x360)
  *        {slug}-treated.webp     the 1280px duotone dither
  *        {slug}-treated-sm.webp  the native-resolution dither for cards
  *
  *      plus whatever paths the film's `still` field actually declares (today
- *      those coincide with the first two). Missing files are listed in full
+ *      those coincide with the 1280 pair). Missing files are listed in full
  *      and the process exits 1.
  *
  * Exit code is 0 only when both stages pass.
@@ -35,7 +36,7 @@ const STILLS_DIR = path.join(ROOT, "public", "stills");
 const STILLS_URL_PREFIX = "/stills/";
 
 /** Renditions the pipeline writes for every film that has a frame. */
-const RENDITIONS = ["{slug}.webp", "{slug}-treated.webp", "{slug}-treated-sm.webp"] as const;
+const RENDITIONS = ["{slug}.webp", "{slug}-sm.webp", "{slug}-treated.webp", "{slug}-treated-sm.webp"] as const;
 
 function rel(p: string): string {
   return path.relative(ROOT, p).split(path.sep).join("/");

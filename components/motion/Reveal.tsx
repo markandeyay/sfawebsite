@@ -88,7 +88,7 @@ export function Reveal({ as = 'div', children, delay = 0, variant = 'fade', seed
       const glyphs = el.querySelectorAll('.split-glyph').length;
       if (glyphs === 0) el.addEventListener('transitionend', onEnd);
       // Guard: settle by clock too, in case transitionend never fires (display:none, no transition, tab hidden).
-      timer = window.setTimeout(settle, DUR[3] + delayMs + Math.min(glyphs, STAGGER_CAP) * STAGGER + 200);
+      timer = window.setTimeout(settle, DUR[3] + delayMs + Math.min(glyphs, STAGGER_CAP) * STAGGER + DUR[2]);
     });
     return () => {
       unobserve();

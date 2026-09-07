@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Still as StillPaths } from "@/content/types";
 import { Still } from "./Still";
 
@@ -16,14 +16,22 @@ interface VideoEmbedProps {
  * hover and focus like any frame) with a solid play label at the bottom
  * left; the iframe is created only after a click, so no page ships a live
  * player. The label has a solid fill, so it is never text over dither.
+ * When the button unmounts, focus moves to the player that replaced it, so
+ * a keyboard user's Tab sequence continues from the screen.
  */
 export function VideoEmbed({ youtubeId, title, still }: VideoEmbedProps) {
   const [playing, setPlaying] = useState(false);
+  const player = useRef<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    if (playing) player.current?.focus();
+  }, [playing]);
 
   if (playing) {
     return (
       <div className="player">
         <iframe
+          ref={player}
           src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0`}
           title={`${title} (YouTube)`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

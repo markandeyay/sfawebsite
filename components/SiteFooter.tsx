@@ -27,7 +27,7 @@ export function SiteFooter() {
         </div>
         <div>
           <h2 className="condensed text-2 text-fg-muted">Site</h2>
-          <ul className="mt-3 flex flex-col gap-2">
+          <ul className="mt-3 flex flex-col gap-1">
             {[...NAV, JOIN_NAV].map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="link link--quiet">
@@ -39,10 +39,10 @@ export function SiteFooter() {
         </div>
         <div>
           <h2 className="condensed text-2 text-fg-muted">Club</h2>
-          <ul className="mt-3 flex flex-col gap-2">
+          <ul className="mt-3 flex flex-col gap-1">
             {MORE.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="link link--quiet" target="_blank" rel="noreferrer">
+                <a href={l.href} className="link link--quiet">
                   {l.label}
                 </a>
               </li>
@@ -51,10 +51,10 @@ export function SiteFooter() {
         </div>
         <div>
           <h2 className="condensed text-2 text-fg-muted">Follow</h2>
-          <ul className="mt-3 flex flex-col gap-2">
+          <ul className="mt-3 flex flex-col gap-1">
             {SOCIAL.map((l) => (
               <li key={l.href}>
-                <a href={l.href} className="link link--quiet" target="_blank" rel="noreferrer">
+                <a href={l.href} className="link link--quiet">
                   {l.label}
                 </a>
               </li>

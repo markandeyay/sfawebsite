@@ -1,4 +1,3 @@
-import { ButtonLink } from "@/components/Button";
 import type { Ceremony, Film } from "@/content/types";
 import { countWord } from "./words";
 
@@ -10,9 +9,11 @@ interface CeremonyLineProps {
 }
 
 /**
- * The last lines of a film page: one sentence derived from the data, then
- * the link to the ceremony on its own line. A winner says what it won;
- * every other film says where it sits on the slate. No reveal.
+ * The last line of a film page: one sentence derived from the data, as an
+ * end card. A winner says what it won; every other film says where it sits
+ * on the slate. No reveal. The "See the awards" link that followed it was
+ * removed in the final pass (DESIGN_NOTES.md 11): the nav's Awards link is
+ * on screen at the same moment and goes to the same page.
  */
 export function CeremonyLine({ film, ceremony, slateSize }: CeremonyLineProps) {
   const wins = film.awards.length;
@@ -22,16 +23,5 @@ export function CeremonyLine({ film, ceremony, slateSize }: CeremonyLineProps) {
       ? `${film.title} won ${countWord(wins)} of the ${countWord(total)} awards at the ${ceremony.year} ceremony.`
       : `${film.title} is one of ${countWord(slateSize)} films on the ${film.year} slate.`;
 
-  return (
-    <div>
-      <p className="text-4 measure">{sentence}</p>
-      {ceremony ? (
-        <p className="mt-4">
-          <ButtonLink variant="link" href={`/awards/${ceremony.year}`}>
-            See the {ceremony.year} awards
-          </ButtonLink>
-        </p>
-      ) : null}
-    </div>
-  );
+  return <p className="text-4 measure">{sentence}</p>;
 }

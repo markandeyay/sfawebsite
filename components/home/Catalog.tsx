@@ -14,7 +14,7 @@ export function Catalog({ films }: { films: Film[] }) {
   const year = films[0]?.year;
   const count = numberWord(films.length, true);
   return (
-    <section id="films" aria-labelledby="films-title" className="wrap pt-stage pb-section scroll-mt-16">
+    <section id="films" aria-labelledby="films-title" className="wrap pt-stage pb-section">
       <SectionHeading
         id="films-title"
         step={7}

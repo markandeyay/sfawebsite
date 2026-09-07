@@ -92,7 +92,9 @@
   --text-7--letter-spacing: -0.03em;
   --text-7--font-weight: 700;
 
-  --text-8: clamp(3.5rem, 2.409rem + 4.545vw, 6.5rem);
+  /* Step 8 alone is anchored at 20rem, not 24rem: its longest word
+     ("Magematics", "Association") must fit the 288px column at 320. */
+  --text-8: clamp(3rem, 2rem + 5vw, 6.5rem);
   --text-8--line-height: 0.9;
   --text-8--letter-spacing: -0.035em;
   --text-8--font-weight: 700;
@@ -230,6 +232,9 @@ html {
   background-color: var(--color-base);
   color: var(--color-cream);
   -webkit-text-size-adjust: 100%;
+  /* Every hash target (the skip link's #main, #films, #join, whatever comes
+     next) lands clear of the sticky nav, whose min-height is spacing-16. */
+  scroll-padding-top: var(--spacing-16);
 }
 
 body {
@@ -260,6 +265,7 @@ body {
 }
 
 img,
+picture,
 video,
 iframe {
   display: block;
@@ -369,7 +375,7 @@ iframe {
     overflow: hidden;
     background-color: var(--color-base);
   }
-  .frame > img {
+  .frame img {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -380,17 +386,15 @@ iframe {
     opacity: 0;
     transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-in);
   }
-  .frame.is-revealed .frame__original,
-  .frame:focus-visible .frame__original,
-  .frame:focus-within .frame__original,
-  .frame-trigger:focus-visible .frame__original,
-  .frame-trigger:focus-within .frame__original {
+  /* The triggers sit in :where() so they stay at (0,1,0) and the reduced-
+     motion rules below, at (0,2,0) and later in source, always win. */
+  :where(.frame.is-revealed, .frame:focus-visible, .frame:focus-within, .frame-trigger:focus-visible, .frame-trigger:focus-within)
+    .frame__original {
     opacity: 1;
     transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-out) var(--reveal-delay, 0ms);
   }
   @media (hover: hover) and (pointer: fine) {
-    .frame:hover .frame__original,
-    .frame-trigger:hover .frame__original {
+    :where(.frame:hover, .frame-trigger:hover) .frame__original {
       opacity: 1;
       transition: opacity var(--reveal-dur, var(--dur-4)) var(--ease-out) var(--reveal-delay, 0ms);
     }
@@ -631,7 +635,12 @@ iframe {
       color: var(--accent);
     }
   }
+  /* Quiet links (the footer lists) keep a 24px target (WCAG 2.5.8) without
+     changing the rendered text: the box grows, the type does not. */
   .link--quiet {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-6);
     color: var(--on-surface-muted);
     text-decoration-color: var(--rule);
   }
@@ -662,6 +671,9 @@ iframe {
     gap: var(--spacing-6);
   }
   .site-nav__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-6); /* a 24px target; the text stays step 2 */
     font-size: var(--text-2);
     line-height: var(--text-2--line-height);
     font-weight: var(--font-weight-medium);

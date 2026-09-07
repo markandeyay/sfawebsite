@@ -11,7 +11,7 @@ export interface StillProps {
   still: StillPaths;
   /** Describes the frame for assistive tech, e.g. "Frame from FDOC". Empty when decorative. */
   alt: string;
-  /** card = the 640x360 treated rendition; full = 1280x720. Originals are always 1280x720. */
+  /** card = the 640x360 renditions (treated and original); full = 1280x720. */
   size?: StillSize;
   /** Load eagerly for the hero and the film page facade. */
   priority?: boolean;
@@ -22,10 +22,16 @@ export interface StillProps {
   style?: CSSProperties;
 }
 
-/** The card rendition of a treated still follows a fixed naming rule. */
+/** The card renditions follow a fixed naming rule (scripts/process-stills.ts). */
 export function cardRendition(treated: string): string {
   return treated.replace(/-treated\.webp$/, "-treated-sm.webp");
 }
+export function cardOriginalRendition(original: string): string {
+  return original.replace(/\.webp$/, "-sm.webp");
+}
+
+/** Only a fine pointer that can hover ever sees the untreated frame at rest. */
+const CAN_HOVER = "(hover: hover) and (pointer: fine)";
 
 /**
  * The two-layer dither reveal. The halftone-treated still (base + carolina)
@@ -33,6 +39,11 @@ export function cardRendition(treated: string): string {
  * crossfades in on hover, focus, focus-within, or .is-revealed. The CSS
  * lives in app/globals.css under .frame; under reduced motion the swap is
  * instant. Both layers share dimensions, so the reveal cannot shift layout.
+ *
+ * The original is requested only where it can be hovered: on a touch device
+ * the second layer's <picture> falls back to the treated file the browser
+ * already has, so the bytes for a frame nobody can resolve are never sent.
+ * `revealed` bypasses the gate, since it exists for touch.
  */
 export function Still({
   still,
@@ -43,8 +54,10 @@ export function Still({
   className = "",
   style,
 }: StillProps) {
-  const treated = size === "card" ? cardRendition(still.treated) : still.treated;
-  const [w, h] = size === "card" ? [640, 360] : [1280, 720];
+  const card = size === "card";
+  const treated = card ? cardRendition(still.treated) : still.treated;
+  const original = card ? cardOriginalRendition(still.original) : still.original;
+  const [w, h] = card ? [640, 360] : [1280, 720];
   const loading = priority ? "eager" : "lazy";
   return (
     <div className={`frame ${revealed ? "is-revealed" : ""} ${className}`} style={style}>
@@ -58,16 +71,19 @@ export function Still({
         decoding="async"
         fetchPriority={priority ? "high" : "auto"}
       />
-      <img
-        className="frame__original"
-        src={still.original}
-        alt=""
-        aria-hidden="true"
-        width={1280}
-        height={720}
-        loading={loading}
-        decoding="async"
-      />
+      <picture>
+        {revealed ? null : <source media={CAN_HOVER} srcSet={original} />}
+        <img
+          className="frame__original"
+          src={revealed ? original : treated}
+          alt=""
+          aria-hidden="true"
+          width={w}
+          height={h}
+          loading={loading}
+          decoding="async"
+        />
+      </picture>
     </div>
   );
 }

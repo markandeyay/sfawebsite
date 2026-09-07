@@ -15,9 +15,15 @@ import { SITE } from "@/lib/site";
  * 16:9 with its catalog number and title as a caption outside the frame,
  * in the same place the card puts them.
  *
- * The site's one orchestrated arrival: the frame, then the number, then
- * the name, on Reveal delays. All CSS once the observer flips one class.
- * The rejected concept (key art, full-bleed) is in docs/notes-home.md.
+ * The site's one orchestrated arrival: the frame is simply there from the
+ * first paint (it is the page's largest contentful element, so it is not
+ * gated on hydration), then the number, then the name, on Reveal delays.
+ * All CSS once the observer flips one class. The rejected concept (key
+ * art, full-bleed) is in DESIGN_NOTES.md 9.1.
+ *
+ * DOM order is the stacked (375) visual order: frame, caption, sentence and
+ * action; at lg the grid places the sentence column to the left by explicit
+ * placement, so Tab never jumps back up the page.
  */
 export function HeroTitleCard({ film }: { film: Film }) {
   return (
@@ -27,17 +33,13 @@ export function HeroTitleCard({ film }: { film: Film }) {
       </Reveal>
 
       <div className="mt-block grid gap-x-8 gap-y-6 lg:grid-cols-12 lg:items-start">
-        <div className="order-last lg:order-none lg:col-span-4 lg:row-start-1">
-          <p className="text-4 text-fg-muted max-w-short">UNC&rsquo;s student-run production club.</p>
-          <ButtonLink href={`/films/${film.slug}`} className="mt-6">
-            Watch {film.title}
-          </ButtonLink>
-        </div>
-        <Reveal className="lg:col-span-8 lg:col-start-5 lg:row-start-1" variant="fade">
-          <Link href={`/films/${film.slug}`} className="card frame-trigger" aria-label={`${film.title}, the film page`}>
-            <Frame film={film} size="full" priority />
-          </Link>
-        </Reveal>
+        <Link
+          href={`/films/${film.slug}`}
+          className="card frame-trigger lg:col-span-8 lg:col-start-5 lg:row-start-1"
+          aria-label={`${film.title}, the film page`}
+        >
+          <Frame film={film} size="full" priority />
+        </Link>
         <Reveal
           as="p"
           variant="fade"
@@ -49,6 +51,12 @@ export function HeroTitleCard({ film }: { film: Film }) {
           <span className="display text-5">{film.title}</span>
           <span className="condensed text-2 text-fg-muted">Directed by {film.director}</span>
         </Reveal>
+        <div className="lg:col-span-4 lg:col-start-1 lg:row-start-1">
+          <p className="text-4 text-fg-muted max-w-short">UNC&rsquo;s student-run production club.</p>
+          <ButtonLink href={`/films/${film.slug}`} className="mt-6">
+            Watch {film.title}
+          </ButtonLink>
+        </div>
       </div>
     </section>
   );

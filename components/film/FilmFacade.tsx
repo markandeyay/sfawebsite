@@ -20,12 +20,7 @@ export function FilmFacade({ film }: { film: Film }) {
         {film.viewable ? (
           <>
             No frame from this film is available.{" "}
-            <a
-              href={`https://www.youtube.com/watch?v=${film.youtubeId}`}
-              className="link"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={`https://www.youtube.com/watch?v=${film.youtubeId}`} className="link">
               Watch {film.title} on YouTube
             </a>
             .

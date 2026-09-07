@@ -16,7 +16,7 @@ export function SectionHeading({ title, lede, id, as = "h2", step = 6, className
   const Tag = as;
   return (
     <div className={className}>
-      <Tag id={id} className={`display text-${step} scroll-mt-16`}>
+      <Tag id={id} className={`display text-${step}`}>
         {title}
       </Tag>
       {lede ? <p className="text-4 measure mt-4">{lede}</p> : null}

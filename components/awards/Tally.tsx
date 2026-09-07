@@ -11,8 +11,9 @@ import type { TallyRow } from "./ceremony";
  * the catalog number and linked title on the right. The lede above has
  * already said "fifteen awards to five films", so the numerals need no
  * unit in sight; assistive tech hears "wins". The numerals arrive after
- * the title, one beat apart; nothing is hidden before hydration. Layout in
- * ./ceremony.css.
+ * the title, one beat apart, and none waits past --dur-5 (the orchestration
+ * budget) however many films won; nothing is hidden before hydration.
+ * Layout in ./ceremony.css.
  */
 export function Tally({ rows }: { rows: TallyRow[] }) {
   if (rows.length === 0) return null;
@@ -25,7 +26,7 @@ export function Tally({ rows }: { rows: TallyRow[] }) {
         {rows.map(({ film, count }, i) => (
           <li key={film.slug} className="seam">
             <span className="seam__lead tally__count condensed text-8 text-fg">
-              <Reveal as="span" variant="none" delay={DUR[3] + i * DUR[2]}>
+              <Reveal as="span" variant="none" delay={Math.min(DUR[3] + i * DUR[2], DUR[5])}>
                 <SplitText text={String(count)} seed={`tally:${film.slug}`} />
               </Reveal>
               <span className="sr-only"> {count === 1 ? "win" : "wins"}</span>

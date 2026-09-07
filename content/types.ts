@@ -103,10 +103,11 @@ export interface Credit {
  * thumbnail). Components render a type-only frame in that case; nothing is
  * generated in its place (SFA_SYSTEM_DESIGN.md 9.4).
  *
- * The pipeline writes a third rendition, `{slug}-treated-sm.webp`, at the
- * dither's native resolution for card-size use. It is derived from
- * `treated` by a fixed naming rule rather than stored here;
- * scripts/validate-content.ts checks all three files exist on disk.
+ * The pipeline also writes two card-size renditions, `{slug}-treated-sm.webp`
+ * (the dither at its native resolution) and `{slug}-sm.webp` (the frame at
+ * 640x360). They are derived from these two paths by a fixed naming rule
+ * (components/Still.tsx) rather than stored here; scripts/validate-content.ts
+ * checks all four files exist on disk.
  */
 export interface Still {
   treated: string;

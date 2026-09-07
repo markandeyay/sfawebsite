@@ -1,6 +1,8 @@
 // Server component. Splits `text` into words (span.split-word, never broken across lines) and glyphs
-// (span.split-glyph, aria-hidden) so app/motion.css can stagger the glyphs when the enclosing Reveal
-// gets "is-in". The outer element carries aria-label={text}, so assistive tech reads the whole string.
+// (span.split-glyph) so app/motion.css can stagger the glyphs when the enclosing Reveal gets "is-in".
+// Assistive tech reads a real text node: the whole string in a visually hidden span, with the glyph
+// spans hidden behind it. (aria-label on a role-less span is prohibited in ARIA 1.2 and is not voiced
+// by every screen reader outside a naming context, e.g. the tally numerals.)
 //
 // Engineered irregularity (brief 4.6): every glyph rests at rotate(--rot) translateY(--dy), about a
 // degree and a couple of hundredths of an em, deterministic from `seed` + glyph index. That resting
@@ -35,7 +37,7 @@ export function SplitText({ text, as = 'span', className, seed, ...rest }: Split
         '--dy': `${jitter(`${s}:${k}:dy`, -0.02, 0.02).toFixed(3)}em`,
       } as CSSProperties;
       return (
-        <span key={k} className="split-glyph" aria-hidden="true" style={style}>
+        <span key={k} className="split-glyph" style={style}>
           {ch}
         </span>
       );
@@ -48,7 +50,12 @@ export function SplitText({ text, as = 'span', className, seed, ...rest }: Split
   });
   return createElement(
     as,
-    { ...rest, className: ['split', className].filter(Boolean).join(' '), 'aria-label': text },
-    ...nodes,
+    { ...rest, className: ['split', className].filter(Boolean).join(' ') },
+    <span key="text" className="sr-only">
+      {text}
+    </span>,
+    <span key="glyphs" aria-hidden="true">
+      {nodes}
+    </span>,
   );
 }
