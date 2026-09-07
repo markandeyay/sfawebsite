@@ -9,8 +9,8 @@ const CARDS = [
   { href: "/#pitch", slug: "Members", ttl: ["The", "Members"], txt: "Over a hundred undergraduates from every major. Most arrive with no experience." },
 ];
 
-/* Four cards on the Carolina field, each veil blooming from its own
-   origin on hover with a real frame behind it. */
+/* Four department slates on the Carolina field: a striped clapper arm
+   on each, a real frame blooming behind on hover. */
 export function Crew({ stills }: { stills: Film[] }) {
   return (
     <section className="sec t-carolina" id="crew" data-scene data-name="Crew" data-idx="04">
@@ -19,7 +19,6 @@ export function Crew({ stills }: { stills: Film[] }) {
         slug="EXT. The crew — day"
         title="The"
         em="Crew"
-        no="04"
         meta={["Officers, producers, guilds", "And a hundred members"]}
       />
 
@@ -28,15 +27,18 @@ export function Crew({ stills }: { stills: Film[] }) {
           const still = stills[i % stills.length];
           return (
             <a className="crew-card" href={c.href} key={c.slug} data-nav data-tribe data-cursor="Go">
+              <span className="crew-card__arm" aria-hidden="true" />
               {still?.still ? (
                 <img className="crew-card__bg" src={still.still.original.replace(/\.webp$/, "-sm.webp")} alt="" aria-hidden="true" loading="lazy" width="640" height="360" />
               ) : null}
               <span className="crew-card__veil" aria-hidden="true" />
-              <span className="crew-card__idx">04 — {String(i + 1).padStart(2, "0")}</span>
-              <span className="crew-card__slug" aria-hidden="true">{c.slug}</span>
-              <h3 className="crew-card__ttl">{c.ttl[0]}<br />{c.ttl[1]}</h3>
-              <p className="crew-card__txt">{c.txt}</p>
-              <span className="arrow" aria-hidden="true"><svg><use href="#i-arrow" /></svg></span>
+              <span className="crew-card__in">
+                <span className="crew-card__idx">Dept. {String(i + 1).padStart(2, "0")}</span>
+                <span className="crew-card__slug" aria-hidden="true">{c.slug}</span>
+                <h3 className="crew-card__ttl">{c.ttl[0]}<br />{c.ttl[1]}</h3>
+                <p className="crew-card__txt">{c.txt}</p>
+                <span className="arrow" aria-hidden="true"><svg><use href="#i-arrow" /></svg></span>
+              </span>
             </a>
           );
         })}

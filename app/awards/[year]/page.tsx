@@ -44,10 +44,9 @@ const ACTS: Array<{ dept: Department; title: string; k: string }> = [
   { dept: "picture", title: "Picture", k: "Act III" },
 ];
 
-
 /* Awards night as its own show: the tally as a scoreboard, three acts
-   in ceremony order with a seal landing on every winner, and Best
-   Picture as the finale on the navy field with the only still. */
+   in ceremony order with a laurel on every winner, and Best Picture as
+   the finale on the ink with the only still. */
 export default async function CeremonyPage({ params }: PageProps) {
   const { year } = await params;
   const y = parseYear(year);
@@ -67,11 +66,10 @@ export default async function CeremonyPage({ params }: PageProps) {
       <div className="night" style={{ paddingBlockStart: "calc(var(--s9) + 2vw)" }}>
         <section className="sec t-paper" id="night" data-scene data-name="Awards night" data-idx="02" style={{ paddingBlockStart: 0 }}>
           <SectionHead
-            n="02"
-            slug={`EXT. Awards night — ${ceremony.held}`}
+            n={String(ceremony.year).slice(2)}
+            slug={`INT. Awards night — ${ceremony.held}`}
             title="Awards"
             em="Night"
-            no={String(ceremony.year).slice(2)}
             meta={[`${numberWord(total, true)} categories`, "Voted by the members"]}
           />
           <p className="night__lede" data-reveal>
@@ -94,7 +92,7 @@ export default async function CeremonyPage({ params }: PageProps) {
         </section>
 
         <Band
-          tone="flare"
+          tone="rec"
           rot={1.6}
           rows={[{ speed: -0.9, items: [{ b: "And the winner is" }, { em: ceremony.held }, { b: `${total} categories` }, { em: "Voted by the members" }] }]}
         />
@@ -113,8 +111,8 @@ export default async function CeremonyPage({ params }: PageProps) {
                   return (
                     <div className="win" data-win key={c.category}>
                       <span className="win__cat">{c.category}</span>
-                      <span className="win__seal" style={{ "--stamp-rot": `${jitter(`win:${c.category}`, -10, 10).toFixed(1)}deg` } as React.CSSProperties} aria-hidden="true">
-                        <span>{l1}<br />{l2}</span>
+                      <span className="win__seal" style={{ "--stamp-rot": `${jitter(`win:${c.category}`, -5, 5).toFixed(1)}deg` } as React.CSSProperties} aria-hidden="true">
+                        <Stamp inline winner={false} rot={0}>{l1}<br />{l2}</Stamp>
                       </span>
                       <div className="win__film">
                         <CatNo no={film.no} />
@@ -134,25 +132,22 @@ export default async function CeremonyPage({ params }: PageProps) {
         </section>
 
         {finale ? (
-          <section className="sec t-navy" id="finale" data-scene data-name="Best Picture" data-idx="BP" aria-labelledby="finale-ttl">
-            <SectionHead n="03" slug="INT. The finale — envelope" title="Best" em="Picture" no="★" meta={[ceremony.held, "The last envelope"]} />
+          <section className="sec t-ink" id="finale" data-scene data-name="Best Picture" data-idx="BP" aria-labelledby="finale-ttl">
+            <SectionHead n="★" slug="INT. The finale — last envelope" title="Best" em="Picture" meta={[ceremony.held, "The last envelope"]} />
             <div className="finale" data-reveal-head>
               <div className="finale__frame" data-finale>
                 <Media
                   film={finaleFilm}
-                  shape="arch"
-                  plate="gold"
                   rot={-0.8}
-                  plateX={-16}
-                  plateY={18}
                   size="full"
                   cursor="Watch"
+                  edge={[`Best Picture ▸ ${ceremony.year}`, `No. ${String(finaleFilm.no).padStart(3, "0")}`]}
                   cap={<><CatNo no={finaleFilm.no} />Directed by {finaleFilm.director}<span className="x">{ceremony.year}</span></>}
                 />
                 <Badge text={`Best Picture ★ ${ceremony.year} ★ Student Film Association ★ `} core="star.svg" />
               </div>
-              <div style={{ display: "flex", justifyContent: "center", marginBlockStart: "var(--s7)" }}>
-                <Stamp inline rot={-7}>Best<br />Picture</Stamp>
+              <div className="finale__laurel">
+                <Stamp inline rot={-3}>Best<br />Picture</Stamp>
               </div>
               <h2 className="finale__ttl" id="finale-ttl" data-split>
                 <Link href={`/films/${finaleFilm.slug}`} data-cursor="Watch">{finaleFilm.title}</Link>

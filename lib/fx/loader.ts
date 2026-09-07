@@ -1,12 +1,12 @@
 import { gsap, EASE, DUR, prefersReduced } from "./motion";
 
 /* ═══════════════════════════════════════════════════════════════════
-   LOADER — ink field, mark, a counter that means something.
+   THE LEADER — an Academy countdown that means something.
 
-   The count is tied to real readiness (fonts + the hero images), not
-   to a fixed timer pretending to load. It eases to 100 as assets land,
-   holds a beat, then the field clips away upward. Runs once per
-   session; later routes arrive under the curtain instead.
+   The numeral counts down from 8 as real readiness arrives (fonts, the
+   hero frame, a minimum beat), the sweep hand goes round once per
+   number, and on 2 the picture starts: a white flash frame, then the
+   field lifts. Runs once per session.
    ═══════════════════════════════════════════════════════════════════ */
 
 const waitFor = (img: HTMLImageElement | null) =>
@@ -16,60 +16,74 @@ const waitFor = (img: HTMLImageElement | null) =>
     img.addEventListener("error", () => res(), { once: true });
   });
 
-const waitForUrl = (url: string) => waitFor(Object.assign(new Image(), { src: url }));
+const FROM = 8;
+const TO = 2;
 
-export const runLoader = (onReveal: () => void, markUrl: string) => {
+export const runLoader = (onReveal: () => void) => {
   const loader = document.getElementById("loader");
-  const count = document.getElementById("loader-count");
-  const fill = document.getElementById("loader-fill");
-  const mark = document.getElementById("loader-mark");
+  const num = document.getElementById("leader-num");
+  const sweep = document.getElementById("leader-sweep");
+  const tc = document.getElementById("leader-tc");
 
   if (!loader) {
     onReveal();
     return;
   }
-
-  const finish = () => {
-    loader.classList.add("-out");
-    gsap.delayedCall(0.35, onReveal);
-    gsap.delayedCall(DUR.d5 + 0.2, () => {
-      loader.classList.add("-gone");
-      loader.remove();
-    });
-  };
-
   if (prefersReduced()) {
     loader.remove();
     onReveal();
     return;
   }
 
-  gsap.set(mark, { opacity: 0, y: 24 });
-  gsap.to(mark, { opacity: 1, y: 0, duration: DUR.d4, ease: EASE.out });
-
-  const p = { v: 0 };
-  const paint = () => {
-    if (count) count.textContent = String(Math.round(p.v)).padStart(3, "0");
-    if (fill) fill.style.transform = `scaleX(${p.v / 100})`;
+  const finish = () => {
+    loader.classList.add("-flash");
+    gsap.delayedCall(0.26, () => {
+      loader.classList.add("-out");
+      gsap.delayedCall(0.35, onReveal);
+      gsap.delayedCall(DUR.d5 + 0.2, () => {
+        loader.classList.add("-gone");
+        loader.remove();
+      });
+    });
   };
 
-  const crawl = gsap.to(p, { v: 88, duration: 2.6, ease: "power2.out", onUpdate: paint });
+  const p = { v: 0 };
+  const steps = FROM - TO;
+  let lastNum = -1;
+  const paint = () => {
+    const t = Math.min(p.v, 0.9999) * steps; /* 0 .. steps */
+    const n = FROM - Math.floor(t);
+    if (num && n !== lastNum) {
+      lastNum = n;
+      num.textContent = String(n);
+    }
+    const frac = t - Math.floor(t);
+    sweep?.style.setProperty("--sweep", `${(frac * 360).toFixed(1)}deg`);
+    if (tc) {
+      const frames = Math.round(p.v * steps * 24);
+      const s = Math.floor(frames / 24);
+      tc.textContent = `TC 00:00:${String(s).padStart(2, "0")}:${String(frames % 24).padStart(2, "0")}`;
+    }
+  };
+  paint();
+
+  /* crawl toward the penultimate number while assets are in flight */
+  const crawl = gsap.to(p, { v: 0.78, duration: 2.8, ease: "power2.out", onUpdate: paint });
 
   const ready = Promise.all([
     document.fonts ? document.fonts.ready : Promise.resolve(),
-    waitForUrl(markUrl),
-    waitFor(document.querySelector(".hero__mascot img")),
-    new Promise<void>((res) => gsap.delayedCall(1.1, res)),
+    waitFor(document.querySelector(".slate-card__frame img")),
+    new Promise<void>((res) => gsap.delayedCall(1.4, res)),
   ]);
 
   ready.then(() => {
     crawl.kill();
     gsap.to(p, {
-      v: 100,
-      duration: 0.5,
+      v: 1,
+      duration: 0.7,
       ease: EASE.soft,
       onUpdate: paint,
-      onComplete: () => gsap.delayedCall(0.22, finish),
+      onComplete: () => gsap.delayedCall(0.18, finish),
     });
   });
 };

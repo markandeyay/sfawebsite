@@ -35,11 +35,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-const TONES = [undefined, "navy", "ink", "caro", "paper", undefined, "navy"] as const;
+const TONES = [undefined, "navy", "ink", undefined, "navy", "ink", undefined] as const;
 
 /* The film page: the catalog number as the scale moment, the title, the
-   screen, the seals, the end credits, the films either side of it on
-   the slate. Same chrome, same atmosphere, same curtain as the lot. */
+   screen, the laurels, the end credits, the films either side of it on
+   the slate. Same chrome, same atmosphere, same iris as the lot. */
 export default async function FilmPage({ params }: PageProps) {
   const { slug } = await params;
   const film = getFilm(slug);
@@ -49,10 +49,11 @@ export default async function FilmPage({ params }: PageProps) {
   const slateSize = getFilms().filter((f) => f.year === film.year).length;
   const wins = film.awards.length;
   const src = film.still ? film.still.original : null;
+  const no = formatCatalogNumber(film.no);
 
   return (
     <>
-      <article className="film t-paper" id="film" data-scene data-name={film.title} data-idx={formatCatalogNumber(film.no)}>
+      <article className="film t-paper" id="film" data-scene data-name={film.title} data-idx={no}>
         <div className="film__eyebrow" data-hero-fade>
           <span>INT. {film.title}</span><i className="ln" />
           <span>Roll {film.year}</span><i className="ln" />
@@ -63,7 +64,7 @@ export default async function FilmPage({ params }: PageProps) {
         <header className="film__head" data-reveal-head>
           <span data-film-hero className="film__no"><CatNo no={film.no} big /></span>
           <h1 className="film__ttl" data-split>{film.title}</h1>
-          <span className="film__by" data-film-hero>Directed by {film.director}</span>
+          <span className="film__by" data-film-hero>Directed by <b>{film.director}</b></span>
         </header>
 
         <div className="film__grid">
@@ -78,7 +79,13 @@ export default async function FilmPage({ params }: PageProps) {
         </div>
 
         <div className="film__screen" data-film-hero>
-          <FilmScreen youtubeId={film.youtubeId} title={film.title} src={src} viewable={film.viewable} />
+          <FilmScreen
+            youtubeId={film.youtubeId}
+            title={film.title}
+            src={src}
+            viewable={film.viewable}
+            edge={[`SFA ▸ ${film.year} ▸ ${String(film.no).padStart(2, "0")}A ▸ ${film.runtime ? `${film.runtime} min` : "Print"}`, `No. ${no}`]}
+          />
         </div>
 
         <div className="film__body">
@@ -93,7 +100,7 @@ export default async function FilmPage({ params }: PageProps) {
                   {film.awards.map((a, i) => {
                     const [l1, l2] = sealLines(a.category);
                     return (
-                      <Stamp key={a.category} tone={TONES[i % TONES.length]} rot={jitter(`seal:${film.slug}:${i}`, -12, 10)} seal>
+                      <Stamp key={a.category} tone={TONES[i % TONES.length]} rot={jitter(`seal:${film.slug}:${i}`, -7, 6)} seal>
                         {l1}<br />{l2}
                         {a.person ? <small>{a.person}</small> : null}
                       </Stamp>
@@ -139,11 +146,7 @@ export default async function FilmPage({ params }: PageProps) {
                 <Link key={f.slug} href={`/films/${f.slug}`} className="shot" data-cursor="Watch">
                   <Media
                     film={f}
-                    shape={i ? "stub" : "leaf"}
-                    plate={i ? "flare" : "gold"}
-                    rot={i ? 1.2 : -1.4}
-                    plateX={i ? 14 : -14}
-                    plateY={14}
+                    rot={i ? 1 : -1.2}
                     cap={<><CatNo no={f.no} />{i ? "Next" : "Previous"}<span className="x">{f.director}</span></>}
                   />
                   <h3 className="shot__ttl">{f.title}</h3>
@@ -157,7 +160,7 @@ export default async function FilmPage({ params }: PageProps) {
       <Band
         tone="caro"
         rot={-1.4}
-        rows={[{ speed: 0.9, items: [{ b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }, { b: "Cut" }, { em: "Check the Gate" }] }]}
+        rows={[{ speed: 0.9, items: [{ b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }, { b: "Cut" }, { em: "Check the gate" }] }]}
       />
 
       <Footer year={film.year} />

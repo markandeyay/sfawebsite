@@ -2,58 +2,48 @@
    TOKENS — the single source of truth for the whole site.
    Nothing below this file may invent a colour, size, or easing.
 
-   Ported from the client's stussy.ink engine (DESIGN_NOTES.md section
-   13) and recoloured for the Student Film Association: UNC navy, the
-   same Carolina, the same hot flare, the same newsprint paper.
+   The screening room (DESIGN_NOTES.md section 14). The engine is the
+   client's stussy.ink build; the skin is film's own: script paper and
+   projector black, REC red as the one hot colour, a marker yellow for
+   highlighter only, Carolina and navy for UNC. A poster face for titles,
+   the screenplay's Courier for everything that labels, a plain sans for
+   reading.
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── INK & PAPER ────────────────────────────────────────────────
-     Warm neutrals. Newsprint reads as a printed object; pure grey
-     reads as an unstyled div. */
-  --paper:      #EDE9E1;
-  --paper-warm: #E6E0D4;
-  --paper-cool: #E4E7EA;
-  --ink:        #100F0D;
-  --ink-soft:   #46423C;
-  --ink-faint:  rgba(16, 15, 13, 0.16);
-  --ink-hair:   rgba(16, 15, 13, 0.11);
+  /* ── PAPER & INK ────────────────────────────────────────────────
+     Script paper, not newsprint: a printed screenplay is bright and
+     slightly warm. The ink is the dark of a screening room. */
+  --paper:      #F5F2EB;
+  --paper-warm: #EFE9DC;
+  --paper-cool: #EDEFF1;
+  --ink:        #0E0D0C;
+  --ink-soft:   #4A4640;
+  --ink-faint:  rgba(14, 13, 12, 0.16);
+  --ink-hair:   rgba(14, 13, 12, 0.11);
 
-  /* ── BRAND ──────────────────────────────────────────────────────
-     Four voices, not nine. Section identity comes from which of these
-     owns the whole field, never from confetti accents. */
+  /* ── BRAND ──────────────────────────────────────────────────────── */
   --carolina:    #4B9CD3;
-  --carolina-hi: #96CDEE;
+  --carolina-hi: #9ACBEB;
   --carolina-lo: #2C6E9E;
   --navy:        #13294B;
   --navy-soft:   #1E3A66;
-  --flare:       #FF4A17;   /* the one hot colour: stamps, urgent tape, focus */
-  --gold:        #F0B429;   /* marker highlight only */
+  --rec:         #E0261F;   /* the one hot colour: the record light, the winner seal, urgent tape */
+  --marker:      #F2C14E;   /* highlighter on a script page, nothing else */
 
-  /* ── SURFACE ROLES ──────────────────────────────────────────────
-     Sections claim a surface; components inherit from it, so a block
-     dropped on navy recolours itself without a modifier class. */
+  /* ── SURFACE ROLES ──────────────────────────────────────────────── */
   --surface:    var(--paper);
   --on-surface: var(--ink);
   --on-surface-dim: var(--ink-soft);
   --rule:       var(--ink-hair);
   --accent:     var(--carolina);
-
-  /* translucent paper wash — lets the atmosphere layer ghost through
-     printed matter instead of hiding it entirely */
-  --wash: rgba(237, 233, 225, 0.88);
+  --wash: rgba(245, 242, 235, 0.9);
 
   /* ── TYPE ───────────────────────────────────────────────────────── */
-  /* the handstyle mark, referenced as a mask by .sheen */
-  --mark: url("/assets/marks/sfa-script.png");
-  --mark-ar: 1600 / 900;
-
-  --f-display: var(--font-barlow), "Barlow Condensed", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  --f-display: var(--font-shoulders), "Big Shoulders Display", Impact, "Arial Narrow Bold", sans-serif;
+  --f-script:  var(--font-courier), "Courier Prime", "Courier New", Courier, monospace;
   --f-text:    "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --f-mono:    var(--font-plex), "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, "Roboto Mono", monospace;
 
-  /* fluid scale — a 1.28 ratio at the small end opening to 1.5 at the top,
-     so display type gets dramatic on desktop without shredding mobile */
   --t-mega:  clamp(72px, 15.5vw, 260px);
   --t-d1:    clamp(52px, 10.5vw, 172px);
   --t-d2:    clamp(34px, 5.4vw,  92px);
@@ -61,15 +51,15 @@
   --t-lede:  clamp(21px, 2.9vw,  46px);
   --t-body:  clamp(15px, 1.02vw, 18px);
   --t-small: clamp(13px, 0.86vw, 15px);
-  --t-label: clamp(10px, 0.72vw, 12px);
-  --t-micro: clamp(9px,  0.62vw, 11px);
+  --t-label: clamp(11px, 0.78vw, 13px);
+  --t-micro: clamp(10px, 0.66vw, 12px);
 
-  --tr-tight:  -0.022em;   /* display */
-  --tr-normal:  0.01em;
-  --tr-wide:    0.16em;    /* labels */
-  --tr-mega:    0.30em;    /* eyebrows, rails */
+  --tr-tight:  -0.01em;    /* display: Big Shoulders is already tight */
+  --tr-normal:  0;
+  --tr-wide:    0.06em;    /* Courier needs far less tracking than a grotesk */
+  --tr-mega:    0.14em;
 
-  --lh-solid: 0.84;
+  --lh-solid: 0.86;
   --lh-tight: 1.06;
   --lh-body:  1.62;
 
@@ -82,23 +72,28 @@
   --gutter: clamp(12px, 1.4vw, 26px);
   --section-y: clamp(80px, 12vh, 168px);
 
-  /* ── MOTION ─────────────────────────────────────────────────────
-     One easing family. --e-out does 80% of the work; the others exist
-     for curtains (--e-inout) and things that should feel stamped
-     (--e-snap). Mirrored one-to-one in lib/fx/motion.ts. */
+  /* ── FILM ───────────────────────────────────────────────────────
+     The physical constants of the medium, used by frames, strips and
+     the leader. */
+  --perf-w: 10px;          /* sprocket hole width */
+  --perf-h: 14px;          /* sprocket hole height */
+  --perf-gap: 22px;        /* pitch between holes */
+  --rail: 22px;            /* the perforated rail either side of a frame */
+  --bar: clamp(10px, 1.6vw, 26px); /* a letterbox bar */
+
+  /* ── MOTION ─────────────────────────────────────────────────────── */
   --e-out:   cubic-bezier(0.16, 1, 0.30, 1);
   --e-inout: cubic-bezier(0.76, 0, 0.24, 1);
   --e-soft:  cubic-bezier(0.22, 0.61, 0.36, 1);
   --e-snap:  cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --d1: 160ms;  /* hover states, cursors */
-  --d2: 320ms;  /* small reveals */
-  --d3: 560ms;  /* card / block reveals */
-  --d4: 900ms;  /* display type */
-  --d5: 1300ms; /* curtains */
+  --d1: 160ms;
+  --d2: 320ms;
+  --d3: 560ms;
+  --d4: 900ms;
+  --d5: 1300ms;
 
-  /* ── DEPTH ──────────────────────────────────────────────────────
-     Reserved z-bands, so nothing ever needs a magic 9999. */
+  /* ── DEPTH ──────────────────────────────────────────────────────── */
   --z-atmos:   0;
   --z-content: 2;
   --z-band:    3;
@@ -110,12 +105,11 @@
   --z-loader:  400;
 }
 
-/* Section surface presets. A section sets one class and every child
-   — rules, labels, arrows, captions — recolours through the roles. */
+/* Section surface presets. */
 .t-paper {
   --surface: var(--paper);      --on-surface: var(--ink);
   --on-surface-dim: var(--ink-soft); --rule: var(--ink-hair);
-  --accent: var(--carolina);    --wash: rgba(237, 233, 225, 0.88);
+  --accent: var(--carolina);    --wash: rgba(245, 242, 235, 0.9);
 }
 .t-navy {
   --surface: var(--navy);       --on-surface: #F2F5F8;
@@ -129,6 +123,6 @@
 }
 .t-ink {
   --surface: var(--ink);        --on-surface: var(--paper);
-  --on-surface-dim: rgba(237, 233, 225, 0.56); --rule: rgba(237, 233, 225, 0.16);
-  --accent: var(--flare);       --wash: var(--ink);
+  --on-surface-dim: rgba(245, 242, 235, 0.56); --rule: rgba(245, 242, 235, 0.16);
+  --accent: var(--carolina);    --wash: var(--ink);
 }

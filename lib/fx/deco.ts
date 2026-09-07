@@ -12,10 +12,10 @@ import { markByName, markImg } from "./marks";
 
 /* Per-section casts. */
 const CASTS: Record<string, string[]> = {
-  slate: ["sheet", "reel", "clapper", "megaphone", "star"],
-  crew: ["chair", "sheet", "spot", "clapper", "ticket"],
-  credits: ["reel", "ticket", "sheet", "megaphone", "star"],
-  finale: ["sheet", "star", "reel", "clapper", "spot"],
+  slate: ["strip", "reel", "clapper", "strip-v", "star"],
+  crew: ["chair", "strip", "spot", "clapper", "ticket"],
+  credits: ["reel", "strip-v", "sheet", "megaphone", "star"],
+  finale: ["sheet", "star", "reel", "strip", "spot"],
 };
 
 /* x/y in %, size in vw, rotation in deg — hand-placed so nothing lands

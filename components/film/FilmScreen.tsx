@@ -1,13 +1,13 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 
-/* The screen. At rest, the film's own frame in a leaf-cut frame on a
-   Carolina plate with a play pill; the YouTube iframe is created only on
-   click, so no page ships a live player. Focus moves to the player when
-   the button unmounts. */
-export function FilmScreen({ youtubeId, title, src, viewable }: { youtubeId: string; title: string; src: string | null; viewable: boolean }) {
+/* The screen. At rest, the film's own frame in the 35 mm chrome with a
+   ticket to play it; the YouTube iframe is created only on click, so no
+   page ships a live player. Focus moves to the player when the button
+   unmounts. */
+export function FilmScreen({ youtubeId, title, src, viewable, edge }: { youtubeId: string; title: string; src: string | null; viewable: boolean; edge: [string, string] }) {
   const [playing, setPlaying] = useState(false);
   const player = useRef<HTMLIFrameElement | null>(null);
 
@@ -29,24 +29,36 @@ export function FilmScreen({ youtubeId, title, src, viewable }: { youtubeId: str
     );
   }
 
+  const ticket = !viewable || !src ? (
+    <span className="facade__play" aria-hidden="true">Festival only</span>
+  ) : (
+    <span className="facade__play" aria-hidden="true">
+      <svg aria-hidden="true"><use href="#i-play" /></svg>
+      Play the film
+    </span>
+  );
+
   const frame = (
-    <figure
-      className="media"
-      data-media={src ? "" : undefined}
-      data-shape="leaf"
-      data-plate="caro"
-      style={{ "--frame-rot": "-0.8deg", "--plate-x": "18px", "--plate-y": "18px" } as CSSProperties}
-    >
-      <div className="media__frame">
-        {src ? (
-          <img className="media__img" src={src} alt={`Frame from ${title}`} width="1280" height="720" fetchPriority="high" />
-        ) : (
-          <div className="media__leader" role="img" aria-label={`${title}: no frame available`}>
-            <span className="k">No frame — festival only</span>
-            <span className="big">{title}</span>
-            <span className="k">Screened at the festival</span>
-          </div>
-        )}
+    <figure className="media" data-media={src ? "" : undefined}>
+      <div className="media__film">
+        <div className="media__frame">
+          {src ? (
+            <img className="media__img" src={src} alt={`Frame from ${title}`} width="1280" height="720" fetchPriority="high" />
+          ) : (
+            <div className="media__leader" role="img" aria-label={`${title}: no frame available`}>
+              <span className="k">Leader — festival only</span>
+              <span className="big">{title}</span>
+              <span className="k">Screened at the festival</span>
+            </div>
+          )}
+          <span className="media__vf" aria-hidden="true" />
+          <span className="media__rec" aria-hidden="true">Rec</span>
+          {ticket}
+        </div>
+        <div className="media__edge" aria-hidden="true">
+          <span>{edge[0]}</span>
+          <span className="n">{edge[1]}</span>
+        </div>
       </div>
     </figure>
   );
@@ -55,7 +67,6 @@ export function FilmScreen({ youtubeId, title, src, viewable }: { youtubeId: str
     return (
       <div className="facade" aria-label={`${title} is not streaming`}>
         {frame}
-        <span className="facade__play" aria-hidden="true">Festival only</span>
       </div>
     );
   }
@@ -63,10 +74,6 @@ export function FilmScreen({ youtubeId, title, src, viewable }: { youtubeId: str
   return (
     <button type="button" onClick={() => setPlaying(true)} className="facade" aria-label={`Play ${title}`} data-cursor="Play">
       {frame}
-      <span className="facade__play" aria-hidden="true">
-        <svg aria-hidden="true" width="14" height="14"><use href="#i-play" /></svg>
-        Play the film
-      </span>
     </button>
   );
 }

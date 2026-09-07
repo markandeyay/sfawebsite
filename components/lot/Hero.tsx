@@ -5,28 +5,37 @@ import { formatCatalogNumber } from "@/content";
 import { SITE } from "@/lib/site";
 import { Badge } from "./Badge";
 
-/* Magazine cover: masthead rule, the handstyle mark with a colour sheen
-   travelling through it, the slate card carrying the cycle's key frame
-   where a mascot would sit, dense corner meta. */
-export function Hero({ keyFilm, films, awards }: { keyFilm: Film; films: number; awards: number }) {
+/* The title card. One frame of widescreen: ink bars top and bottom, a
+   viewfinder inside them, REC and the aspect ratio in the top bar, the
+   club's name set as a main title with the projector beam crossing it,
+   and the slate for the cycle's key film right of frame. */
+export function Hero({ keyFilm, films, awards, year }: { keyFilm: Film; films: number; awards: number; year: number }) {
   return (
-    <section className="hero t-paper" id="hero" data-scene data-name="Cover" data-idx="00">
+    <section className="hero t-paper" id="hero" data-scene data-name="Title card" data-idx="00">
       <div className="hero__eyebrow" data-hero-fade>
         <span>UNC Chapel Hill</span><i className="ln" />
         <span>Student-run</span><i className="ln" />
-        <span>Roll 2025</span><i className="ln" />
+        <span>Roll {year}</span><i className="ln" />
         <span className="hot">Festival in May</span>
       </div>
 
-      <div className="hero__stage">
+      <div className="hero__stage" data-reveal-head="manual">
+        <span className="hero__bar -top" aria-hidden="true" />
+        <span className="hero__bar -bottom" aria-hidden="true" />
+        <span className="hero__hud" aria-hidden="true">
+          <span className="rec">Rec</span>
+          <span className="u-hide-sp">Roll {year} · Sc 01 · Tk 01 · 24 fps</span>
+          <span>1.85 : 1</span>
+        </span>
+        <span className="hero__vf" aria-hidden="true"><i /><i /><i /><i /></span>
+
         <h1 className="hero__lockup">
           <span className="u-sr">{SITE.name}</span>
-          <span className="hero__mark sheen" id="hero-mark" aria-hidden="true"><i /></span>
-          <span className="hero__sub" data-hero aria-hidden="true">
-            Student Film <em>Association</em>
+          <span className="hero__title" data-split aria-hidden="true">
+            Student<br />Film<br />Association
           </span>
-          <span className="hero__tag" data-hero>
-            <span>Studio</span><span className="hot">★</span><span>Roll camera</span>
+          <span className="hero__line" data-hero>
+            <b>A student-run studio.</b> {films} films a year <span className="hot">★</span> {awards} awards <span className="hot">★</span> one festival
           </span>
         </h1>
 
@@ -40,9 +49,9 @@ export function Hero({ keyFilm, films, awards }: { keyFilm: Film; films: number;
                 ) : null}
               </span>
               <span className="slate-card__fields" aria-hidden="true">
-                <span><div>Roll<b>2025</b></div></span>
-                <span><div className="hot">Scene<b>No. {formatCatalogNumber(keyFilm.no)}</b></div></span>
-                <span><div>Take<b>{keyFilm.title}</b></div></span>
+                <span>Roll<b>{year}</b></span>
+                <span className="hot">Scene<b>No. {formatCatalogNumber(keyFilm.no)}</b></span>
+                <span>Take<b>{keyFilm.title}</b></span>
               </span>
             </span>
           </Link>
@@ -52,7 +61,7 @@ export function Hero({ keyFilm, films, awards }: { keyFilm: Film; films: number;
 
       <div className="hero__foot" data-hero-fade>
         <span className="hero__scroll"><i />Scroll</span>
-        <span className="u-hide-sp">Roll 2025 — {films} films — {awards} awards — festival in May — no experience needed</span>
+        <span className="u-hide-sp">Roll {year} — {films} films — {awards} awards — festival in May — no experience needed</span>
       </div>
 
       <span className="hero__side u-hide-sp" aria-hidden="true">Southern Part of Heaven — Student Film Association</span>

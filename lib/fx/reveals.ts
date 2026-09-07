@@ -119,6 +119,8 @@ export const initReveals = (): (() => void) => {
 
   const targets = document.querySelectorAll<HTMLElement>("[data-reveal], [data-reveal-head]");
   targets.forEach((el) => {
+    /* the hero title is revealed by the intro timeline, not the observer */
+    if (el.dataset.revealHead === "manual") return;
     /* siblings in the same parent cascade rather than landing together */
     const parent = el.parentElement;
     if (parent && el.hasAttribute("data-reveal")) {

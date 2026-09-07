@@ -1,26 +1,37 @@
 import type { Metadata } from "next";
-import { Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
+import { Big_Shoulders, Courier_Prime, Permanent_Marker } from "next/font/google";
 import "./globals.css";
 import { ChromeTop, ChromeBottom } from "@/components/engine/Chrome";
 import Engine from "@/components/engine/Engine";
 import { SITE } from "@/lib/site";
 import { getSiteKeyFilm } from "@/lib/home";
 
-/* The display voice: the client's own Figma stand-in for Futura Condensed.
-   800 for the headlines, 400 italic for the outlined second words. */
-const barlow = Barlow_Condensed({
+/* The poster face: Big Shoulders at its display optical size, weight 900,
+   for every title. Squared signage letters, nothing to do with Futura. */
+const shoulders = Big_Shoulders({
   subsets: ["latin"],
-  weight: ["400", "700", "800"],
-  style: ["normal", "italic"],
-  variable: "--font-barlow",
+  weight: "variable",
+  axes: ["opsz"],
+  variable: "--font-shoulders",
   display: "swap",
 });
 
-/* Kickers, rails, captions, the credit roll's roles. */
-const plex = IBM_Plex_Mono({
+/* The screenplay face: Courier Prime, the Courier cut drawn for scripts.
+   Sluglines, kickers, captions, the roles in the credit roll, the form. */
+const courier = Courier_Prime({
   subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-plex",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-courier",
+  display: "swap",
+});
+
+/* The chalk: Permanent Marker for the fields written on the slate, and
+   nothing else. */
+const marker = Permanent_Marker({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-marker",
   display: "swap",
 });
 
@@ -44,7 +55,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${barlow.variable} ${plex.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${shoulders.variable} ${courier.variable} ${marker.variable}`} suppressHydrationWarning>
       <body>
         <ChromeTop />
         <main id="main">{children}</main>

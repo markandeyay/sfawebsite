@@ -10,7 +10,7 @@ import { Credits } from "@/components/lot/Credits";
 import { Pitch } from "@/components/lot/Pitch";
 import { Footer } from "@/components/lot/Footer";
 
-/* The lot: one long scroll, every section a department. Everything
+/* The screening room: one long scroll, every section a reel. Everything
    renders from content/*.json. */
 export default function Home() {
   const films = getFilmsInCatalogOrder();
@@ -27,14 +27,14 @@ export default function Home() {
 
   return (
     <>
-      <Hero keyFilm={keyFilm} films={films.length} awards={summary.total} />
+      <Hero keyFilm={keyFilm} films={films.length} awards={summary.total} year={year} />
 
       <Band
-        tone="flare"
+        tone="rec"
         rot={-2.4}
         rows={[
-          { speed: 1, items: [{ b: "Student Film Association" }, { em: "Roll Sound" }, { b: `${films.length} Films` }, { em: "Speed" }] },
-          { speed: -0.68, items: [{ em: "Festival in May" }, { b: `${summary.total} Awards` }, { em: "Mark It" }, { b: "Action" }] },
+          { speed: 1, items: [{ b: "Student Film Association" }, { em: "Roll sound" }, { b: `${films.length} Films` }, { em: "Speed" }] },
+          { speed: -0.68, items: [{ em: "Festival in May" }, { b: `${summary.total} Awards` }, { em: "Mark it" }, { b: "Action" }] },
         ]}
       />
 
@@ -55,7 +55,7 @@ export default function Home() {
       <Band
         tone="navy"
         rot={-1.6}
-        rows={[{ speed: 0.86, items: [{ b: "Go Heels" }, { em: "Quiet on Set" }, { b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }] }]}
+        rows={[{ speed: 0.86, items: [{ b: "Go Heels" }, { em: "Quiet on set" }, { b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }] }]}
       />
 
       <Credits />

@@ -1,11 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════
-   MARKS — the hand-drawn set vocabulary that lives in the atmosphere,
-   the section deco, the loader field and the crossings.
-
-   Two kinds of ink: doodles drawn with rough.js strokes (SVG) and words
-   hand-lettered in marker faces (PNG with alpha). Each carries its own
-   aspect ratio; every placement sets width and lets height follow.
-   Files live in public/assets/marks.
+   MARKS — the film marks that live in the atmosphere, the section deco,
+   the leader field and the crossings: strips of film, the props of a
+   set, drawn with rough.js strokes so the line wobbles, and two
+   hand-lettered slate words.
    ═══════════════════════════════════════════════════════════════════ */
 
 export interface Mark {
@@ -14,6 +11,8 @@ export interface Mark {
 }
 
 export const MARKS: Mark[] = [
+  { file: "strip.svg", ar: 520 / 220 },
+  { file: "strip-v.svg", ar: 220 / 520 },
   { file: "clapper.svg", ar: 1 },
   { file: "reel.svg", ar: 420 / 400 },
   { file: "megaphone.svg", ar: 480 / 400 },
@@ -23,10 +22,6 @@ export const MARKS: Mark[] = [
   { file: "star.svg", ar: 1 },
   { file: "w-action.png", ar: 895 / 256 },
   { file: "w-cut.png", ar: 543 / 256 },
-  { file: "w-roll.png", ar: 936 / 156 },
-  { file: "w-take.png", ar: 682 / 246 },
-  { file: "w-speed.png", ar: 574 / 205 },
-  { file: "w-quiet.png", ar: 951 / 127 },
 ];
 
 /* the large composition used once per section as the hero piece */

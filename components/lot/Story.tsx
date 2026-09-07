@@ -4,21 +4,30 @@ import { Media } from "./Media";
 import { Badge } from "./Badge";
 import { CatNo } from "./CatNo";
 
-/* How a film gets made here: the manifesto assembles as you pass it. */
+/* How a film gets made here, as a call sheet: the manifesto lines rise,
+   then the sheet fills row by row as you pass it. */
+const SHEET: Array<{ day: string; call: string; what: string; who: string }> = [
+  { day: "Fall", call: "Pitch", what: "Bring a script or an idea. The script review board reads every pitch.", who: "Any UNC student" },
+  { day: "Fall", call: "Greenlight", what: "The board greenlights the films the club can make well that year.", who: "Script review board" },
+  { day: "Fall", call: "Crew up", what: "Each greenlit film gets a producer and builds a crew of actors, editors, cinematographers and set crew from the membership.", who: "The guilds" },
+  { day: "Spring", call: "Shoot", what: "Crews shoot and cut with the club’s equipment and the guilds behind them.", who: "The crew" },
+  { day: "May", call: "Screen", what: "Every film premieres at the SFA Film Festival. Up to about twenty minutes each.", who: "Everyone" },
+  { day: "May", call: "Wrap", what: "Awards night follows the festival, voted on by the members.", who: "The members" },
+];
+
 export function Story({ film }: { film: Film }) {
   return (
-    <section className="sec t-paper" id="story" data-scene data-name="How it's made" data-idx="03">
+    <section className="sec t-paper" id="story" data-scene data-name="Call sheet" data-idx="03">
       <SectionHead
         n="03"
-        slug="INT. How it's made — fall to May"
+        slug="INT. Call sheet — fall to May"
         title="How it's"
         em="Made"
-        no="03"
         meta={["Pitch in the fall", "Screen in May"]}
       />
 
       <div className="story__pin" id="story-pin">
-        <div className="story__ghost" aria-hidden="true">Action</div>
+        <div className="story__ghost" aria-hidden="true">Fade in:</div>
         <div className="story__grid">
           <div className="story__copy">
             <p className="story__lede">
@@ -28,32 +37,36 @@ export function Story({ film }: { film: Film }) {
             <p className="story__body" data-body="l">
               Bring a script or an idea in the fall. A script review board reads every pitch and
               greenlights the ones the club can make well that year. Each greenlit film gets a
-              producer and builds a crew of actors, editors, cinematographers and set crew from
-              the membership.
+              producer and builds a crew from the membership.
             </p>
             <p className="story__body" data-body="r">
-              Spring is production. Crews shoot and cut with the club&rsquo;s equipment and the guilds
-              behind them. Every film premieres at the SFA Film Festival in May, and the awards follow,
-              voted on by the members.
+              Spring is production. Every film premieres at the SFA Film Festival in May, and the
+              awards follow, voted on by the members.
             </p>
-            <dl className="facts">
-              <div data-fact="l"><dt>Pitch</dt><dd>Fall semester</dd></div>
-              <div data-fact="r"><dt>Review</dt><dd>Script review board</dd></div>
-              <div data-fact="l"><dt>Crew up</dt><dd>Producer, then a crew from the guilds</dd></div>
-              <div data-fact="r"><dt>Shoot</dt><dd>Spring semester</dd></div>
-              <div data-fact="l"><dt>Screen</dt><dd>SFA Film Festival, May</dd></div>
-              <div data-fact="r"><dt>Runtime</dt><dd>Up to about twenty minutes</dd></div>
-            </dl>
+            <div className="callsheet-wrap">
+              <table className="callsheet">
+                <caption>Call sheet — one film, fall to May</caption>
+                <thead>
+                  <tr><th scope="col">Day</th><th scope="col">Call</th><th scope="col">Scene</th><th scope="col">Who</th></tr>
+                </thead>
+                <tbody>
+                  {SHEET.map((r, i) => (
+                    <tr key={r.call} data-fact={i % 2 ? "r" : "l"}>
+                      <th scope="row">{r.day}</th>
+                      <td className="when">{r.call}</td>
+                      <td className="what">{r.what}</td>
+                      <td>{r.who}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="story__media" data-story-media>
             <Media
               film={film}
-              shape="arch"
-              plate="gold"
               rot={-1.2}
-              plateX={-18}
-              plateY={16}
               size="full"
               cursor="Watch"
               cap={<><CatNo no={film.no} />{film.title}, {film.year}<span className="x">{film.director}</span></>}

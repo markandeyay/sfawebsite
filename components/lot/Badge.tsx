@@ -3,8 +3,9 @@ import type { CSSProperties } from "react";
 
 let seq = 0;
 
-/* Rotary text on a ring with a mark at the core. */
-export function Badge({ text, core = "star.svg", className = "", style, badge = false }: { text: string; core?: string; className?: string; style?: CSSProperties; badge?: boolean }) {
+/* Rotary text on a ring with a reel turning at the core: a film can
+   label. */
+export function Badge({ text, core = "reel.svg", className = "", style, badge = false }: { text: string; core?: string; className?: string; style?: CSSProperties; badge?: boolean }) {
   const id = `badge-${++seq}`;
   return (
     <span className={`badge ${className}`} aria-hidden="true" style={style} data-badge={badge ? "" : undefined}>

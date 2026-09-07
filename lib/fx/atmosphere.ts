@@ -7,39 +7,41 @@ import { MARKS, SHEET, markImg } from "./marks";
 
    Three depths, each parallaxing at its own rate:
 
-     FAR   typeset lanes streaming sideways (the underprint)
-     MID   a drift field of hand-drawn marks, slowly breathing
-     NEAR  occasional fast crossings that cut the whole screen
+     FAR   lanes streaming sideways: screenplay lines in Courier, film
+           edge codes on perforated strips, and the odd poster word
+     MID   a drift field of film marks, slowly breathing
+     NEAR  occasional crossings that cut the whole screen
 
-   Everything streams on CSS keyframes, which Chrome runs on the
-   compositor — no rAF, no ticker, no per-frame JS. The only main-thread
-   work is one transform per depth on scroll.
-
-   The phrases are the set's vocabulary: what a crew says on the day,
-   what a slate reads, what the club is.
+   Everything streams on CSS keyframes on the compositor. The only
+   main-thread work is one transform per depth on scroll.
    ═══════════════════════════════════════════════════════════════════ */
 
-const PHRASES = [
-  "Roll Sound", "Speed", "Mark It", "Action", "Cut", "Check the Gate",
-  "Student Film Association", "Chapel Hill, NC", "Festival in May",
-  "Take 2", "Scene 12", "INT. Student Union — Night", "Fade In:",
-  "Twelve Films", "Fifteen Awards", "No Experience Needed",
-  "Southern Part of Heaven", "Go Heels", "Est. UNC", "Quiet on Set",
+const SCRIPT = [
+  "FADE IN:", "INT. STUDENT UNION — NIGHT", "EXT. THE QUAD — DAY", "CUT TO:",
+  "SMASH CUT TO:", "(beat)", "ROLL SOUND", "SPEED", "MARK IT", "ACTION",
+  "CUT", "CHECK THE GATE", "QUIET ON SET", "(V.O.)", "(CONT'D)", "MATCH CUT:",
+  "INT. SCREENING ROOM — NIGHT", "EXT. FRANKLIN ST — DUSK", "FADE OUT.",
 ];
+const EDGE = [
+  "SFA 2025", "ROLL A", "12A", "13", "14", "15A", "SCENE 12 TAKE 2", "KEEP",
+  "NO. 001", "NO. 002", "NO. 003", "PRINT", "HEAD", "TAIL", "SYNC",
+];
+const POSTER = ["Student Film Association", "Festival in May", "Twelve Films", "Fifteen Awards", "Chapel Hill", "No Experience Needed"];
 
-interface Tier { fs: [number, number]; op: [number, number]; weight: number; dur: [number, number] }
+type Kind = "script" | "edge" | "poster";
+interface Tier { kind: Kind; fs: [number, number]; op: [number, number]; dur: [number, number] }
 const TIERS: Tier[] = [
-  { fs: [84, 124], op: [0.028, 0.040], weight: 800, dur: [150, 210] },
-  { fs: [38, 54],  op: [0.032, 0.046], weight: 800, dur: [110, 160] },
-  { fs: [18, 25],  op: [0.045, 0.062], weight: 500, dur: [80,  120] },
+  { kind: "poster", fs: [84, 124], op: [0.030, 0.042], dur: [150, 210] },
+  { kind: "script", fs: [18, 26], op: [0.06, 0.085], dur: [110, 160] },
+  { kind: "edge", fs: [11, 14], op: [0.10, 0.14], dur: [90, 130] },
 ];
 
 /* Tint budget. Ink carries the field; the brand colours are seasoning. */
 const TINTS: Array<[string, number]> = [
-  ["16, 15, 13", 0.62],
-  ["75, 156, 211", 0.22],
-  ["255, 74, 23", 0.09],
-  ["240, 180, 41", 0.07],
+  ["14, 13, 12", 0.66],
+  ["75, 156, 211", 0.2],
+  ["224, 38, 31", 0.07],
+  ["19, 41, 75", 0.07],
 ];
 
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
@@ -68,11 +70,9 @@ export const initAtmosphere = (): Atmosphere | null => {
 
   const vw = window.innerWidth;
   const narrow = vw < 900;
-  const LANES = narrow ? 10 : 16;
-  const FIELD = narrow ? 7 : 13;
-
-  /* The tier sizes are tuned against a ~1440px stage. */
-  const scale = Math.min(1, Math.max(0.42, vw / 1440));
+  const LANES = narrow ? 11 : 17;
+  const FIELD = narrow ? 6 : 11;
+  const scale = Math.min(1, Math.max(0.5, vw / 1440));
 
   const layer = (depth: string) => {
     const el = document.createElement("div");
@@ -85,30 +85,36 @@ export const initAtmosphere = (): Atmosphere | null => {
   const mid = layer("mid");
   const near = layer("near");
 
-  /* ── FAR: typeset lanes ─────────────────────────────────────────── */
+  /* ── FAR: the lanes ─────────────────────────────────────────────── */
   const farFrag = document.createDocumentFragment();
   for (let i = 0; i < LANES; i++) {
-    const tier = TIERS[i % 4 === 1 ? 0 : i % 2 === 0 ? 2 : 1];
+    /* mostly script lines, a strip of edge code every third lane, a
+       poster word every fifth */
+    const tier = i % 5 === 2 ? TIERS[0] : i % 3 === 1 ? TIERS[2] : TIERS[1];
     const fs = rand(tier.fs[0], tier.fs[1]) * scale;
     const lane = document.createElement("div");
     lane.className = "atmos__lane";
-
+    lane.dataset.kind = tier.kind;
     lane.style.setProperty("--y", `${(i / LANES) * 108 - 4 + rand(-1.6, 1.6)}vh`);
     lane.style.setProperty("--fs", `${fs.toFixed(1)}px`);
-    lane.style.setProperty("--fw", String(tier.weight));
     lane.style.setProperty("--c", `rgba(${pickTint()}, ${rand(tier.op[0], tier.op[1]).toFixed(3)})`);
     lane.style.setProperty("--dur", `${rand(tier.dur[0], tier.dur[1]).toFixed(0)}s`);
     if (i % 3 === 2) lane.dataset.dir = "r";
 
-    const perChar = fs * 0.4;
+    const perChar = fs * (tier.kind === "poster" ? 0.42 : 0.62);
     const unit = document.createElement("span");
     let width = 0;
     let guard = 0;
-    while (width < vw * 1.25 && guard++ < 60) {
-      const txt = pick(PHRASES);
+    const words = tier.kind === "poster" ? POSTER : tier.kind === "edge" ? EDGE : SCRIPT;
+    while (width < vw * 1.25 && guard++ < 80) {
+      const txt = pick(words);
       const b = document.createElement("b");
-      b.textContent = `${txt} ★`;
+      b.textContent = tier.kind === "edge" ? txt : tier.kind === "poster" ? `${txt} ★` : txt;
       unit.appendChild(b);
+      if (tier.kind === "edge") {
+        for (let k = 0; k < 3; k++) unit.appendChild(document.createElement("i"));
+        width += fs * 3;
+      }
       width += (txt.length + 2) * perChar + fs * 0.6;
     }
     lane.appendChild(unit);
@@ -134,7 +140,7 @@ export const initAtmosphere = (): Atmosphere | null => {
     el.style.setProperty("--spin", `${rand(-11, 11).toFixed(1)}deg`);
     el.style.setProperty("--dur", `${rand(11, 24).toFixed(1)}s`);
     el.style.setProperty("--delay", `${rand(-14, 0).toFixed(1)}s`);
-    el.style.setProperty("--op", rand(0.10, 0.19).toFixed(3));
+    el.style.setProperty("--op", rand(0.09, 0.16).toFixed(3));
     const m = bag[i % bag.length];
     el.style.setProperty("--ar", String(m.ar));
     el.appendChild(markImg(m.file));
@@ -145,7 +151,7 @@ export const initAtmosphere = (): Atmosphere | null => {
   /* ── NEAR: crossings ──────────────────────────────────────────── */
   const nearFrag = document.createDocumentFragment();
   const crossers: HTMLElement[] = [];
-  for (const m of [...MARKS, SHEET]) {
+  for (const m of [...MARKS.filter((x) => x.file.startsWith("strip")), SHEET]) {
     const el = document.createElement("div");
     el.className = "atmos__chara";
     el.style.setProperty("--ar", String(m.ar));
@@ -172,18 +178,18 @@ export const initAtmosphere = (): Atmosphere | null => {
     settle = gsap.delayedCall(0.25, () => { for (const set of setters) set(0); });
   });
 
-  /* ── crossing scheduler ─────────────────────────────────────────── */
   let call: gsap.core.Tween | null = null;
   let cursor = 0;
   const scheduleCross = (first = false) => {
-    call = gsap.delayedCall(first ? 4 : rand(5, 10), () => {
+    call = gsap.delayedCall(first ? 5 : rand(7, 13), () => {
       const el = crossers[cursor++ % crossers.length];
+      if (!el) return;
       el.classList.remove("-run");
-      void el.offsetWidth; /* restart the keyframe */
+      void el.offsetWidth;
       el.style.setProperty("--y", `${rand(6, 80)}vh`);
-      el.style.setProperty("--w", `${rand(8, 17).toFixed(1)}vw`);
-      el.style.setProperty("--dur", `${rand(10, 17).toFixed(1)}s`);
-      el.style.setProperty("--tilt", `${rand(-14, 14).toFixed(1)}deg`);
+      el.style.setProperty("--w", `${rand(10, 22).toFixed(1)}vw`);
+      el.style.setProperty("--dur", `${rand(11, 18).toFixed(1)}s`);
+      el.style.setProperty("--tilt", `${rand(-10, 10).toFixed(1)}deg`);
       el.classList.add("-run");
       scheduleCross();
     });

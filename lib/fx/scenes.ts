@@ -22,7 +22,11 @@ const set = (sel: string, vars: gsap.TweenVars) => {
 export const prepareScenes = () => {
   if (prefersReduced()) return;
   set("[data-hero]", { opacity: 0, y: 44 });
-  set("#hero-mark", { opacity: 0, y: 60, rotate: -7, scale: 1.08 });
+  /* the letterbox closes in from both edges, the viewfinder snaps on */
+  set(".hero__bar.-top", { yPercent: -100 });
+  set(".hero__bar.-bottom", { yPercent: 100 });
+  set(".hero__hud", { opacity: 0 });
+  set(".hero__vf i", { opacity: 0, scale: 1.8 });
   set("[data-hero-fade]", { opacity: 0 });
   set(".hero__eyebrow .ln", { scaleX: 0, transformOrigin: "0 50%" });
   set(".hero__mascot .badge", { opacity: 0, scale: 0.4, rotate: -90 });
@@ -30,23 +34,29 @@ export const prepareScenes = () => {
   set("[data-film-hero]", { opacity: 0, y: 40 });
 };
 
-/* The curtain lifts onto a page that then assembles itself. Beats are
+/* The iris opens onto a page that then assembles itself. Beats are
    deliberately overlapped rather than sequential. */
 export const heroIntro = () => {
   if (prefersReduced()) return;
 
   const tl = gsap.timeline({ defaults: { ease: EASE.out } });
+  const stage = document.querySelector<HTMLElement>(".hero__stage");
 
-  if (document.getElementById("hero-mark")) {
-    tl.to("#hero-mark", { opacity: 1, y: 0, rotate: -2, scale: 1, duration: 1.25 }, 0)
-      .to(".hero__eyebrow .ln", { scaleX: 1, duration: 1.1, stagger: 0.09 }, 0.18)
-      .to(".hero__mascot[data-hero]", { opacity: 1, y: 0, duration: 1.35, ease: EASE.snap }, 0.2)
-      .to(".hero__mascot .badge", { opacity: 1, scale: 1, rotate: 0, duration: 1.1, ease: EASE.snap }, 0.62)
-      .to(".hero__tag[data-hero], .hero__sub[data-hero]", { opacity: 1, y: 0, duration: DUR.d4, stagger: 0.1 }, 0.5)
-      .to("[data-hero-fade]", { opacity: 1, duration: DUR.d4, stagger: 0.1 }, 0.56)
-      .to(".hero__side", { opacity: 0.55, y: 0, duration: DUR.d4 }, 0.9);
+  if (stage) {
+    tl.to(".hero__bar", { yPercent: 0, duration: 0.9, ease: "power3.inOut" }, 0)
+      /* the title rises letter by letter through the CSS reveal */
+      .add(() => stage.classList.add("-in"), 0.28)
+      .to(".hero__vf i", { opacity: 0.8, scale: 1, duration: 0.55, ease: EASE.snap, stagger: 0.06 }, 0.55)
+      .to(".hero__hud", { opacity: 1, duration: DUR.d3 }, 0.8)
+      .to(".hero__eyebrow .ln", { scaleX: 1, duration: 1.1, stagger: 0.09 }, 0.3)
+      .to(".hero__mascot[data-hero]", { opacity: 1, y: 0, duration: 1.35, ease: EASE.snap }, 0.45)
+      .to(".hero__mascot .badge", { opacity: 1, scale: 1, rotate: 0, duration: 1.1, ease: EASE.snap }, 0.9)
+      .to(".hero__line[data-hero]", { opacity: 1, y: 0, duration: DUR.d4 }, 1.05)
+      .to("[data-hero-fade]", { opacity: 1, duration: DUR.d4, stagger: 0.1 }, 0.7)
+      .to(".hero__side", { opacity: 0.55, y: 0, duration: DUR.d4 }, 1.1)
+      .add(() => stage.classList.add("-settled"), 3.2);
 
-    /* the mascot keeps breathing after the intro lands */
+    /* the slate keeps breathing after the intro lands */
     gsap.to(".hero__mascot", {
       y: -14, rotate: 1.2, duration: 3.6,
       ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2,
@@ -90,8 +100,8 @@ export const initScenes = (): (() => void) => {
 
   const spin = document.querySelector("[data-spin]");
   if (spin) {
-    tweens.push(gsap.fromTo(spin, { rotate: -32 }, {
-      rotate: 32, ease: EASE.linear,
+    tweens.push(gsap.fromTo(spin, { rotate: -18, yPercent: 10 }, {
+      rotate: 18, yPercent: -10, ease: EASE.linear,
       scrollTrigger: { trigger: "#credits", start: "top bottom", end: "bottom top", scrub: 1 },
     }));
   }
@@ -113,7 +123,7 @@ export const initScenes = (): (() => void) => {
   };
 };
 
-/* ── HOW IT'S MADE — the manifesto assembles as you pass it ───── */
+/* ── CALL SHEET — the manifesto rises, the sheet fills ─────────── */
 const storyScene = () => {
   const root = document.getElementById("story-pin");
   if (!root) return;
@@ -165,12 +175,12 @@ const slateScene = () => {
 
   const distance = () => Math.max(0, track.scrollWidth - window.innerWidth + 40);
 
-  /* Entrance: the roll deals itself out before the pin takes over. */
+  /* Entrance: the reel deals itself out before the pin takes over. */
   gsap.fromTo(shots,
     {
       y: (i: number) => 70 + i * 28,
-      rotate: (i: number) => (i % 2 ? 8 : -8) - i * 0.7,
-      scale: 0.84,
+      rotate: (i: number) => (i % 2 ? 6 : -6) - i * 0.5,
+      scale: 0.86,
       opacity: 0,
     },
     {
@@ -209,7 +219,7 @@ const slateScene = () => {
       { y: 0, rotate: 0 },
       {
         y: amt * 5.5,
-        rotate: amt * 0.1,
+        rotate: amt * 0.08,
         ease: EASE.linear,
         immediateRender: false,
         scrollTrigger: { trigger: pin, start: "top top", end: () => `+=${distance()}`, scrub: 1.2 },
@@ -217,7 +227,7 @@ const slateScene = () => {
   });
 };
 
-/* ── AWARDS NIGHT — the rack fills, then the stamps land ──────── */
+/* ── AWARDS NIGHT — the frames arrive, then the laurels land ───── */
 const rackScene = () => {
   const cards = gsap.utils.toArray<HTMLElement>("[data-product]");
   if (!cards.length) return;
@@ -228,15 +238,15 @@ const rackScene = () => {
   });
 
   cards.forEach((card, i) => {
-    tl.fromTo(card, { y: 110, rotate: i % 2 === 0 ? -4 : 4, opacity: 0 }, { y: 0, rotate: 0, opacity: 1, duration: 0.46 }, i * 0.1);
-    const stamp = card.querySelector<HTMLElement>("[data-stamp]");
-    if (stamp) {
-      tl.fromTo(stamp, { scale: 2.2, rotate: -34, opacity: 0 }, { scale: 1, rotate: -11, opacity: 1, duration: 0.26, ease: EASE.snap }, i * 0.1 + 0.3);
+    tl.fromTo(card, { y: 110, rotate: i % 2 === 0 ? -3 : 3, opacity: 0 }, { y: 0, rotate: 0, opacity: 1, duration: 0.46 }, i * 0.1);
+    const laurel = card.querySelector<HTMLElement>("[data-stamp]");
+    if (laurel) {
+      tl.fromTo(laurel, { scale: 1.7, y: -26, opacity: 0 }, { scale: 1, y: 0, opacity: 1, duration: 0.26, ease: EASE.snap }, i * 0.1 + 0.3);
     }
   });
 };
 
-/* ── THE CREW — cards deal in from the deck ───────────────────── */
+/* ── THE CREW — the slates deal in from the deck ─────────────── */
 const crewScene = () => {
   const cards = gsap.utils.toArray<HTMLElement>("[data-tribe]");
   if (!cards.length) return;
@@ -248,7 +258,7 @@ const crewScene = () => {
     });
 };
 
-/* ── END CREDITS — the roll crawls, the columns slide in ──────── */
+/* ── END CREDITS — the crawl rises, the columns slide in ─────── */
 const creditsScene = () => {
   const cols = gsap.utils.toArray<HTMLElement>("[data-store]");
   if (cols.length) {
@@ -270,14 +280,14 @@ const creditsScene = () => {
   }
 };
 
-/* ── FILM PAGE — the seals land, the neighbours deal in ───────── */
+/* ── FILM PAGE — the laurels land, the neighbours deal in ──────── */
 const filmScene = () => {
   const seals = gsap.utils.toArray<HTMLElement>("[data-seal]");
   if (seals.length) {
     gsap.fromTo(seals,
-      { scale: 2.2, rotate: -34, opacity: 0 },
+      { scale: 1.6, y: -30, opacity: 0 },
       {
-        scale: 1, rotate: (i: number) => (i % 2 ? 7 : -9), opacity: 1, duration: 0.5, ease: EASE.snap, stagger: 0.08,
+        scale: 1, y: 0, opacity: 1, duration: 0.5, ease: EASE.snap, stagger: 0.08,
         scrollTrigger: { trigger: "[data-seals]", start: "top 85%", once: true },
       });
   }
@@ -294,11 +304,11 @@ const nightScene = () => {
           x: 0, opacity: 1, duration: 0.5, ease: EASE.out,
           scrollTrigger: { trigger: w, start: "top 88%", once: true },
         });
-      const seal = w.querySelector<HTMLElement>(".win__seal");
+      const seal = w.querySelector<HTMLElement>(".win__seal .laurel");
       if (seal) {
         gsap.fromTo(seal,
-          { scale: 2, rotate: -30, opacity: 0 },
-          { scale: 1, rotate: i % 2 ? 6 : -8, opacity: 1, duration: 0.45, ease: EASE.snap, delay: 0.15,
+          { scale: 1.6, y: -20, opacity: 0 },
+          { scale: 1, y: 0, opacity: 1, duration: 0.45, ease: EASE.snap, delay: 0.15,
             scrollTrigger: { trigger: w, start: "top 88%", once: true } });
       }
     });

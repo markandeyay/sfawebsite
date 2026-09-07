@@ -5,7 +5,6 @@ import { Curtain } from "./curtain";
 import { initAtmosphere, type Atmosphere } from "./atmosphere";
 import { initDeco } from "./deco";
 import { initBands } from "./bands";
-import { initMedia } from "./media";
 import { initCursor } from "./cursor";
 import { initChrome } from "./chrome";
 import { initReveals } from "./reveals";
@@ -24,7 +23,6 @@ import { prepareScenes, heroIntro, initScenes, refreshScenes } from "./scenes";
    under the curtain, which the new page lifts once it has booted.
    ═══════════════════════════════════════════════════════════════════ */
 
-const MARK_URL = "/assets/marks/sfa-script.png";
 const LOADED_KEY = "sfa:loaded";
 
 let curtain: Curtain | null = null;
@@ -59,7 +57,6 @@ export const boot = (): (() => void) => {
   cleanups.push(initChrome());
   cleanups.push(initDeco());
   cleanups.push(initBands());
-  cleanups.push(initMedia());
   cleanups.push(initCursor());
   cleanups.push(initReveals());
   cleanups.push(initScenes());
@@ -102,7 +99,7 @@ export const boot = (): (() => void) => {
   const loader = document.getElementById("loader");
   if (firstVisit && loader) {
     sessionStorage.setItem(LOADED_KEY, "1");
-    runLoader(reveal, MARK_URL);
+    runLoader(reveal);
   } else {
     loader?.remove();
     const hash = window.location.hash;
@@ -129,6 +126,6 @@ export const boot = (): (() => void) => {
     atmosphere?.stop();
     cleanups.reverse().forEach((c) => c());
     ScrollTrigger.getAll().forEach((t) => t.kill());
-    gsap.set("[data-hero], #hero-mark, [data-hero-fade], .hero__side, [data-film-hero]", { clearProps: "all" });
+    gsap.set("[data-hero], .hero__bar, .hero__hud, .hero__vf i, [data-hero-fade], .hero__side, [data-film-hero]", { clearProps: "all" });
   };
 };

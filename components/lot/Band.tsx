@@ -2,14 +2,15 @@ import type { CSSProperties } from "react";
 
 export type BandItem = { b: string } | { em: string };
 
-/* The tilted marquee tape between sections. Two rows running opposite
-   ways reads as printed tape rather than a scrolling div. */
+/* A strip of 35 mm lying across the seam between two sections:
+   perforations top and bottom, the words in the frames, frame lines
+   between them. Two rows running opposite ways read as two strips. */
 export function Band({
   tone,
   rot,
   rows,
 }: {
-  tone: "flare" | "paper" | "caro" | "navy";
+  tone: "ink" | "rec" | "paper" | "caro" | "navy" | "flare";
   rot: number;
   rows: Array<{ speed: number; items: BandItem[] }>;
 }) {

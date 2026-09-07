@@ -2,8 +2,9 @@
 import { SITE } from "@/lib/site";
 import { SectionHead } from "./SectionHead";
 
-/* The exec board as end credits: role right, name left, meeting at the
-   gutter. No names have been supplied, and none are invented. */
+/* The exec board as an end-credit crawl: role above, name below,
+   centred, on the ink. No names have been supplied, and none are
+   invented. */
 const ROLES = [
   "President",
   "Vice president",
@@ -19,16 +20,15 @@ export function Credits() {
     <section className="sec t-ink" id="credits" data-scene data-name="End credits" data-idx="05">
       <SectionHead
         n="05"
-        slug="INT. End credits — roll"
+        slug="INT. End credits — crawl"
         title="End"
         em="Credits"
-        no="05"
         meta={["The people who run it", "Names to be supplied"]}
       />
 
       <div className="credits__grid">
         <div className="credits__roll" data-roll>
-          <dl className="roll">
+          <dl className="roll roll--crawl">
             {ROLES.map((role) => (
               <div className="roll__row" data-roll-row key={role}>
                 <dt className="roll__role">{role}</dt>
@@ -59,7 +59,7 @@ export function Credits() {
             </p>
           </div>
           <div className="credits__mark" data-store>
-            <img src="/assets/marks/sheet.png" alt="" width="955" height="1154" data-spin loading="lazy" />
+            <img src="/assets/marks/strip-v.svg" alt="" width="220" height="520" data-spin loading="lazy" />
           </div>
         </div>
       </div>

@@ -1518,3 +1518,107 @@ zero console errors on all three routes at 1440 and 375.
 Exec-board names, semester dates, crew credits beyond the director,
 person-level winners, a frame or public upload for At Last, the Gift, the 2026
 slate, and a mail relay URL for the pitch form (docs/APPS_SCRIPT_SETUP.md).
+
+## 14. Sixth direction (2026-09-07): the screening room
+
+The client's verdict on the lot: "It looks much better but it looks like a
+ripoff of Stussy... make this look more filmy... while keeping the same good
+flair as the Stussy site, make it your own." Right on both counts. The lot
+kept every one of stussy's visual devices (handstyle wordmark with a sheen,
+die-cut plates, rubber stamps, dotted tapes, magazine-cover hero) and only
+changed the words. This pass keeps the engine and its flair, mechanics
+untouched, and replaces every visual device with one borrowed from film's
+physical life. The test for each element: would a person who has stood on a
+set or in a projection booth recognise it without being told?
+
+### 14.1 The vocabulary
+
+- **The leader.** The loader is an Academy countdown: a numeral inside two
+  rings with a crosshair, a sweep wiping once per count, a timecode ticking
+  above, PICTURE START below. It counts from 8 down to 2 on real progress
+  (fonts, the hero frame) and never shows 1, as a real leader does not.
+- **The iris and the clap.** Route changes close a black iris on the page
+  from a point off-centre, a clapperboard snaps in and claps on the dark, a
+  paper flash frame fires, and the iris opens on the next page. The ink layer
+  carries a round hole cut by a CSS mask; the hole radius is the only thing
+  that animates. Same-page anchors use the same iris.
+- **The HUD.** The header is a camera overlay: a blinking REC dot, the name,
+  the reel list, a running timecode at 24 fps. The side rail is a strip of
+  perforations with a frame counter (FR 0000–9999 across the page) and the
+  reel name. The cursor is a reticle with corner brackets. A cue mark blinks
+  top-right every so often, the way one warns a projectionist of a reel
+  change.
+- **The title card.** The hero is one frame of widescreen: ink letterbox bars
+  full-bleed above and below, REC and the aspect ratio in the top bar,
+  viewfinder brackets in the corners, STUDENT / FILM / ASSOCIATION as a main
+  title, and the clapperboard slate carrying the key film's real frame with
+  its fields written in a marker face. A Carolina light passes through the
+  title one letter after the next, like bulbs chasing round a marquee: a
+  colour loop per glyph, offset by its reveal delay, nothing composited.
+- **Sluglines.** Section heads are screenplay sluglines: the scene number in
+  both margins, INT. THE SLATE — NIGHT in Courier between them, the title in
+  the poster face with its second word in Courier blue, the scene number
+  again as a faint numeral. The two typographic worlds of a film, the
+  one-sheet and the script, on one line.
+- **Strips.** The tapes between sections are lengths of 35 mm: perforations
+  top and bottom, frame lines between the words, display and Courier
+  alternating. They still tilt, still run at constant pixels per second,
+  still speed up and flip to REC red under fast scrolling.
+- **Frames.** Every still sits in 35 mm chrome: an ink surround with sprocket
+  rails either side, edge print along the bottom margin (SFA ▸ 2025 ▸ 03A and
+  the catalog number), a viewfinder with a REC dot that appears on hover.
+  Rectangles only, because a frame of film is a rectangle; the die-cuts, the
+  colour plates and the ghost fan are gone. A film with no frame gets black
+  leader with the slate fields written on it.
+- **Laurels.** Awards are laurels, the festival's own mark: two branches
+  around WINNER and the category, on a paper plate when they sit on a still,
+  in Carolina on paper and paper on ink. The awards page gives every winner
+  one.
+- **The screening room.** The slate is on ink, one pinned reel of frames with
+  a FRAME 01 / 12 counter, ending on a tail leader: END OF REEL.
+- **The call sheet.** How it's made is a bordered Courier table with an
+  inverted header row: day, call, scene, who. The manifesto lines still rise
+  on scrub, with a Carolina highlighter through the line that matters; FADE
+  IN: drifts behind in Courier.
+- **Department slates.** The crew cards carry a striped clapper arm and a
+  DEPT. 01 index; the veil still blooms from a corner on hover with a real
+  frame behind it.
+- **The crawl.** End credits are centred, role above name, on ink.
+- **The script page.** The pitch form is a numbered page with a slugline,
+  every field in Courier, the send button a ticket stub.
+- **THE END.** The footer is the card, over a strip of perforations, in the
+  poster face at its largest size.
+- **The atmosphere.** The lanes behind the page now stream screenplay lines
+  (FADE IN:, INT. STUDENT UNION — NIGHT, CUT TO:, (beat)), edge codes on
+  perforated strips, and the odd poster word; the drift field is strips of
+  film and the props of a set; the crossings are strips.
+
+### 14.2 Type and colour
+
+Big Shoulders Display 900 for every title (squared signage letters, variable
+optical size) and Courier Prime 700 for everything a script would carry:
+sluglines, kickers, captions, edge print, the credit roles, the form.
+Permanent Marker only on the slate's chalk fields. Paper #F5F2EB, ink
+#0E0D0C, REC red #E0261F, Carolina #4B9CD3 (with a light and a dark cut),
+navy #13294B. A marker-yellow token exists but is not used in the design:
+the client rejected gold, and the highlighter through the manifesto is
+Carolina. Barlow Condensed, IBM Plex Mono and the Rock Salt handstyle
+rasters are gone from the page.
+
+### 14.3 What the engine kept
+
+One Lenis, one scroll broadcast, one pin per page, transform and opacity
+only, hidden states set in JavaScript, reduced motion as a contract, the
+reveal observer, the band loops, the atmosphere's three depths, the cursor,
+the per-route boot and teardown. The `media` module (the ghost fan behind a
+photo) was deleted; the frame's hover is CSS.
+
+### 14.4 Verified
+
+Production build, Playwright with installed Chrome: the countdown leader
+runs and lifts; the title lands letter by letter and the sweep runs; the
+slate pin counts 01 to 12; laurels land on the rack; the call sheet fills
+row by row; the crawl rises; the iris closes to black, the clapper claps and
+the film page opens under the iris; a header link wipes to the awards
+section on the same page; the finale frame blooms on the awards page;
+scrollX is 0 at 1440 and 375; zero console errors on the three routes.

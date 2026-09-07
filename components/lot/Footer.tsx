@@ -1,30 +1,31 @@
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 
+/* THE END, the way a print ends: a strip of perforations, the card, the
+   tail leader of links and small print. */
 export function Footer({ year }: { year: number }) {
   return (
     <footer className="footer t-ink">
       <div className="footer__bar" aria-hidden="true" />
       <div className="footer__inner">
         <div className="footer__word" data-reveal-head>
-          <img src="/assets/marks/sfa-script.png" alt="SFA" width="1377" height="751" loading="lazy" />
-          <p className="big" data-split>Roll {year}</p>
+          <p className="big" data-split>The End</p>
+          <p className="sub">Student Film Association — Roll {year} — UNC Chapel Hill</p>
         </div>
 
         <div className="footer__cols">
           <div className="footer__col">
-            <h4>The lot</h4>
+            <h4>The reel</h4>
             <Link href="/#slate" data-nav className="u-line">The slate</Link>
             <Link href="/#rack" data-nav className="u-line">Awards night</Link>
-            <Link href="/#story" data-nav className="u-line">How it&rsquo;s made</Link>
+            <Link href="/#story" data-nav className="u-line">Call sheet</Link>
           </div>
           <div className="footer__col">
             <h4>The crew</h4>
             <Link href="/#crew" data-nav className="u-line">Crew</Link>
             <Link href="/#credits" data-nav className="u-line">End credits</Link>
             <Link href="/#pitch" data-nav className="u-line">Send your pitch</Link>
-            <Link href="/#hero" data-nav className="u-line">Back to top</Link>
+            <Link href="/#hero" data-nav className="u-line">Back to the top</Link>
           </div>
           <div className="footer__col">
             <h4>Elsewhere</h4>
@@ -36,8 +37,8 @@ export function Footer({ year }: { year: number }) {
         </div>
 
         <div className="footer__meta">
-          <p>© {year} <img className="mark-inline" src="/assets/marks/sfa-script.png" alt="SFA" loading="lazy" /></p>
-          <p>Student Film Association — UNC Chapel Hill<br />Twelve films a year. Fifteen awards. One festival.</p>
+          <p>© {year} Student Film Association</p>
+          <p>UNC Chapel Hill<br />Twelve films a year. Fifteen awards. One festival.</p>
           <p>Made in Chapel Hill</p>
         </div>
       </div>

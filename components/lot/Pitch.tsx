@@ -1,7 +1,8 @@
 import { SectionHead } from "./SectionHead";
 import { PitchForm } from "./PitchForm";
 
-/* The interest form: a paper postcard between the ink fields. */
+/* The interest form as a script page: a numbered Courier page with a
+   slugline, the fields in the same face. */
 export function Pitch() {
   return (
     <section className="sec t-paper" id="pitch" data-scene data-name="Pitch" data-idx="06">
@@ -10,7 +11,6 @@ export function Pitch() {
         slug="INT. Send your pitch — anytime"
         title="Send your"
         em="Pitch"
-        no="06"
         meta={["A script, an idea, or just a name", "The club reads everything"]}
       />
 
@@ -23,7 +23,11 @@ export function Pitch() {
           </p>
           <p className="pitch__key"><span className="req" aria-hidden="true">*</span> Required. Everything else is optional.</p>
         </div>
-        <PitchForm />
+        <div className="script" data-reveal>
+          <span className="script__pg" aria-hidden="true">1.</span>
+          <p className="script__slug" aria-hidden="true">INT. Your pitch — day</p>
+          <PitchForm />
+        </div>
       </div>
     </section>
   );

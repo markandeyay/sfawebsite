@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════
-   COMPONENTS — section heads, bands, media frames, stamps, reveals,
-   the credit roll. Every one reads its colour from the surface roles,
-   so the same markup works on paper, navy, carolina and ink unchanged.
+   COMPONENTS — sluglines, strips, frames, laurels, the reel, the roll,
+   reveals. Every one reads its colour from the surface roles, so the
+   same markup works on paper, navy, carolina and ink unchanged.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── SECTION ──────────────────────────────────────────────────────── */
@@ -12,9 +12,7 @@
 }
 .sec--flush { padding-block-end: 0; }
 
-/* ── SECTION DECO ─────────────────────────────────────────────────
-   Background marks living inside the solid-colour sections, where the
-   page-level atmosphere cannot reach. Built in lib/fx/deco.ts. */
+/* ── SECTION DECO ───────────────────────────────────────────────── */
 .sec__deco {
   position: absolute; inset: 0; z-index: 0;
   pointer-events: none; overflow: hidden; contain: paint;
@@ -31,17 +29,24 @@
 .t-carolina .sec__deco-mark { opacity: 0.13; }
 .sec > *:not(.sec__deco) { position: relative; z-index: 1; }
 
-/* ── SECTION HEAD ─────────────────────────────────────────────────
-   Rule, index, display pair, meta. No overflow:hidden on the head. */
+/* ── SECTION HEAD: the slugline ────────────────────────────────────
+   A screenplay puts the scene number in both margins and the slugline
+   between them, bold, uppercase, Courier. Under it, the title in the
+   poster face with its second line in the script face: the one-sheet
+   and the screenplay, the two typographic worlds of a film. */
 .sec__head { padding-inline: var(--margin); margin-block-end: var(--s8); }
 .sec__rule {
   display: flex; align-items: center; gap: var(--s4);
-  padding-block-end: var(--s4); border-block-end: 1px solid var(--rule);
+  padding-block-end: var(--s4); border-block-end: 1.5px solid var(--on-surface);
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
+  letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
-.sec__rule .n { font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-wide); color: var(--accent); font-variant-numeric: tabular-nums; }
-.sec__rule .k { font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-mega); text-transform: uppercase; color: var(--on-surface-dim); }
+.sec__rule .n { color: var(--on-surface); font-variant-numeric: tabular-nums; min-width: 2.2em; }
+.sec__rule .n:last-child { text-align: right; }
+.sec__rule .k { flex: 1; color: var(--on-surface); text-align: center; }
+.sec__rule .k em { font-style: normal; color: var(--accent); }
 .sec__rule .ln {
-  flex: 1; height: 1px; background: var(--rule);
+  flex: 0 0 auto; width: clamp(24px, 6vw, 90px); height: 1px; background: var(--rule);
   transform: scaleX(0); transform-origin: 0 50%;
   transition: transform var(--d5) var(--e-out) 90ms;
 }
@@ -51,38 +56,41 @@
   transition: opacity var(--d3) var(--e-out), transform var(--d3) var(--e-out);
 }
 .-in .sec__rule .n { opacity: 1; transform: none; }
-.-in .sec__rule .k { opacity: 1; transform: none; transition-delay: 260ms; }
+.-in .sec__rule .k { opacity: 1; transform: none; transition-delay: 200ms; }
 
 .sec__title {
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: var(--s7); flex-wrap: wrap; margin-block-start: var(--s5);
 }
 .sec__tt {
-  font-family: var(--f-display); font-weight: 800; text-transform: uppercase;
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
   font-size: var(--t-d1); line-height: var(--lh-solid); letter-spacing: var(--tr-tight);
 }
 .sec__tt em {
-  display: block; font-style: italic; color: transparent;
-  -webkit-text-stroke: clamp(1.5px, 0.24vw, 4px) var(--accent);
-  paint-order: stroke fill;
+  display: block; font-style: normal; font-family: var(--f-script); font-weight: 700;
+  font-size: 0.46em; line-height: 1.1; letter-spacing: -0.02em; margin-block-start: 0.08em;
+  color: var(--accent);
 }
+/* the scene number, big and faint, in the script face */
 .sec__no {
   margin-inline: auto var(--s7);
-  font-family: var(--f-display); font-weight: 800; font-style: italic;
-  font-size: var(--t-d1); line-height: var(--lh-solid); letter-spacing: var(--tr-tight);
-  color: transparent; -webkit-text-stroke: 1.5px var(--on-surface-dim);
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-d1); line-height: var(--lh-solid);
+  color: var(--on-surface); opacity: 0;
   user-select: none; pointer-events: none;
-  opacity: 0; transform: translate3d(0, 30px, 0) rotate(-7deg) scale(0.9);
+  transform: translate3d(0, 30px, 0) rotate(-4deg) scale(0.9);
   transition: opacity var(--d5) var(--e-out) 380ms, transform var(--d5) var(--e-out) 380ms;
 }
-.-in .sec__no { opacity: 0.3; transform: none; }
+.-in .sec__no { opacity: 0.12; transform: none; }
 .sec__meta {
-  font-family: var(--f-mono); font-size: var(--t-label); line-height: 2;
+  font-family: var(--f-script); font-size: var(--t-label); line-height: 1.9;
   letter-spacing: var(--tr-wide); text-transform: uppercase;
   text-align: right; color: var(--on-surface-dim); padding-block-end: 0.5em;
 }
 
-/* ── BAND (marquee) ─────────────────────────────────────────────── */
+/* ── STRIP (marquee tape as 35 mm) ───────────────────────────────
+   Full-bleed, tilted, a strip of film lying across the seam between
+   two sections: perforations top and bottom, the words in the frames,
+   frame lines between them. The loop is one GPU transform per row. */
 .band {
   position: relative; z-index: var(--z-band);
   margin-block: calc(var(--section-y) * -0.22);
@@ -92,208 +100,246 @@
   pointer-events: none;
 }
 .band__row {
-  display: flex; white-space: nowrap; align-items: center;
+  display: flex; white-space: nowrap; align-items: stretch;
   width: max-content;
   background: var(--band-bg, var(--ink)); color: var(--band-fg, var(--paper));
-  border-block: 2px solid var(--ink);
-  padding-block: 0.22em;
+  padding-block: var(--rail);
   will-change: transform;
+  --hole: var(--band-hole, rgba(245, 242, 235, 0.92));
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 calc((var(--perf-gap) - var(--perf-w)) / 2), var(--hole) calc((var(--perf-gap) - var(--perf-w)) / 2) calc((var(--perf-gap) + var(--perf-w)) / 2), transparent calc((var(--perf-gap) + var(--perf-w)) / 2) var(--perf-gap)),
+    repeating-linear-gradient(90deg, transparent 0 calc((var(--perf-gap) - var(--perf-w)) / 2), var(--hole) calc((var(--perf-gap) - var(--perf-w)) / 2) calc((var(--perf-gap) + var(--perf-w)) / 2), transparent calc((var(--perf-gap) + var(--perf-w)) / 2) var(--perf-gap));
+  background-size: var(--perf-gap) var(--perf-h), var(--perf-gap) var(--perf-h);
+  background-repeat: repeat-x, repeat-x;
+  background-position: 0 4px, 0 calc(100% - 4px);
+  background-color: var(--band-bg, var(--ink));
 }
 .band__row + .band__row { margin-block-start: -2px; }
 .band__row { transition: background-color 140ms linear, color 140ms linear; }
-.band.-urgent .band__row { background: var(--ink); color: var(--paper); }
-.band.-urgent em { -webkit-text-stroke-color: var(--flare); }
-.band.-urgent .dot { background: var(--flare); }
+.band.-urgent .band__row { background-color: var(--rec); color: var(--paper); --hole: rgba(245, 242, 235, 0.85); }
 .band__set { display: flex; align-items: center; flex: 0 0 auto; }
 .band__set > * { flex: 0 0 auto; }
 .band em, .band b {
-  font-family: var(--f-display); font-style: italic; text-transform: uppercase;
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
   font-size: clamp(30px, 4.4vw, 68px); line-height: 1;
-  letter-spacing: var(--tr-tight); padding-inline: 0.16em;
+  letter-spacing: var(--tr-tight); padding-inline: 0.5em;
 }
-.band b { font-weight: 800; }
-.band em { font-weight: 400; color: transparent; -webkit-text-stroke: 1.5px currentColor; }
+.band em { font-style: normal; font-family: var(--f-script); font-weight: 700; font-size: clamp(16px, 2.2vw, 34px); letter-spacing: 0.02em; }
+/* the frame line between words */
 .band .dot {
-  width: 0.34em; height: 0.34em; border-radius: 50%;
-  background: currentColor; margin-inline: 0.5em;
-  font-size: clamp(30px, 4.4vw, 68px);
+  width: 2px; height: calc(clamp(30px, 4.4vw, 68px) * 1.3); border-radius: 0;
+  background: currentColor; opacity: 0.55; margin-inline: 0.2em; align-self: center;
 }
-.band--flare  { --band-bg: var(--flare);    --band-fg: var(--paper); }
-.band--paper  { --band-bg: var(--paper);    --band-fg: var(--ink); }
-.band--caro   { --band-bg: var(--carolina); --band-fg: var(--navy); }
-.band--navy   { --band-bg: var(--navy);     --band-fg: var(--carolina-hi); }
+.band--ink   { --band-bg: var(--ink);      --band-fg: var(--paper); }
+.band--rec   { --band-bg: var(--rec);      --band-fg: var(--paper); --band-hole: rgba(245, 242, 235, 0.85); }
+.band--paper { --band-bg: var(--paper);    --band-fg: var(--ink); --band-hole: var(--ink); }
+.band--caro  { --band-bg: var(--carolina); --band-fg: var(--navy); --band-hole: var(--navy); }
+.band--navy  { --band-bg: var(--navy);     --band-fg: var(--paper); --band-hole: rgba(245, 242, 235, 0.85); }
+/* legacy tone names from the first pass map onto the new ones */
+.band--flare { --band-bg: var(--rec); --band-fg: var(--paper); --band-hole: rgba(245, 242, 235, 0.85); }
 
-/* ── MEDIA FRAME ────────────────────────────────────────────────── */
+/* ── FRAME (media) ───────────────────────────────────────────────
+   A still as a frame of 35 mm: perforated rails either side, the edge
+   print in the margin, corner brackets that appear on hover like a
+   viewfinder. Rectangles only; a frame of film is a rectangle. */
 .media { position: relative; display: block; }
-
-.media__frame {
-  position: relative; overflow: hidden; background: var(--ink-faint);
-  aspect-ratio: var(--ar, 16 / 9);
-  border-radius: var(--frame-r, clamp(10px, 1.28vw, 20px));
+.media__film {
+  position: relative; background: var(--ink); color: var(--paper);
+  padding: var(--s2) var(--rail); border-radius: 3px;
   transform: rotate(var(--frame-rot, 0deg));
   transition: transform var(--d3) var(--e-out);
 }
-.media[data-shape="arch"]  .media__frame { --frame-r: 50vw 50vw clamp(10px, 1.28vw, 20px) clamp(10px, 1.28vw, 20px); }
-.media[data-shape="oval"]  .media__frame { --frame-r: 50%; }
-.media[data-shape="leaf"]  .media__frame { --frame-r: clamp(48px, 7vw, 110px) clamp(10px, 1.28vw, 20px); }
-.media[data-shape="pill"]  .media__frame { --frame-r: 50vw; }
-/* the ticket: one corner stub cut, like a torn admission */
-.media[data-shape="stub"]  .media__frame { --frame-r: clamp(10px, 1.28vw, 20px) clamp(10px, 1.28vw, 20px) clamp(48px, 6vw, 96px) clamp(10px, 1.28vw, 20px); }
-
-.media[data-plate] .media__frame {
-  box-shadow: var(--plate-x, 15px) var(--plate-y, 15px) 0 0 var(--plate, transparent);
-  transition: transform var(--d3) var(--e-out), box-shadow var(--d3) var(--e-out);
+.media__film::before, .media__film::after {
+  content: ""; position: absolute; top: var(--s2); bottom: var(--s2); width: var(--perf-w);
+  background: repeating-linear-gradient(180deg, transparent 0 4px, rgba(245, 242, 235, 0.92) 4px calc(4px + var(--perf-h)), transparent calc(4px + var(--perf-h)) var(--perf-gap));
+  border-radius: 1px;
 }
-.media[data-plate]:hover .media__frame,
-.media[data-plate]:focus-visible .media__frame { box-shadow: 0 0 0 0 var(--plate, transparent); }
-.media[data-plate="flare"] .media__frame { --plate: var(--flare); }
-.media[data-plate="caro"]  .media__frame { --plate: var(--carolina); }
-.media[data-plate="navy"]  .media__frame { --plate: var(--navy); }
-.media[data-plate="gold"]  .media__frame { --plate: var(--gold); }
-.media[data-plate="paper"] .media__frame { --plate: var(--paper); }
+.media__film::before { left: calc((var(--rail) - var(--perf-w)) / 2); }
+.media__film::after { right: calc((var(--rail) - var(--perf-w)) / 2); }
+.media__frame {
+  position: relative; overflow: hidden; background: var(--navy);
+  aspect-ratio: var(--ar, 16 / 9); border-radius: 2px;
+}
 .media__img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; transform-origin: 50% 50%;
+  transition: transform var(--d5) var(--e-out);
 }
-.media__frame.-live .media__img { will-change: transform; }
+/* the viewfinder: four corner brackets and a centre mark */
+.media__vf {
+  position: absolute; inset: 6%; pointer-events: none; opacity: 0;
+  transition: opacity var(--d2) var(--e-out);
+  --c: rgba(245, 242, 235, 0.95);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top left / 2px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 2px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) center / 10px 1.5px no-repeat,
+    linear-gradient(var(--c), var(--c)) center / 1.5px 10px no-repeat;
+}
+.media__rec {
+  position: absolute; top: var(--s3); left: var(--s3); pointer-events: none;
+  display: inline-flex; align-items: center; gap: 0.45em;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
+  letter-spacing: var(--tr-wide); text-transform: uppercase; color: rgba(245, 242, 235, 0.95);
+  opacity: 0; transition: opacity var(--d2) var(--e-out);
+}
+.media__rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); }
+/* the edge print along the bottom margin */
+.media__edge {
+  display: flex; justify-content: space-between; gap: var(--s3);
+  padding-block-start: var(--s2); font-family: var(--f-script); font-weight: 700;
+  font-size: var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(245, 242, 235, 0.55); white-space: nowrap; overflow: hidden;
+}
+.media__edge .n { color: var(--carolina-hi); }
+@media (hover: hover) and (pointer: fine) {
+  .media:hover .media__vf, .media:focus-visible .media__vf,
+  a:hover > .media .media__vf, a:focus-visible > .media .media__vf { opacity: 1; }
+  .media:hover .media__rec, a:hover > .media .media__rec, a:focus-visible > .media .media__rec { opacity: 1; }
+  .media:hover .media__img, a:hover > .media .media__img { transform: scale(1.03); }
+  .media[data-tilt]:hover .media__film, a:hover > .media[data-tilt] .media__film { transform: rotate(0deg); }
+}
 .media__cap {
   display: flex; align-items: baseline; gap: var(--s3);
-  margin-block-start: calc(var(--s4) + max(0px, var(--plate-y, 0px)));
-  font-family: var(--f-mono); font-size: var(--t-label);
+  margin-block-start: var(--s4);
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
   letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
 .media__cap .n { color: var(--accent); font-variant-numeric: tabular-nums; }
 .media__cap .x { margin-inline-start: auto; color: var(--on-surface-dim); }
 
-/* the type-only leader for a film with no frame: a slate */
+/* the type-only leader for a film with no frame: black leader with
+   the slate fields written on it */
 .media__leader {
   position: absolute; inset: 0; display: grid; align-content: space-between;
-  padding: clamp(var(--s4), 2vw, var(--s6)); background: var(--navy); color: var(--paper);
+  padding: clamp(var(--s4), 2vw, var(--s6)); background: var(--ink); color: var(--paper);
 }
 .media__leader .big {
-  font-family: var(--f-display); font-weight: 800; font-style: italic; text-transform: uppercase;
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
   font-size: clamp(22px, 2.6vw, 44px); line-height: 0.9; letter-spacing: var(--tr-tight);
 }
-.media__leader .k { font-family: var(--f-mono); font-size: var(--t-micro); letter-spacing: var(--tr-mega); text-transform: uppercase; color: var(--carolina-hi); }
+.media__leader .k { font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--carolina-hi); }
 
-/* ── STAMP ──────────────────────────────────────────────────────── */
-.stamp {
-  position: absolute; z-index: 4; display: grid; place-items: center;
-  width: clamp(72px, 8.5vw, 116px); aspect-ratio: 1; border-radius: 50%;
-  background: var(--stamp-bg, var(--flare)); color: var(--stamp-fg, var(--paper));
-  border: 2px solid currentColor; box-shadow: 0 0 0 3px var(--stamp-bg, var(--flare));
-  transform: rotate(var(--stamp-rot, -11deg));
-  font-family: var(--f-display); font-weight: 800; font-style: italic;
-  text-transform: uppercase; text-align: center; line-height: 0.9;
-  font-size: clamp(13px, 1.35vw, 19px); letter-spacing: 0.03em;
+/* ── LAUREL ─────────────────────────────────────────────────────
+   The festival's own mark of a win: two branches around the category.
+   Carolina laurels on paper, paper laurels on the dark fields. Tilted
+   a fraction, like a laurel printed on a poster. */
+.laurel {
+  position: absolute; z-index: 4; display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+  gap: 0.15em; width: clamp(96px, 11vw, 150px);
+  color: var(--laurel, var(--carolina));
+  transform: rotate(var(--stamp-rot, -6deg));
   pointer-events: none;
 }
-.stamp--ink  { --stamp-bg: var(--ink);   --stamp-fg: var(--paper); }
-.stamp--navy { --stamp-bg: var(--navy);  --stamp-fg: var(--carolina-hi); }
-.stamp--caro { --stamp-bg: var(--carolina); --stamp-fg: var(--navy); }
-.stamp--paper { --stamp-bg: var(--paper); --stamp-fg: var(--ink); }
-.stamp small { display: block; font-family: var(--f-mono); font-style: normal; font-weight: 600; font-size: 0.5em; letter-spacing: 0.12em; margin-block-start: 0.3em; }
-/* inline stamps: a row of seals under a film's title */
-.stamp--inline { position: static; transform: rotate(var(--stamp-rot, -6deg)); }
+.laurel svg { width: 100%; height: auto; }
+.laurel__l, .laurel__r { width: 26%; }
+.laurel__r svg { transform: scale(-1, 1); }
+.laurel__t {
+  text-align: center; color: var(--laurel-fg, var(--ink));
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(12px, 1.2vw, 17px); line-height: 0.92; letter-spacing: 0;
+}
+.laurel__t small {
+  display: block; font-family: var(--f-script); font-weight: 700; font-size: 0.6em;
+  letter-spacing: 0.06em; margin-block-start: 0.35em; color: var(--laurel, var(--carolina));
+}
+.laurel__t b { display: block; font-family: var(--f-script); font-weight: 700; font-size: 0.55em; letter-spacing: 0.1em; margin-block-end: 0.35em; color: var(--rec); }
+.laurel--paper { --laurel: var(--paper); --laurel-fg: var(--paper); }
+.laurel--navy { --laurel: var(--navy); --laurel-fg: var(--navy); }
+.laurel--rec { --laurel: var(--rec); --laurel-fg: var(--ink); }
+.laurel--ink { --laurel: var(--ink); --laurel-fg: var(--ink); }
+.laurel--inline { position: static; }
+.t-ink .laurel, .t-navy .laurel { --laurel: var(--carolina-hi); --laurel-fg: var(--paper); }
+/* on a photo, the laurel sits on a small paper plate so it reads */
+.laurel--plate { background: var(--paper); padding: 0.6em 0.8em; border-radius: 3px; --laurel-fg: var(--ink); --laurel: var(--carolina); }
 
-/* ── SHEEN ──────────────────────────────────────────────────────── */
-.sheen {
-  position: relative; overflow: hidden;
-  background: var(--sheen-base, var(--ink));
-  -webkit-mask: var(--mark) no-repeat center / contain;
-  mask: var(--mark) no-repeat center / contain;
-}
-.sheen > i {
-  position: absolute; top: -10%; bottom: -10%; left: 0;
-  width: 38%;
-  background: linear-gradient(100deg,
-    transparent 0%, var(--carolina) 28%, var(--flare) 50%, var(--gold) 72%, transparent 100%);
-  will-change: transform;
-  animation: sheen-run 7.5s linear infinite;
-  animation-play-state: var(--atmos-play, running);
-}
-@keyframes sheen-run {
-  from { transform: translate3d(-120%, 0, 0); }
-  to   { transform: translate3d(380%, 0, 0); }
-}
-
-/* ── ROTARY BADGE ───────────────────────────────────────────────── */
+/* ── REEL BADGE ─────────────────────────────────────────────────
+   Rotary text on a ring with a reel at the core, turning slowly. */
 .badge { position: relative; display: grid; place-items: center; }
-.badge > svg:first-child { width: 100%; height: 100%; animation: badge-spin 18s linear infinite; }
+.badge > svg:first-child { width: 100%; height: 100%; animation: badge-spin 22s linear infinite; }
 .badge > svg:first-child text {
-  font-family: var(--f-mono); font-size: 12.5px; font-weight: 600;
-  letter-spacing: 0.24em; fill: currentColor; text-transform: uppercase;
+  font-family: var(--f-script); font-size: 12.5px; font-weight: 700;
+  letter-spacing: 0.12em; fill: currentColor; text-transform: uppercase;
 }
-.badge img, .badge .badge__core { position: absolute; width: 30%; }
+.badge img, .badge .badge__core { position: absolute; width: 34%; animation: badge-spin 9s linear infinite reverse; }
 @keyframes badge-spin { to { transform: rotate(360deg); } }
 
 /* ── ARROW BUTTON ───────────────────────────────────────────────── */
 .arrow {
   display: grid; place-items: center; width: 2.4em; height: 2.4em;
-  border: 1.5px solid currentColor; border-radius: 50%;
+  border: 1.5px solid currentColor; border-radius: 3px;
   transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out);
 }
 .arrow svg { width: 0.75em; height: 0.75em; }
 
-/* ── PILL BUTTON ────────────────────────────────────────────────── */
+/* ── TICKET BUTTON ───────────────────────────────────────────────
+   A stub: rectangular, notched at both ends, Courier caps. */
 .pill {
-  display: inline-flex; align-items: center; gap: 0.5em;
-  padding: 0.62em 1.5em; border: 1.5px solid var(--on-surface); border-radius: 50vw;
+  position: relative; display: inline-flex; align-items: center; gap: 0.6em;
+  padding: 0.75em 1.4em; border: 1.5px solid var(--on-surface); border-radius: 3px;
   background: transparent; color: var(--on-surface); cursor: pointer;
-  font-family: var(--f-display); font-weight: 800; font-style: italic;
-  text-transform: uppercase; font-size: clamp(17px, 1.6vw, 24px);
-  letter-spacing: var(--tr-tight); line-height: 1;
-  transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out),
-              transform var(--d2) var(--e-out);
+  font-family: var(--f-script); font-weight: 700; text-transform: uppercase;
+  font-size: var(--t-small); letter-spacing: var(--tr-wide); line-height: 1;
+  transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out), transform var(--d2) var(--e-out);
+  --notch: var(--surface);
+  background-image:
+    radial-gradient(circle at 0 50%, var(--notch) 0 5px, transparent 5.5px),
+    radial-gradient(circle at 100% 50%, var(--notch) 0 5px, transparent 5.5px);
 }
-.pill:hover, .pill:focus-visible { background: var(--on-surface); color: var(--surface); transform: translateY(-2px); }
+.pill:hover, .pill:focus-visible { background-color: var(--on-surface); color: var(--surface); transform: translateY(-2px); }
 .pill:disabled { opacity: 0.45; cursor: default; transform: none; }
 .pill svg { width: 0.8em; height: 0.8em; stroke: currentColor; }
-.pill--solid { background: var(--on-surface); color: var(--surface); }
-.pill--solid:hover, .pill--solid:focus-visible { background: var(--flare); border-color: var(--flare); color: var(--paper); }
+.pill--solid { background-color: var(--on-surface); color: var(--surface); }
+.pill--solid:hover, .pill--solid:focus-visible { background-color: var(--rec); border-color: var(--rec); color: var(--paper); }
+.pill--rec { border-color: var(--rec); color: var(--rec); }
+.pill--rec:hover, .pill--rec:focus-visible { background-color: var(--rec); color: var(--paper); }
 
-/* ── CATALOG NUMBER ─────────────────────────────────────────────
-   "No. 001": the spine number on every frame, row and page. Mono,
-   tabular, the accent colour, a fraction off-true. */
+/* ── CATALOG NUMBER ─────────────────────────────────────────────── */
 .catno {
   display: inline-block; white-space: nowrap;
-  font-family: var(--f-mono); font-variant-numeric: tabular-nums;
-  font-size: var(--t-label); letter-spacing: var(--tr-wide); font-weight: 600;
+  font-family: var(--f-script); font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: var(--t-label); letter-spacing: var(--tr-wide);
   color: var(--accent);
   transform: rotate(var(--tilt, 0deg));
   transform-origin: left baseline;
 }
 .catno--big {
-  font-family: var(--f-display); font-weight: 800; font-style: italic;
+  font-family: var(--f-display); font-weight: 900;
   font-size: var(--t-mega); line-height: var(--lh-solid); letter-spacing: var(--tr-tight);
   color: var(--on-surface);
 }
-.catno--big small { font-size: 0.3em; font-style: normal; vertical-align: 1.5em; margin-inline-end: 0.1em; color: var(--accent); }
+.catno--big small { font-family: var(--f-script); font-weight: 700; font-size: 0.22em; letter-spacing: 0.06em; vertical-align: 2.2em; margin-inline-end: 0.2em; color: var(--accent); }
 
 /* ── CREDIT ROLL ──────────────────────────────────────────────────
-   End credits: role right, name left, meeting at a centre gutter. */
+   End credits: role right, name left, meeting at the centre gutter. */
 .roll { display: grid; gap: var(--s2); }
 .roll__row {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--s6);
   align-items: baseline; padding-block: var(--s1);
 }
 .roll__role {
-  text-align: right; font-family: var(--f-mono); font-size: var(--t-label);
+  text-align: right; font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
   letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim);
 }
 .roll__name {
-  font-family: var(--f-display); font-weight: 800; text-transform: uppercase;
-  font-size: clamp(20px, 2vw, 32px); line-height: 1; letter-spacing: var(--tr-tight);
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(22px, 2.2vw, 36px); line-height: 1; letter-spacing: var(--tr-tight);
 }
 .roll__name.-missing {
-  font-weight: 400; font-style: italic; text-transform: none; color: var(--on-surface-dim);
-  font-size: clamp(16px, 1.4vw, 22px);
+  font-family: var(--f-script); font-weight: 400; font-style: italic; text-transform: none; color: var(--on-surface-dim);
+  font-size: clamp(15px, 1.2vw, 19px);
 }
 .roll__group { margin-block-start: var(--s6); padding-block-start: var(--s5); border-block-start: 1px solid var(--rule); }
 .roll__group:first-child { margin-block-start: 0; padding-block-start: 0; border: 0; }
 .roll__group h4 {
   text-align: center; margin-block-end: var(--s4);
-  font-family: var(--f-mono); font-size: var(--t-micro); letter-spacing: var(--tr-mega);
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-mega);
   text-transform: uppercase; color: var(--accent);
 }
 .roll__aside {
@@ -338,5 +384,5 @@
 .-no-motion .sec__rule .n,
 .-no-motion .sec__rule .k,
 .-no-motion .sec__no { opacity: 1 !important; transform: none !important; }
-.-no-motion .sec__no { opacity: 0.3 !important; }
+.-no-motion .sec__no { opacity: 0.12 !important; }
 .-no-motion .sec__rule .ln { transform: scaleX(1) !important; }

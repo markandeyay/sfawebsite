@@ -1,12 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════════
-   EXTRAS — the pieces SFA adds to the stussy grammar: the slate card
-   in the hero, the seal row, the pitch chooser.
+   EXTRAS — the pieces that are SFA's own: the slate card in the hero,
+   the title card's viewfinder, the laurel row, the call sheet, the
+   script page, the pitch chooser.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── THE SLATE CARD ─────────────────────────────────────────────
-   A clapperboard carrying the cycle's key frame: the striped arm on
-   top, the board below with the frame set into it and the fields a
-   real slate carries. Sits where a mascot would. */
+   A clapperboard carrying the cycle's key frame. The fields are
+   hand-written, as they are on a real slate. */
 .slate-card {
   position: relative; display: grid; gap: 0;
   transform: rotate(3deg); transform-origin: 50% 60%;
@@ -25,48 +25,136 @@
   padding: clamp(10px, 1.2vw, 16px);
   display: grid; gap: clamp(8px, 1vw, 14px);
 }
-.slate-card__frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 8px; background: var(--navy); }
+.slate-card__frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; background: var(--navy); }
 .slate-card__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .slate-card__fields {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(6px, 0.8vw, 12px);
 }
-.slate-card__fields div {
-  border: 1.5px solid rgba(237, 233, 225, 0.35); border-radius: 6px; padding: 0.4em 0.6em;
-  font-family: var(--f-mono); font-size: var(--t-micro); letter-spacing: var(--tr-wide); text-transform: uppercase;
-  color: rgba(237, 233, 225, 0.6); line-height: 1.5;
+.slate-card__fields > span {
+  border: 1.5px solid rgba(245, 242, 235, 0.35); border-radius: 4px; padding: 0.35em 0.6em;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-wide); text-transform: uppercase;
+  color: rgba(245, 242, 235, 0.55); line-height: 1.5;
 }
-.slate-card__fields b { display: block; font-family: var(--f-display); font-weight: 800; font-size: clamp(16px, 1.6vw, 26px); letter-spacing: var(--tr-tight); color: var(--paper); line-height: 1; margin-block-start: 0.1em; }
+/* the values are chalk: a marker face, tilted a hair */
+.slate-card__fields > span b {
+  display: block; font-family: var(--font-marker), "Permanent Marker", "Comic Sans MS", cursive; font-weight: 400;
+  font-size: clamp(16px, 1.7vw, 27px); letter-spacing: 0; color: var(--paper); line-height: 1;
+  margin-block-start: 0.15em; text-transform: none; transform: rotate(-1.5deg); transform-origin: 0 100%;
+}
 .slate-card__fields .hot b { color: var(--carolina-hi); }
 
-/* ── SEAL ROW (film page) ───────────────────────────────────────── */
-.seals { display: flex; flex-wrap: wrap; gap: var(--s4) var(--s5); align-items: center; }
-.seals .stamp { position: static; width: clamp(80px, 8vw, 116px); }
+/* ── THE TITLE CARD (hero) ──────────────────────────────────────
+   Letterbox bars and a viewfinder frame around the title. */
+.tcard { position: relative; }
+.tcard__bar {
+  position: absolute; left: calc(var(--margin) * -1); right: calc(var(--margin) * -1); height: var(--bar);
+  background: var(--ink);
+}
+.tcard__bar.-top { top: calc(var(--bar) * -1 - var(--s4)); }
+.tcard__bar.-bottom { bottom: calc(var(--bar) * -1 - var(--s4)); }
+.tcard__vf { position: absolute; inset: calc(var(--s3) * -1) calc(var(--s4) * -1); pointer-events: none; }
+.tcard__vf i {
+  position: absolute; width: 22px; height: 22px; border: 2px solid var(--ink); opacity: 0.8;
+}
+.tcard__vf i:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.tcard__vf i:nth-child(2) { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.tcard__vf i:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.tcard__vf i:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+.tcard__hud {
+  position: absolute; top: calc(var(--s3) * -1); left: 0; right: 0; display: flex; justify-content: space-between;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-wide);
+  text-transform: uppercase; color: var(--ink-soft); pointer-events: none; transform: translateY(-100%);
+}
+.tcard__hud .rec { display: inline-flex; align-items: center; gap: 0.45em; color: var(--rec); }
+.tcard__hud .rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); animation: rec-blink 1.6s steps(1) infinite; }
+/* the projector beam: a Carolina light passing through the title one
+   letter after the next, like bulbs chasing round a marquee. Each glyph
+   runs the same colour loop, offset by its reveal delay, so the wave
+   reads left to right through all three lines. Colour only: no layout,
+   no compositing, and the split letters stay exactly where they are. */
+.hero__title .gl {
+  --gr: 0deg !important; --gy: 0em !important;
+  animation: beam-glyph 7.5s linear infinite;
+  animation-delay: calc(var(--gd, 0ms) * 2.6 + 2.4s);
+}
+.hero__stage.-settled .hero__title .gl { will-change: auto; }
+@keyframes beam-glyph {
+  0%, 100% { color: var(--ink); }
+  5%       { color: var(--carolina-lo); }
+  8%       { color: var(--carolina); }
+  10.5%    { color: var(--carolina-hi); }
+  13%      { color: var(--carolina); }
+  19%      { color: var(--ink); }
+}
+.hero__line {
+  display: block; margin-block-start: var(--s5);
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
+  letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--ink-soft);
+}
+.hero__line b { color: var(--ink); }
+.hero__line .hot { color: var(--rec); }
 
-/* ── CHOOSER (the pitch form's "what do you want to do") ────────── */
-.choose { display: flex; flex-wrap: wrap; gap: var(--s2); }
+/* ── LAUREL ROW (film page) ─────────────────────────────────────── */
+.seals { display: flex; flex-wrap: wrap; gap: var(--s5) var(--s6); align-items: center; }
+.seals .laurel { position: static; width: clamp(120px, 12vw, 170px); }
+
+/* ── CALL SHEET (how it's made) ─────────────────────────────────
+   A real call sheet is a bordered Courier table with an inverted
+   header row. Day, call, scene, location. */
+.callsheet {
+  width: 100%; border-collapse: collapse; margin-block-start: var(--s7);
+  font-family: var(--f-script); font-size: var(--t-label); letter-spacing: 0.02em; text-transform: uppercase;
+  border: 1.5px solid var(--on-surface);
+}
+.callsheet caption {
+  caption-side: top; text-align: left; padding: 0 0 var(--s3);
+  font-weight: 700; letter-spacing: var(--tr-wide); color: var(--on-surface-dim);
+}
+.callsheet th, .callsheet td { padding: 0.7em 0.8em; border: 1px solid var(--rule); vertical-align: top; text-align: left; }
+.callsheet thead th { background: var(--on-surface); color: var(--surface); font-weight: 700; border-color: var(--on-surface); }
+.callsheet tbody th { font-weight: 700; white-space: nowrap; color: var(--accent); }
+.callsheet td.when { white-space: nowrap; font-weight: 700; }
+.callsheet td.what { text-transform: none; font-family: var(--f-text); font-size: var(--t-small); letter-spacing: 0; line-height: 1.5; }
+.callsheet tr[data-fact] { opacity: 1; }
+
+/* ── SCRIPT PAGE (the pitch) ────────────────────────────────────── */
+.script {
+  position: relative; background: var(--paper); border: 1.5px solid var(--ink);
+  padding: clamp(var(--s6), 4vw, var(--s9)) clamp(var(--s5), 5vw, var(--s10));
+  font-family: var(--f-script);
+  box-shadow: 8px 10px 0 var(--carolina);
+}
+.script__pg { position: absolute; top: var(--s4); right: var(--s5); font-weight: 700; font-size: var(--t-label); }
+.script__slug { font-weight: 700; font-size: var(--t-small); text-transform: uppercase; margin-block-end: var(--s5); }
+.script .field__label { font-family: var(--f-script); font-weight: 700; text-align: center; letter-spacing: var(--tr-mega); }
+.script .field__input { font-family: var(--f-script); }
+.script .field__input--area { border-radius: 2px; }
+
+/* ── CHOOSER ────────────────────────────────────────────────────── */
+.choose { display: flex; flex-wrap: wrap; gap: var(--s2); justify-content: center; }
 .choose label {
   display: inline-flex; align-items: center; gap: 0.5em; padding: 0.45em 0.9em;
-  border: 1.5px solid var(--on-surface-dim); border-radius: 50vw; cursor: pointer;
-  font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase;
+  border: 1.5px solid var(--on-surface-dim); border-radius: 3px; cursor: pointer;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase;
   transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out), border-color var(--d2) var(--e-out);
 }
 .choose input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.choose label:has(input:checked) { background: var(--navy); color: var(--paper); border-color: var(--navy); }
-.choose label:has(input:focus-visible) { outline: 3px solid var(--flare); outline-offset: 3px; }
+.choose label:has(input:checked) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.choose label:has(input:focus-visible) { outline: 3px solid var(--rec); outline-offset: 3px; }
 
 /* ── FILM PAGE EXTRAS ───────────────────────────────────────────── */
 .film__eyebrow {
   display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; padding-inline: var(--margin);
-  font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-mega); text-transform: uppercase;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase;
   margin-block-end: var(--s7);
 }
 .film__eyebrow .ln { flex: 1; min-width: 24px; height: 1px; background: var(--ink-faint); }
-.film__eyebrow .hot { color: var(--flare); }
-.film__meta { display: grid; gap: var(--s2); font-family: var(--f-mono); font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim); }
-.film__meta b { color: var(--on-surface); font-weight: 600; }
-.film__sub { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: var(--t-d2); line-height: var(--lh-solid); letter-spacing: var(--tr-tight); margin-block-end: var(--s5); }
-.film__sub em { font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--accent); paint-order: stroke fill; }
+.film__eyebrow .hot { color: var(--rec); }
+.film__meta { display: grid; gap: var(--s2); font-family: var(--f-script); font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim); }
+.film__meta b { color: var(--on-surface); font-weight: 700; }
+.film__sub { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: var(--t-d2); line-height: var(--lh-solid); letter-spacing: var(--tr-tight); margin-block-end: var(--s5); }
+.film__sub em { display: block; font-style: normal; font-family: var(--f-script); font-weight: 700; font-size: 0.42em; letter-spacing: 0; color: var(--accent); margin-block-start: 0.1em; }
 
 /* ── NIGHT (awards page) EXTRAS ─────────────────────────────────── */
-.night__lede { padding-inline: var(--margin); margin-block-end: var(--s8); font-family: var(--f-display); font-weight: 800; text-transform: uppercase; font-size: var(--t-lede); line-height: var(--lh-tight); letter-spacing: var(--tr-tight); color: var(--navy); max-width: 24ch; }
-.night__lede span { color: var(--flare); }
+.night__lede { padding-inline: var(--margin); margin-block-end: var(--s8); font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: var(--t-lede); line-height: var(--lh-tight); letter-spacing: var(--tr-tight); color: var(--navy); max-width: 24ch; }
+.night__lede span { color: var(--rec); }

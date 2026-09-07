@@ -30,12 +30,12 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 ul, ol { list-style: none; }
 iframe { display: block; border: 0; }
 
-::selection { background: var(--flare); color: var(--paper); }
+::selection { background: var(--rec); color: var(--paper); }
 
 /* Focus: invisible for mouse users, unmissable for keyboard users. */
 :focus { outline: none; }
 :focus-visible {
-  outline: 3px solid var(--flare);
+  outline: 3px solid var(--rec);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -49,7 +49,7 @@ iframe { display: block; border: 0; }
 .u-skip {
   position: fixed; top: -100%; left: var(--margin); z-index: 500;
   padding: var(--s3) var(--s5); background: var(--ink); color: var(--paper);
-  font-family: var(--f-mono); font-size: var(--t-label);
+  font-family: var(--f-script); font-size: var(--t-label);
   letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
 .u-skip:focus-visible { top: var(--s4); }
@@ -68,17 +68,17 @@ iframe { display: block; border: 0; }
   paint-order: stroke fill;
 }
 .ty-label {
-  font-family: var(--f-mono); font-size: var(--t-label); font-weight: 500;
+  font-family: var(--f-script); font-size: var(--t-label); font-weight: 500;
   letter-spacing: var(--tr-wide); text-transform: uppercase;
   color: var(--on-surface-dim);
 }
 .ty-micro {
-  font-family: var(--f-mono); font-size: var(--t-micro); font-weight: 500;
+  font-family: var(--f-script); font-size: var(--t-micro); font-weight: 500;
   letter-spacing: var(--tr-mega); text-transform: uppercase;
 }
 .ty-body { font-size: var(--t-body); line-height: var(--lh-body); max-width: 62ch; }
 .ty-num {
-  font-family: var(--f-mono); font-variant-numeric: tabular-nums;
+  font-family: var(--f-script); font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
 }
 
