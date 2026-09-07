@@ -309,6 +309,7 @@
 }
 [data-reveal].-in { opacity: 1; transform: none; }
 
+.glword { display: inline-block; white-space: nowrap; }
 .glw { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0.05em 0.08em 0.2em; margin: -0.05em -0.08em -0.2em; }
 .gl  { display: inline-block; transform: translate3d(0, 135%, 0) rotate(3deg); will-change: transform; }
 .-in .gl {

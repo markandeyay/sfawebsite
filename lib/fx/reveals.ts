@@ -20,10 +20,20 @@ const splitLetters = (host: HTMLElement) => {
         const text = child.textContent || "";
         if (!text.trim()) return;
         const frag = document.createDocumentFragment();
+        /* Glyph wrappers are inline-blocks, so without a word wrapper a
+           long title could break between letters ("THE G / IFT"). Each
+           word gets a nowrap span; spaces stay text nodes between them. */
+        let word: HTMLElement | null = null;
         for (const ch of text) {
           if (ch === " ") {
+            word = null;
             frag.appendChild(document.createTextNode(" "));
             continue;
+          }
+          if (!word) {
+            word = document.createElement("span");
+            word.className = "glword";
+            frag.appendChild(word);
           }
           const w = document.createElement("span");
           w.className = "glw";
@@ -39,7 +49,7 @@ const splitLetters = (host: HTMLElement) => {
           g.style.setProperty("--gy", `${(Math.random() * 0.036 - 0.018).toFixed(3)}em`);
           idx++;
           w.appendChild(g);
-          frag.appendChild(w);
+          word.appendChild(w);
         }
         node.replaceChild(frag, child);
       } else if (child.nodeType === Node.ELEMENT_NODE && !(child as HTMLElement).classList.contains("glw")) {
