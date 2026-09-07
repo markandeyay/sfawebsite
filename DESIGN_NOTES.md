@@ -937,6 +937,103 @@ inside the artwork, which is where UNC lives on this site.
 
 ### 8.7 Motion
 
-Merged by the lead from `docs/motion-notes.md`: Lenis (the one dependency
-added this wave, by the motion agent), the single scroll broadcast, the
-reveal contract, the reduced-motion contract, and what was not ported.
+Merged by the lead from the motion agent's notes. Lenis is the one dependency added in this wave.
+
+Files: `lib/hash.ts`, `lib/motion.ts`, `lib/scroll.ts`,
+`lib/head-script.ts`, `components/motion/{SmoothScroll,ScrollFlag,Reveal,SplitText}.tsx`, `app/motion.css`.
+
+#### 8.7.1 Dependency: `lenis` 1.3.26 (MIT, no dependencies)
+
+Brief 4.3 calls momentum scrolling the largest single perceived-quality lever and asks for Lenis with a
+duration near 1.05 and an expo ease. Lenis is 15 lines to wire (`components/motion/SmoothScroll.tsx`),
+has zero runtime dependencies, ships ESM with types, and its own native scroll listener re-emits keyboard,
+anchor and scrollbar scrolls, so one event source covers every way a page can move. The four CSS rules it
+needs are copied into `app/motion.css` (no second stylesheet). Configuration: `duration: 1.05`,
+`easing: EASE_FN.out` (the same expo-out curve as `--ease-out`), `autoRaf: false` (one loop of ours,
+below), `smoothWheel: true`, `syncTouch: false` (touch keeps native inertia), `anchors: false` (below).
+
+#### 8.7.2 Mirrored easings and durations (brief 4.2)
+
+`lib/motion.ts` exports `EASE` (CSS strings), `EASE_FN` (the same curves as functions) and `DUR`, equal
+one-to-one to `--ease-out/in/in-out/linear` and `--dur-1..5` in `app/globals.css`. Lenis runs on
+`EASE_FN.out`; every CSS transition runs on the tokens. Also exported: `STAGGER` (16 ms, derived as
+`DUR[1] / 7.5`, mirrored in CSS as `calc(var(--dur-1) / 7.5)`) and `STAGGER_CAP` (40).
+
+#### 8.7.3 One scroll handler (brief 4.4)
+
+`lib/scroll.ts` is the only scroll broadcast. `subscribeScroll(fn)` delivers `{ y, dy, progress, direction }`,
+calls `fn` once immediately, returns an unsubscribe. `getScroll()` reads without subscribing. Sources:
+
+- While `SmoothScroll` is mounted it takes a driver (`driveScroll()`) and pushes Lenis's `scroll` event
+  into the broadcast. Lenis owns the page's only native `scroll` listener in that mode.
+- Otherwise (reduced motion, or before/after Lenis) ONE passive native `scroll` listener, coalesced with
+  `requestAnimationFrame`, attached only while there is at least one subscriber.
+
+`ScrollFlag` is the first consumer: it sets `data-scrolled` on `<html>` past 24 px (style the nav with
+`html[data-scrolled] .site-nav`). Verified with Playwright (`scratchpad/motion-check.js`): exactly one
+non-React `scroll` listener is active in every mode, including after a runtime reduced-motion flip in either
+direction. React itself registers `scroll` on `document` as part of its root event system; that is React,
+not this codebase.
+
+#### 8.7.4 The rAF loop
+
+One loop, in `SmoothScroll`, calling `lenis.raf(time)`. Lenis's `raf` returns immediately when no
+animation is running. The loop is cancelled on `visibilitychange` (hidden) and resumed when visible, and on
+unmount. Lenis's `autoRaf` is off so there is never a second loop.
+
+#### 8.7.5 The reveal contract (brief 4.5, 4.7)
+
+- `Reveal` renders `as` with `class="reveal reveal--fade|rise|none"`. One module-level
+  `IntersectionObserver` (threshold 0.15, `rootMargin: 0 0 10% 0`, plus "reveal on first intersection"
+  for elements taller than 60% of the viewport) adds `is-in` once. `is-settled` follows on the element's own
+  `transitionend`, and by a clock guard (`DUR[3] + delay + glyphs * STAGGER + 200 ms`) in case it never
+  fires. Settled releases `will-change`.
+- Hidden state is CSS-only and lives under `.js .reveal`. The `js` class comes from the inline head script,
+  so server markup is never hidden and a JS failure leaves a readable page. The head script also removes
+  `js` after 4 s if no motion component has set `data-motion-ready`, so a failed bundle cannot leave the
+  page blank.
+- Inline custom properties: `--enter-delay` (base `delay` + `jitter(seed, 0, 150)` ms when seeded) and
+  `--enter-ease` (`pick(seed + "/ease", [--ease-out, --ease-in-out])` when seeded). They are named
+  `enter`, not `reveal`, because `Frame` already uses `--reveal-delay` for the dither crossfade and custom
+  properties inherit: a seeded `Reveal` around a hero frame would otherwise lag its hover crossfade.
+- `SplitText` (server component) splits into `span.split-word` (nowrap, so a word never breaks across
+  lines) and `span.split-glyph` (aria-hidden) with `--i`, `--rot` (±1°) and `--dy` (±0.02 em) from
+  `jitter(seed:index)`. The outer element carries `aria-label={text}`. Inside a `Reveal`, glyphs stagger by
+  `calc(var(--enter-delay) + min(var(--i), 40) * var(--stagger))` and the wrapper itself does not fade
+  (`.reveal:has(.split-glyph)`), so the first glyph is never gated behind a second fade. The resting
+  rotate/translate is kept after the animation: it is the engineered irregularity (brief 4.6).
+- Use with intent (Wave 3 direction): SplitText+Reveal on the one heading per route that deserves it;
+  plain `Reveal` with `seed` for grids and rows so timing is ragged; no reveal on credit blocks.
+
+#### 8.7.6 Reduced motion (brief 4.3, 4.7)
+
+The head script adds `-no-motion` to `<html>` when `prefers-reduced-motion: reduce` matches and keeps it
+in sync on change. `SmoothScroll` never instantiates Lenis under it, destroys Lenis when the query flips
+to reduce, and recreates it when it flips back; the scroll broadcast falls back to the native listener each
+time. `app/motion.css` forces every `.reveal` and `.split-glyph` to its settled state with `!important`
+under `.-no-motion` and again under `@media (prefers-reduced-motion: reduce)` (for the case where the
+head script did not run). Glyphs keep their static resting tilt under reduced motion: it is not motion.
+Verified: with `reducedMotion: 'reduce'` the root has `-no-motion`, `html.lenis` is absent,
+`window.lenisVersion` is undefined, all 148 reveal elements are at opacity 1 without scrolling, no element
+has a transition duration, and native scrolling still broadcasts.
+
+#### 8.7.7 Anchors and focus
+
+Lenis `anchors` is off. A same-page `#hash` link jumps natively (honouring `scroll-padding-top`), moves
+the sequential focus start point as the browser does, and Lenis re-syncs from the native scroll event.
+Verified: after clicking `#bottom` the page sits at the target minus `scroll-padding-top` and stays there
+for 1.3 s (Lenis does not fight). The skip link keeps its native focus behaviour. Do not add
+`scroll-behavior: smooth` to `html`; it fights Lenis.
+
+#### 8.7.8 Not ported (brief 4.8)
+
+No lagging cursor, no gooey curtain page transition, no drifting atmosphere layer, no breathing mascot.
+No parallax. No scroll-linked marquee. The motion budget is the dither crossfade (Frame, design system)
+plus one orchestrated arrival per route, built from `Reveal` delays.
+
+#### 8.7.9 Wiring (done by the design system in `app/layout.tsx` / `app/globals.css`)
+
+`<script dangerouslySetInnerHTML={{ __html: MOTION_HEAD_SCRIPT }} />` first in `<head>`;
+`suppressHydrationWarning` on `<html>` (the head script adds classes before React hydrates);
+`<SmoothScroll />` and `<ScrollFlag />` once in the body; `@import "./motion.css"` after the tailwind import.
+`SmoothScroll` is a no-op on a second mount.
