@@ -1,6 +1,6 @@
 import { gsap, prefersReduced } from "./motion";
 import { onScroll } from "./scroll";
-import { MARKS, SHEET, markImg } from "./marks";
+import { FIELD_MARKS, CROSSERS, markImg } from "./marks";
 
 /* ═══════════════════════════════════════════════════════════════════
    ATMOSPHERE — the world behind the page.
@@ -8,12 +8,13 @@ import { MARKS, SHEET, markImg } from "./marks";
    Three depths, each parallaxing at its own rate:
 
      FAR   lanes streaming sideways: screenplay lines in Courier, film
-           edge codes on perforated strips, and the odd poster word
-     MID   a drift field of film marks, slowly breathing
+           edge codes on perforated strips, one lane of poster words
+     MID   a drift field of strips, reels, cans and take notes
      NEAR  occasional crossings that cut the whole screen
 
    Everything streams on CSS keyframes on the compositor. The only
-   main-thread work is one transform per depth on scroll.
+   main-thread work is one transform per depth on scroll, and the loops
+   are paused while an opaque section covers the viewport.
    ═══════════════════════════════════════════════════════════════════ */
 
 const SCRIPT = [
@@ -30,11 +31,11 @@ const POSTER = ["Student Film Association", "Festival in May", "Twelve Films", "
 
 type Kind = "script" | "edge" | "poster";
 interface Tier { kind: Kind; fs: [number, number]; op: [number, number]; dur: [number, number] }
-const TIERS: Tier[] = [
-  { kind: "poster", fs: [84, 124], op: [0.030, 0.042], dur: [150, 210] },
-  { kind: "script", fs: [18, 26], op: [0.06, 0.085], dur: [110, 160] },
-  { kind: "edge", fs: [11, 14], op: [0.10, 0.14], dur: [90, 130] },
-];
+const TIERS: Record<Kind, Tier> = {
+  poster: { kind: "poster", fs: [84, 124], op: [0.028, 0.038], dur: [150, 210] },
+  script: { kind: "script", fs: [18, 26], op: [0.06, 0.085], dur: [110, 160] },
+  edge: { kind: "edge", fs: [11, 14], op: [0.10, 0.14], dur: [90, 130] },
+};
 
 /* Tint budget. Ink carries the field; the brand colours are seasoning. */
 const TINTS: Array<[string, number]> = [
@@ -71,7 +72,7 @@ export const initAtmosphere = (): Atmosphere | null => {
   const vw = window.innerWidth;
   const narrow = vw < 900;
   const LANES = narrow ? 11 : 17;
-  const FIELD = narrow ? 6 : 11;
+  const FIELD = narrow ? 4 : 6;
   const scale = Math.min(1, Math.max(0.5, vw / 1440));
 
   const layer = (depth: string) => {
@@ -88,9 +89,9 @@ export const initAtmosphere = (): Atmosphere | null => {
   /* ── FAR: the lanes ─────────────────────────────────────────────── */
   const farFrag = document.createDocumentFragment();
   for (let i = 0; i < LANES; i++) {
-    /* mostly script lines, a strip of edge code every third lane, a
-       poster word every fifth */
-    const tier = i % 5 === 2 ? TIERS[0] : i % 3 === 1 ? TIERS[2] : TIERS[1];
+    /* mostly script lines, a strip of edge code every third lane, one
+       lane of poster words */
+    const tier = i === 2 ? TIERS.poster : i % 3 === 1 ? TIERS.edge : TIERS.script;
     const fs = rand(tier.fs[0], tier.fs[1]) * scale;
     const lane = document.createElement("div");
     lane.className = "atmos__lane";
@@ -109,7 +110,7 @@ export const initAtmosphere = (): Atmosphere | null => {
     while (width < vw * 1.25 && guard++ < 80) {
       const txt = pick(words);
       const b = document.createElement("b");
-      b.textContent = tier.kind === "edge" ? txt : tier.kind === "poster" ? `${txt} ★` : txt;
+      b.textContent = txt;
       unit.appendChild(b);
       if (tier.kind === "edge") {
         for (let k = 0; k < 3; k++) unit.appendChild(document.createElement("i"));
@@ -125,22 +126,22 @@ export const initAtmosphere = (): Atmosphere | null => {
 
   /* ── MID: the drift field ─────────────────────────────────────── */
   const midFrag = document.createDocumentFragment();
-  const cols = narrow ? 2 : 4;
-  const bag = [...MARKS].sort(() => Math.random() - 0.5);
+  const cols = narrow ? 2 : 3;
+  const bag = [...FIELD_MARKS].sort(() => Math.random() - 0.5);
   for (let i = 0; i < FIELD; i++) {
     const el = document.createElement("div");
     el.className = "atmos__mark";
     const col = i % cols;
     const row = Math.floor(i / cols);
-    el.style.setProperty("--x", `${(col / cols) * 100 + rand(2, 16)}vw`);
-    el.style.setProperty("--y", `${(row / Math.ceil(FIELD / cols)) * 96 + rand(1, 14)}vh`);
-    el.style.setProperty("--w", `${(rand(4.6, 11) * (narrow ? 1.35 : 1)).toFixed(2)}vw`);
+    el.style.setProperty("--x", `${(col / cols) * 100 + rand(4, 18)}vw`);
+    el.style.setProperty("--y", `${(row / Math.ceil(FIELD / cols)) * 96 + rand(2, 16)}vh`);
+    el.style.setProperty("--w", `${(rand(5, 11) * (narrow ? 1.35 : 1)).toFixed(2)}vw`);
     el.style.setProperty("--rot", `${rand(-26, 26).toFixed(1)}deg`);
     el.style.setProperty("--sway", `${rand(9, 22).toFixed(1)}px`);
     el.style.setProperty("--spin", `${rand(-11, 11).toFixed(1)}deg`);
     el.style.setProperty("--dur", `${rand(11, 24).toFixed(1)}s`);
     el.style.setProperty("--delay", `${rand(-14, 0).toFixed(1)}s`);
-    el.style.setProperty("--op", rand(0.09, 0.16).toFixed(3));
+    el.style.setProperty("--op", rand(0.09, 0.15).toFixed(3));
     const m = bag[i % bag.length];
     el.style.setProperty("--ar", String(m.ar));
     el.appendChild(markImg(m.file));
@@ -151,7 +152,7 @@ export const initAtmosphere = (): Atmosphere | null => {
   /* ── NEAR: crossings ──────────────────────────────────────────── */
   const nearFrag = document.createDocumentFragment();
   const crossers: HTMLElement[] = [];
-  for (const m of [...MARKS.filter((x) => x.file.startsWith("strip")), SHEET]) {
+  for (const m of CROSSERS) {
     const el = document.createElement("div");
     el.className = "atmos__chara";
     el.style.setProperty("--ar", String(m.ar));
@@ -160,6 +161,23 @@ export const initAtmosphere = (): Atmosphere | null => {
     crossers.push(el);
   }
   near.appendChild(nearFrag);
+
+  /* ── pause while an opaque section covers the viewport ────────── */
+  const opaque = Array.from(document.querySelectorAll<HTMLElement>(".sec.t-ink, .sec.t-navy, .footer"));
+  let paused = false;
+  const setPaused = (p: boolean) => {
+    if (p === paused) return;
+    paused = p;
+    root.style.setProperty("--atmos-play", p ? "paused" : "running");
+  };
+  const coveredNow = () => {
+    const h = window.innerHeight;
+    for (const el of opaque) {
+      const r = el.getBoundingClientRect();
+      if (r.top <= 0 && r.bottom >= h) return true;
+    }
+    return false;
+  };
 
   /* ── scroll response: one transform per depth ─────────────────── */
   const rates: Array<[HTMLElement, number]> = [[far, 1], [mid, 2.3], [near, 3.4]];
@@ -172,6 +190,9 @@ export const initAtmosphere = (): Atmosphere | null => {
 
   const off = onScroll(({ velocity }) => {
     if (!running) return;
+    const covered = coveredNow();
+    setPaused(covered);
+    if (covered) return;
     const v = -velocity * 1.1;
     for (const set of setters) set(v);
     settle?.kill();
@@ -199,13 +220,13 @@ export const initAtmosphere = (): Atmosphere | null => {
     start: () => {
       running = true;
       root.classList.add("-ready");
-      root.style.removeProperty("--atmos-play");
+      setPaused(coveredNow());
       scheduleCross(true);
     },
     stop: () => {
       running = false;
       call?.kill();
-      root.style.setProperty("--atmos-play", "paused");
+      setPaused(true);
     },
     destroy: () => {
       running = false;

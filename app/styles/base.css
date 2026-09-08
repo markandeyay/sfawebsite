@@ -67,13 +67,15 @@ iframe { display: block; border: 0; }
   -webkit-text-stroke: clamp(1.5px, 0.22vw, 4px) currentColor;
   paint-order: stroke fill;
 }
+/* Courier Prime is loaded at 400 and 700 only; at label size it is always
+   the bold, or it reads as a hairline. */
 .ty-label {
-  font-family: var(--f-script); font-size: var(--t-label); font-weight: 500;
+  font-family: var(--f-script); font-size: var(--t-label); font-weight: 700;
   letter-spacing: var(--tr-wide); text-transform: uppercase;
   color: var(--on-surface-dim);
 }
 .ty-micro {
-  font-family: var(--f-script); font-size: var(--t-micro); font-weight: 500;
+  font-family: var(--f-script); font-size: var(--t-micro); font-weight: 700;
   letter-spacing: var(--tr-mega); text-transform: uppercase;
 }
 .ty-body { font-size: var(--t-body); line-height: var(--lh-body); max-width: 62ch; }

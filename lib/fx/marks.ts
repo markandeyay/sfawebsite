@@ -1,8 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════
-   MARKS — the film marks that live in the atmosphere, the section deco,
-   the leader field and the crossings: strips of film, the props of a
-   set, drawn with rough.js strokes so the line wobbles, and two
-   hand-lettered slate words.
+   MARKS — the film marks that live in the atmosphere, the section deco
+   and the crossings: strips of film, a reel, a can, the kit a student
+   crew actually carries (C-stand, boom, gaff tape, script, apple box,
+   light meter), drawn with rough.js strokes so the line wobbles, and
+   the take notes an editor writes on a strip in grease pencil.
    ═══════════════════════════════════════════════════════════════════ */
 
 export interface Mark {
@@ -13,23 +14,32 @@ export interface Mark {
 export const MARKS: Mark[] = [
   { file: "strip.svg", ar: 520 / 220 },
   { file: "strip-v.svg", ar: 220 / 520 },
-  { file: "clapper.svg", ar: 1 },
   { file: "reel.svg", ar: 420 / 400 },
-  { file: "megaphone.svg", ar: 480 / 400 },
-  { file: "chair.svg", ar: 330 / 400 },
-  { file: "spot.svg", ar: 360 / 400 },
+  { file: "can.svg", ar: 1 },
+  { file: "clapper.svg", ar: 1 },
+  { file: "script.svg", ar: 340 / 440 },
+  { file: "cstand.svg", ar: 300 / 520 },
+  { file: "boom.svg", ar: 520 / 300 },
+  { file: "gaff.svg", ar: 320 / 300 },
+  { file: "applebox.svg", ar: 480 / 320 },
+  { file: "meter.svg", ar: 300 / 420 },
   { file: "ticket.svg", ar: 510 / 300 },
-  { file: "star.svg", ar: 1 },
-  { file: "w-action.png", ar: 895 / 256 },
-  { file: "w-cut.png", ar: 543 / 256 },
+  { file: "n-pick.png", ar: 553 / 198 },
+  { file: "n-ng.png", ar: 337 / 170 },
+  { file: "n-hold.png", ar: 581 / 188 },
+  { file: "n-mos.png", ar: 532 / 200 },
 ];
 
-/* the large composition used once per section as the hero piece */
-export const SHEET: Mark = { file: "sheet.png", ar: 955 / 1154 };
+/* the drift field behind the page: only what belongs in a projection
+   booth's paperwork, so the far field reads as film, not a sticker wall */
+export const FIELD_MARKS = MARKS.filter((m) => /^(strip|reel|can|n-)/.test(m.file));
+
+/* what crosses the screen now and then */
+export const CROSSERS = MARKS.filter((m) => /^(strip|script)/.test(m.file));
 
 /** "reel" -> the registry entry whose file is reel.svg or reel.png */
 export const markByName = (name: string): Mark =>
-  [...MARKS, SHEET].find((m) => m.file.replace(/\.[a-z]+$/, "") === name) ?? { file: `${name}.svg`, ar: 1 };
+  MARKS.find((m) => m.file.replace(/\.[a-z]+$/, "") === name) ?? { file: `${name}.svg`, ar: 1 };
 
 export const markSrc = (file: string) => `/assets/marks/${file}`;
 

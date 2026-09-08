@@ -1,16 +1,18 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { Film } from "@/content/types";
+import { formatCatalogNumber } from "@/content";
 import { jitter } from "@/lib/hash";
 import { numberWord } from "@/lib/home";
 import { SectionHead } from "./SectionHead";
 import { Media } from "./Media";
 import { CatNo } from "./CatNo";
 
-/* The screening room. Every film on the slate, in the order it was made,
-   as frames on one pinned reel with a frame counter. Each frame links to
-   its film page through the iris. Reduced motion or a narrow screen: a
-   vertical reel. */
+/* The reel. Every film on the slate, in the order it was made, as one
+   continuous strip of frames on ink with a magazine counter in the
+   corner; the titles are grease-pencil notes under the strip, circled
+   where the film won. Each frame links to its page through the iris.
+   Reduced motion or a narrow screen: a vertical reel. */
 export function Slate({ films, year }: { films: Film[]; year: number }) {
   return (
     <section className="sec slate t-ink" id="slate" data-scene data-name="The slate" data-idx="01">
@@ -25,9 +27,9 @@ export function Slate({ films, year }: { films: Film[]; year: number }) {
       <div className="slate__pin" id="slate-pin">
         <div className="slate__track" id="slate-track">
           {films.map((film, i) => {
-            const rot = jitter(`shot:${film.slug}`, -1.4, 1.4);
             const drift = Math.round(jitter(`drift:${film.slug}`, -12, 12));
             const wins = film.awards.length;
+            const no = formatCatalogNumber(film.no);
             return (
               <Link
                 key={film.slug}
@@ -35,20 +37,24 @@ export function Slate({ films, year }: { films: Film[]; year: number }) {
                 className="shot"
                 data-drift={drift}
                 data-cursor="Watch"
+                data-slate={film.title}
+                data-scene-no={`No. ${no}`}
                 style={{ "--i": i } as CSSProperties}
               >
-                <Media
-                  film={film}
-                  rot={rot}
-                  cap={
-                    <>
-                      <CatNo no={film.no} />
-                      <span>{film.director}</span>
-                      <span className="x">{wins ? `${wins} ${wins === 1 ? "win" : "wins"}` : film.year}</span>
-                    </>
-                  }
-                />
-                <h3 className="shot__ttl">{film.title}</h3>
+                <Media film={film} rot={0} edge={[`SFA ▸ ${film.year} ▸ ${String(film.no).padStart(2, "0")}A`, `No. ${no}`]} />
+                <h3 className="shot__ttl">
+                  {film.title}
+                  {wins ? (
+                    <svg className="shot__pick" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+                      <ellipse cx="50" cy="20" rx="48" ry="17" />
+                    </svg>
+                  ) : null}
+                </h3>
+                <p className="shot__meta">
+                  <CatNo no={film.no} />
+                  <span>{film.director}</span>
+                  {wins ? <span className="n">{wins} {wins === 1 ? "win" : "wins"}</span> : null}
+                </p>
               </Link>
             );
           })}
@@ -59,12 +65,11 @@ export function Slate({ films, year }: { films: Film[]; year: number }) {
         </div>
 
         <div className="slate__hud" aria-hidden="true">
-          <span className="k">Frame</span>
-          <span className="cur" id="sl-cur">01</span>
-          <span className="tot">/ {String(films.length).padStart(2, "0")}</span>
-          <span className="slate__bar"><i id="sl-fill" /></span>
-          <span className="slate__hint">Scroll to advance the reel →</span>
+          <span className="k">Reel 01</span>
+          <span>FR <b id="sl-fr">0000</b></span>
+          <span><span className="cur" id="sl-cur">01</span><span className="k"> / {String(films.length).padStart(2, "0")}</span></span>
         </div>
+        <span className="slate__lamp" id="sl-lamp" aria-hidden="true" />
       </div>
     </section>
   );

@@ -44,9 +44,10 @@ export const initMotion = () => {
   gsap.defaults({ ease: EASE.out, duration: DUR.d3 });
 
   /* Mobile browsers fire resize when the address bar collapses during a
-     scroll. Without this, every such collapse re-measures every trigger
-     mid-gesture — the classic "pinned section jumps on mobile" bug. */
-  ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: "visibilitychange,DOMContentLoaded,load" });
+     scroll. ignoreMobileResize suppresses exactly that; a real resize
+     (window, devtools dock, rotation) must still refresh every trigger,
+     or the pinned reel and everything after it measure stale. */
+  ScrollTrigger.config({ ignoreMobileResize: true });
 
   if (prefersReduced()) {
     /* The class is the contract: components.css uses it to force every

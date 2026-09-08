@@ -8,6 +8,8 @@ import { SITE } from "@/lib/site";
    that relays the message as an email; paste the deployed URL into
    SCRIPT_URL (docs/APPS_SCRIPT_SETUP.md). Until the club wires it, the
    form says so and points at Instagram instead of pretending.
+   Laid out as script pages are: a character cue, a parenthetical, the
+   line.
    ═══════════════════════════════════════════════════════════════════ */
 
 const SCRIPT_URL = "";
@@ -61,34 +63,38 @@ export function PitchForm() {
       <div className="pitch__row" data-reveal>
         <div className={`field ${bad.name ? "-bad" : ""}`}>
           <label className="field__label" htmlFor="p-name">Name <span className="req" aria-hidden="true">*</span></label>
+          <span className="field__paren" aria-hidden="true">(who is pitching)</span>
           <input className="field__input" id="p-name" name="name" type="text" autoComplete="name" required aria-required="true" onInput={() => setBad((b) => ({ ...b, name: false }))} />
           <span className="field__err">Tell us who&rsquo;s writing</span>
         </div>
         <div className={`field ${bad.email ? "-bad" : ""}`}>
           <label className="field__label" htmlFor="p-email">Your email <span className="req" aria-hidden="true">*</span></label>
+          <span className="field__paren" aria-hidden="true">(where the club writes back)</span>
           <input className="field__input" id="p-email" name="email" type="email" autoComplete="email" required aria-required="true" onInput={() => setBad((b) => ({ ...b, email: false }))} />
           <span className="field__err">Need a real address to write back</span>
         </div>
       </div>
 
       <div className="field" data-reveal>
-        <span className="field__label" id="p-role-label">What do you want to do</span>
-        <div className="choose" role="group" aria-labelledby="p-role-label">
+        <span className="field__label" id="p-role-label">What you want to do</span>
+        <span className="field__paren" aria-hidden="true">(check any)</span>
+        <div className="cbs" role="group" aria-labelledby="p-role-label">
           {ROLES.map((r) => (
-            <label key={r}><input type="checkbox" name="role" value={r} />{r}</label>
+            <label className="cb" key={r}><input type="checkbox" name="role" value={r} /><span>{r}</span></label>
           ))}
         </div>
       </div>
 
       <div className={`field ${bad.message ? "-bad" : ""}`} data-reveal>
         <label className="field__label" htmlFor="p-message">Your pitch <span className="req" aria-hidden="true">*</span></label>
-        <textarea className="field__input field__input--area" id="p-message" name="message" rows={5} required aria-required="true" placeholder="A logline, an idea, or just how you want to help." onInput={() => setBad((b) => ({ ...b, message: false }))} />
+        <span className="field__paren" aria-hidden="true">(a logline, an idea, or just how you want to help)</span>
+        <textarea className="field__input field__input--area" id="p-message" name="message" rows={5} required aria-required="true" onInput={() => setBad((b) => ({ ...b, message: false }))} />
         <span className="field__err">The slate won&rsquo;t roll empty</span>
       </div>
 
       <div className="pitch__foot" data-reveal>
         <button className="pill" type="submit" disabled={busy}>
-          Send it<svg aria-hidden="true"><use href="#i-arrow" /></svg>
+          Send the pitch<svg aria-hidden="true"><use href="#i-arrow" /></svg>
         </button>
         <p className={`pitch__status ${status.tone ? `-${status.tone}` : ""}`} role="status" aria-live="polite">{status.msg}</p>
       </div>

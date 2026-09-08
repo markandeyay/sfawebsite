@@ -4,9 +4,9 @@ import type { Film } from "@/content/types";
 import { formatCatalogNumber } from "@/content";
 
 /* A still as a frame of 35 mm: perforated rails either side, the edge
-   print in the margin, a viewfinder that appears on hover. The stills
-   are the club's real frames, shown as shot. A film with no frame gets
-   black leader with the slate fields written on it. */
+   print in the margin. The stills are the club's real frames, shown as
+   shot. A film with no frame gets black leader with the slate fields
+   written on it. */
 export function Media({
   film,
   rot = 0,
@@ -64,8 +64,6 @@ export function Media({
               <span className="k">No. {no} — {film.director}</span>
             </div>
           )}
-          <span className="media__vf" aria-hidden="true" />
-          <span className="media__rec" aria-hidden="true">Rec</span>
           {children}
         </div>
         <div className="media__edge" aria-hidden="true">

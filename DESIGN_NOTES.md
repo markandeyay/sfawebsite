@@ -1548,18 +1548,20 @@ set or in a projection booth recognise it without being told?
   reel name. The cursor is a reticle with corner brackets. A cue mark blinks
   top-right every so often, the way one warns a projectionist of a reel
   change.
-- **The title card.** The hero is one frame of widescreen: ink letterbox bars
-  full-bleed above and below, REC and the aspect ratio in the top bar,
-  viewfinder brackets in the corners, STUDENT / FILM / ASSOCIATION as a main
-  title, and the clapperboard slate carrying the key film's real frame with
-  its fields written in a marker face. A Carolina light passes through the
-  title one letter after the next, like bulbs chasing round a marquee: a
+- **The screen.** The hero is one real widescreen frame, ink, full bleed,
+  sitting on the paper page: REC, the roll and the ratio (2.39 : 1, and the
+  frame is 2.39 : 1) in its top bar, viewfinder brackets in its corners,
+  STUDENT / FILM / ASSOCIATION inside it as a main title, and the
+  clapperboard slate carrying the key film's real frame held into the lens,
+  breaking the bottom edge of the frame. The screen opens from a slit like a
+  gate; the slate claps once it is in frame. A Carolina light passes through
+  the title one letter after the next, like bulbs chasing round a marquee: a
   colour loop per glyph, offset by its reveal delay, nothing composited.
-- **Sluglines.** Section heads are screenplay sluglines: the scene number in
-  both margins, INT. THE SLATE — NIGHT in Courier between them, the title in
-  the poster face with its second word in Courier blue, the scene number
-  again as a faint numeral. The two typographic worlds of a film, the
-  one-sheet and the script, on one line.
+- **Script pages.** Section heads are script pages: a page number top right,
+  the scene number in both margins with INT. THE SLATE — NIGHT in Courier
+  between them, the title in the poster face with its second word in Courier
+  blue, the parenthetical under it, and every paper section ends on
+  (CONTINUED). No faint numeral: a script has none.
 - **Strips.** The tapes between sections are lengths of 35 mm: perforations
   top and bottom, frame lines between the words, display and Courier
   alternating. They still tilt, still run at constant pixels per second,
@@ -1613,7 +1615,57 @@ reveal observer, the band loops, the atmosphere's three depths, the cursor,
 the per-route boot and teardown. The `media` module (the ghost fan behind a
 photo) was deleted; the frame's hover is CSS.
 
-### 14.4 Verified
+### 14.4 The critique round
+
+Five independent critics (film-native, distinct-from-stussy, type and
+legibility, layout bugs, motion and performance) read the captures against
+the stussy.ink reference and the code, and a sixth merged their findings
+into a ranked plan. Their consensus on the first pass: the film layer was
+real, but the page underneath was still the stussy chapter page in
+silhouette (cover grid, title block with a faint numeral, colour run, rotary
+badge, slogan tapes, product rack, contact form, three-column footer), and
+that is a composition problem, not a texture problem. The second pass
+changed the composition:
+
+- The hero became the screen described above instead of the cover grid; the
+  eyebrow, the side text and the rotary badge are gone.
+- The chrome takes its colour from the surface under it (the scene observer
+  stamps `data-surface` on the root) instead of a difference blend, so REC
+  is red on paper instead of cyan. The nav lost its numerals and reads as
+  edge print with frame lines; JOIN is a record control. The rail is one
+  narrow vertical column. The timecode is derived from scroll progress, the
+  same crank as the frame counter, so the two agree and scrolling up runs
+  the count backwards.
+- The Carolina crew section and the navy GO HEELS tape are gone: the
+  department slates moved onto the ink stage above the credits, so the page
+  runs paper, ink, paper, ink, paper, ink. The slates got hinged arms that
+  clap on arrival and hover, and a striped board.
+- The rotary badge became a film can label: typed keys, hand-written values.
+- The tape after the hero carries the twelve real frames of the year with
+  their edge codes; the second row is head leader.
+- The slate is one continuous strip at one height with frame lines between
+  frames, grease-pencil titles circled where the film won, a boxed magazine
+  counter, and a lamp flash when the strip runs out.
+- Awards night is a ceremony, not a rack: Best Picture is the largest frame,
+  laurels are printed direct on the stills in paper, the categories are
+  listed, and the night ends on an ink title card with a ticket to the full
+  ceremony. Every ★ separator is gone; the star is reserved for the finale.
+- The end credits fold the club's facts and links into the crawl, which is a
+  sticky block scrubbed inside its own stage (not a second pin).
+- The pitch is one formatted script page: character cues over dialogue
+  lines, parentheticals, a Courier checklist.
+- The footer is the end card bracketed by tail leader.
+- The small type tier moved up (labels 12–13px, micro 10.5–12px), Courier at
+  small sizes is always the bold, and small accents use a text-safe blue
+  (Carolina's dark cut on paper, its light cut on ink).
+- The clapper between routes now names its destination: scene, title, take.
+- The drift field is the kit a crew carries (C-stand, boom, gaff tape,
+  script, can, apple box, light meter) and grease-pencil take notes (PICK,
+  NG, HOLD, MOS); the megaphone, chair, star and the old hand-lettered words
+  are gone. The grain is dark alpha speckle composited normally, and off on
+  phones. ScrollTrigger refreshes on resize again.
+
+### 14.5 Verified
 
 Production build, Playwright with installed Chrome: the countdown leader
 runs and lifts; the title lands letter by letter and the sweep runs; the

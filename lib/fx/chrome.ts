@@ -2,17 +2,21 @@ import { onScroll } from "./scroll";
 import { prefersReduced } from "./motion";
 
 /* ═══════════════════════════════════════════════════════════════════
-   CHROME — header auto-hide, the running timecode, the frame counter
-   rail, page-top, active nav, the cue mark.
+   CHROME — header auto-hide, the timecode, the frame counter rail,
+   page-top, active nav, the surface stamp, the cue mark.
 
-   Everything scroll-driven reads from the single broadcast. Every
-   class write is guarded by a state flip.
+   Scroll is the crank: the timecode and the frame counter are both
+   derived from scroll progress, so the two counters on one HUD agree,
+   scrolling up runs the count backwards like a Steenbeck, and nothing
+   repaints while the page is still. Every class write is guarded by a
+   state flip.
    ═══════════════════════════════════════════════════════════════════ */
 
 const FPS = 24;
+/* frames in the reel: the rail reads FR 0000 at the top and 9999 at the end */
+const REEL = 9999;
 
-const timecode = (ms: number) => {
-  const frames = Math.floor((ms / 1000) * FPS);
+const timecode = (frames: number) => {
   const f = frames % FPS;
   const s = Math.floor(frames / FPS) % 60;
   const m = Math.floor(frames / FPS / 60) % 60;
@@ -37,6 +41,14 @@ export const initChrome = (): (() => void) => {
   let lastFrame = -1;
   const trackH = () => (railFill?.parentElement?.clientHeight ?? 0) - 2;
 
+  const paintFrames = (frames: number) => {
+    if (frames === lastFrame) return;
+    lastFrame = frames;
+    if (railFr) railFr.textContent = `FR ${String(frames).padStart(4, "0")}`;
+    if (tc) tc.textContent = `TC ${timecode(frames)}`;
+  };
+  paintFrames(0);
+
   const off = onScroll(({ y, progress }) => {
     if (header) {
       const hide = y > lastY && y > 180;
@@ -53,24 +65,9 @@ export const initChrome = (): (() => void) => {
       }
     }
     if (railFill) railFill.style.setProperty("--fr", `${(progress * trackH()).toFixed(1)}px`);
-    if (railFr) {
-      const frame = Math.round(progress * 9999);
-      if (frame !== lastFrame) {
-        lastFrame = frame;
-        railFr.textContent = `FR ${String(frame).padStart(4, "0")}`;
-      }
-    }
+    paintFrames(Math.round(progress * REEL));
     lastY = y;
   });
-
-  /* the timecode runs at 24 fps from the moment the page booted; under
-     reduced motion it is set once and left */
-  const t0 = performance.now();
-  let tcTimer = 0;
-  if (tc) {
-    if (prefersReduced()) tc.textContent = `TC ${timecode(0)}`;
-    else tcTimer = window.setInterval(() => { tc.textContent = `TC ${timecode(performance.now() - t0)}`; }, 1000 / FPS);
-  }
 
   /* the cue mark blinks twice every so often, like a reel change */
   let cueTimer = 0;
@@ -84,7 +81,9 @@ export const initChrome = (): (() => void) => {
     cueTimer = window.setTimeout(blink, 9000);
   }
 
-  /* active scene via an observer */
+  /* active scene via an observer; the same observer stamps the surface
+     under the chrome on the root, which recolours header, rail, cue and
+     page-top through CSS */
   const scenes = Array.from(document.querySelectorAll<HTMLElement>("[data-scene]"));
   const navLinks = new Map<string, HTMLElement>();
   document.querySelectorAll<HTMLElement>("[data-navlink]").forEach((a) => {
@@ -103,6 +102,11 @@ export const initChrome = (): (() => void) => {
         if (railIdx) railIdx.textContent = `Reel ${el.dataset.idx || "00"}`;
         if (railName) railName.textContent = el.dataset.name || "";
         navLinks.forEach((a, key) => a.classList.toggle("-active", key === id));
+        document.documentElement.dataset.surface = el.matches(".t-ink, .t-navy, .footer")
+          ? "dark"
+          : el.matches(".t-carolina")
+            ? "caro"
+            : "light";
       }
     },
     { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
@@ -112,8 +116,8 @@ export const initChrome = (): (() => void) => {
   return () => {
     off();
     io.disconnect();
-    window.clearInterval(tcTimer);
     window.clearTimeout(cueTimer);
     header?.classList.remove("-hidden");
+    delete document.documentElement.dataset.surface;
   };
 };

@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 const TONES = [undefined, "navy", "ink", undefined, "navy", "ink", undefined] as const;
 
 /* The film page: the catalog number as the scale moment, the title, the
-   screen, the laurels, the end credits, the films either side of it on
-   the slate. Same chrome, same atmosphere, same iris as the lot. */
+   screen with its ticket, the laurels, the end credits, the films either
+   side of it on the slate. Same chrome, same atmosphere, same iris. */
 export default async function FilmPage({ params }: PageProps) {
   const { slug } = await params;
   const film = getFilm(slug);
@@ -84,6 +84,8 @@ export default async function FilmPage({ params }: PageProps) {
             title={film.title}
             src={src}
             viewable={film.viewable}
+            year={film.year}
+            no={no}
             edge={[`SFA ▸ ${film.year} ▸ ${String(film.no).padStart(2, "0")}A ▸ ${film.runtime ? `${film.runtime} min` : "Print"}`, `No. ${no}`]}
           />
         </div>
@@ -100,7 +102,7 @@ export default async function FilmPage({ params }: PageProps) {
                   {film.awards.map((a, i) => {
                     const [l1, l2] = sealLines(a.category);
                     return (
-                      <Stamp key={a.category} tone={TONES[i % TONES.length]} rot={jitter(`seal:${film.slug}:${i}`, -7, 6)} seal>
+                      <Stamp key={a.category} tone={TONES[i % TONES.length]} rot={jitter(`seal:${film.slug}:${i}`, -5, 4)} seal fest={`SFA Film Festival ${ceremony.year}`}>
                         {l1}<br />{l2}
                         {a.person ? <small>{a.person}</small> : null}
                       </Stamp>
@@ -108,13 +110,13 @@ export default async function FilmPage({ params }: PageProps) {
                   })}
                 </div>
                 <p className="ty-label" style={{ marginBlockStart: "var(--s5)" }}>
-                  <Link href={`/awards/${ceremony.year}`} className="u-line" data-cursor="Go">The whole {ceremony.year} ceremony</Link>
+                  <Link href={`/awards/${ceremony.year}`} className="u-line" data-cursor="Go" data-slate="Awards night" data-scene-no={String(ceremony.year)}>The whole {ceremony.year} ceremony</Link>
                 </p>
               </>
             ) : (
               <p className="ty-body">
                 {film.title} screened at the {film.year} festival. {ceremony ? <>The night&rsquo;s {numberWord(ceremony.categories.length)} awards went elsewhere; </> : null}
-                {ceremony ? <Link href={`/awards/${ceremony.year}`} className="u-line" data-cursor="Go">see the ceremony</Link> : null}.
+                {ceremony ? <Link href={`/awards/${ceremony.year}`} className="u-line" data-cursor="Go" data-slate="Awards night" data-scene-no={String(ceremony.year)}>see the ceremony</Link> : null}.
               </p>
             )}
           </section>
@@ -143,7 +145,7 @@ export default async function FilmPage({ params }: PageProps) {
           <div className="film__adj-grid">
             {[prev, next].map((f, i) =>
               f ? (
-                <Link key={f.slug} href={`/films/${f.slug}`} className="shot" data-cursor="Watch">
+                <Link key={f.slug} href={`/films/${f.slug}`} className="shot" data-cursor="Watch" data-slate={f.title} data-scene-no={`No. ${formatCatalogNumber(f.no)}`}>
                   <Media
                     film={f}
                     rot={i ? 1 : -1.2}
@@ -158,7 +160,7 @@ export default async function FilmPage({ params }: PageProps) {
       </article>
 
       <Band
-        tone="caro"
+        tone="ink"
         rot={-1.4}
         rows={[{ speed: 0.9, items: [{ b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }, { b: "Cut" }, { em: "Check the gate" }] }]}
       />

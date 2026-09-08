@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════
-   COMPONENTS — sluglines, strips, frames, laurels, the reel, the roll,
-   reveals. Every one reads its colour from the surface roles, so the
-   same markup works on paper, navy, carolina and ink unchanged.
+   COMPONENTS — script-page heads, strips, frames, laurels, can labels,
+   the credit roll, tickets, reveals. Every one reads its colour from
+   the surface roles, so the same markup works on paper and ink.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── SECTION ──────────────────────────────────────────────────────── */
@@ -11,6 +11,13 @@
   padding-block: var(--section-y);
 }
 .sec--flush { padding-block-end: 0; }
+/* every paper section ends the way a script page does */
+.sec.t-paper::after {
+  content: "(CONTINUED)"; display: block; text-align: right;
+  padding: var(--s6) var(--margin) 0;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
+  letter-spacing: var(--tr-wide); color: var(--on-surface-dim);
+}
 
 /* ── SECTION DECO ───────────────────────────────────────────────── */
 .sec__deco {
@@ -26,25 +33,28 @@
 .sec__deco-mark img, .sec__deco-mark svg { width: 100%; height: 100%; object-fit: contain; display: block; }
 .t-navy .sec__deco-mark img, .t-navy .sec__deco-mark svg,
 .t-ink .sec__deco-mark img, .t-ink .sec__deco-mark svg { filter: invert(1); }
-.t-carolina .sec__deco-mark { opacity: 0.13; }
 .sec > *:not(.sec__deco) { position: relative; z-index: 1; }
 
-/* ── SECTION HEAD: the slugline ────────────────────────────────────
-   A screenplay puts the scene number in both margins and the slugline
-   between them, bold, uppercase, Courier. Under it, the title in the
-   poster face with its second line in the script face: the one-sheet
-   and the screenplay, the two typographic worlds of a film. */
-.sec__head { padding-inline: var(--margin); margin-block-end: var(--s8); }
+/* ── SECTION HEAD: a script page ───────────────────────────────────
+   Page number top right. Scene number in both margins with the
+   slugline between them, bold, uppercase, Courier. The title in the
+   poster face with its second line in the script face, then the
+   parenthetical under it. No faint numeral: a script has none. */
+.sec__head { position: relative; padding-inline: var(--margin); margin-block-end: var(--s8); }
+.sec__pg {
+  position: absolute; right: var(--margin); top: calc(var(--s6) * -1);
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-small); color: var(--on-surface-dim);
+}
 .sec__rule {
   display: flex; align-items: center; gap: var(--s4);
-  padding-block-end: var(--s4); border-block-end: 1.5px solid var(--on-surface);
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
+  padding-block-end: var(--s3); border-block-end: 1.5px solid var(--on-surface);
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-small);
   letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
-.sec__rule .n { color: var(--on-surface); font-variant-numeric: tabular-nums; min-width: 2.2em; }
+.sec__rule .n { font-size: var(--t-label); color: var(--on-surface); font-variant-numeric: tabular-nums; min-width: 2.2em; }
 .sec__rule .n:last-child { text-align: right; }
 .sec__rule .k { flex: 1; color: var(--on-surface); text-align: center; }
-.sec__rule .k em { font-style: normal; color: var(--accent); }
+.sec__rule .k em { font-style: normal; color: var(--accent-ink); }
 .sec__rule .ln {
   flex: 0 0 auto; width: clamp(24px, 6vw, 90px); height: 1px; background: var(--rule);
   transform: scaleX(0); transform-origin: 0 50%;
@@ -58,10 +68,7 @@
 .-in .sec__rule .n { opacity: 1; transform: none; }
 .-in .sec__rule .k { opacity: 1; transform: none; transition-delay: 200ms; }
 
-.sec__title {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  gap: var(--s7); flex-wrap: wrap; margin-block-start: var(--s5);
-}
+.sec__title { display: block; margin-block-start: var(--s5); }
 .sec__tt {
   font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
   font-size: var(--t-d1); line-height: var(--lh-solid); letter-spacing: var(--tr-tight);
@@ -71,26 +78,17 @@
   font-size: 0.46em; line-height: 1.1; letter-spacing: -0.02em; margin-block-start: 0.08em;
   color: var(--accent);
 }
-/* the scene number, big and faint, in the script face */
-.sec__no {
-  margin-inline: auto var(--s7);
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-d1); line-height: var(--lh-solid);
-  color: var(--on-surface); opacity: 0;
-  user-select: none; pointer-events: none;
-  transform: translate3d(0, 30px, 0) rotate(-4deg) scale(0.9);
-  transition: opacity var(--d5) var(--e-out) 380ms, transform var(--d5) var(--e-out) 380ms;
-}
-.-in .sec__no { opacity: 0.12; transform: none; }
 .sec__meta {
-  font-family: var(--f-script); font-size: var(--t-label); line-height: 1.9;
-  letter-spacing: var(--tr-wide); text-transform: uppercase;
-  text-align: right; color: var(--on-surface-dim); padding-block-end: 0.5em;
+  margin: var(--s4) 0 0 1.5em; max-width: 44ch;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-small); line-height: 1.8;
+  color: var(--on-surface-dim);
 }
 
 /* ── STRIP (marquee tape as 35 mm) ───────────────────────────────
    Full-bleed, tilted, a strip of film lying across the seam between
-   two sections: perforations top and bottom, the words in the frames,
-   frame lines between them. The loop is one GPU transform per row. */
+   two sections: perforations top and bottom, the club's own frames in
+   the frames, or leader words, frame lines between. One GPU transform
+   per row. Fast scrolling is a loop loss: the strip flashes red. */
 .band {
   position: relative; z-index: var(--z-band);
   margin-block: calc(var(--section-y) * -0.22);
@@ -100,10 +98,11 @@
   pointer-events: none;
 }
 .band__row {
+  position: relative; isolation: isolate;
   display: flex; white-space: nowrap; align-items: stretch;
   width: max-content;
   background: var(--band-bg, var(--ink)); color: var(--band-fg, var(--paper));
-  padding-block: var(--rail);
+  padding-block: calc(var(--perf-h) + 6px);
   will-change: transform;
   --hole: var(--band-hole, rgba(245, 242, 235, 0.92));
   background-image:
@@ -111,12 +110,23 @@
     repeating-linear-gradient(90deg, transparent 0 calc((var(--perf-gap) - var(--perf-w)) / 2), var(--hole) calc((var(--perf-gap) - var(--perf-w)) / 2) calc((var(--perf-gap) + var(--perf-w)) / 2), transparent calc((var(--perf-gap) + var(--perf-w)) / 2) var(--perf-gap));
   background-size: var(--perf-gap) var(--perf-h), var(--perf-gap) var(--perf-h);
   background-repeat: repeat-x, repeat-x;
-  background-position: 0 4px, 0 calc(100% - 4px);
+  background-position: 0 3px, 0 calc(100% - 3px);
   background-color: var(--band-bg, var(--ink));
 }
 .band__row + .band__row { margin-block-start: -2px; }
-.band__row { transition: background-color 140ms linear, color 140ms linear; }
-.band.-urgent .band__row { background-color: var(--rec); color: var(--paper); --hole: rgba(245, 242, 235, 0.85); }
+/* the red state is painted once and only its opacity moves */
+.band__row::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; will-change: opacity;
+  background-color: var(--rec);
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 calc((var(--perf-gap) - var(--perf-w)) / 2), rgba(245, 242, 235, 0.85) calc((var(--perf-gap) - var(--perf-w)) / 2) calc((var(--perf-gap) + var(--perf-w)) / 2), transparent calc((var(--perf-gap) + var(--perf-w)) / 2) var(--perf-gap)),
+    repeating-linear-gradient(90deg, transparent 0 calc((var(--perf-gap) - var(--perf-w)) / 2), rgba(245, 242, 235, 0.85) calc((var(--perf-gap) - var(--perf-w)) / 2) calc((var(--perf-gap) + var(--perf-w)) / 2), transparent calc((var(--perf-gap) + var(--perf-w)) / 2) var(--perf-gap));
+  background-size: var(--perf-gap) var(--perf-h), var(--perf-gap) var(--perf-h);
+  background-repeat: repeat-x, repeat-x;
+  background-position: 0 3px, 0 calc(100% - 3px);
+}
+.band.-urgent .band__row::before { animation: loop-loss 0.45s steps(2) 3; }
+@keyframes loop-loss { 0% { opacity: 0; } 50% { opacity: 0.9; } 100% { opacity: 0; } }
 .band__set { display: flex; align-items: center; flex: 0 0 auto; }
 .band__set > * { flex: 0 0 auto; }
 .band em, .band b {
@@ -130,18 +140,32 @@
   width: 2px; height: calc(clamp(30px, 4.4vw, 68px) * 1.3); border-radius: 0;
   background: currentColor; opacity: 0.55; margin-inline: 0.2em; align-self: center;
 }
+/* a frame of the club's own film on the strip, and its edge code */
+.band__frame {
+  width: calc(var(--perf-gap) * 5.5); aspect-ratio: 16 / 9; margin-inline: 3px;
+  background: var(--navy); overflow: hidden; align-self: center;
+}
+.band__frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.band__frame .ldr {
+  display: grid; place-items: center; width: 100%; height: 100%; padding: 4px;
+  background: var(--ink); color: var(--paper); text-align: center;
+  font-family: var(--f-display); font-weight: 900; font-size: 12px; line-height: 1; text-transform: uppercase;
+}
+.band__code {
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
+  letter-spacing: 0.08em; text-transform: uppercase; writing-mode: vertical-rl;
+  opacity: 0.6; margin-inline: 4px 10px; align-self: center;
+}
 .band--ink   { --band-bg: var(--ink);      --band-fg: var(--paper); }
 .band--rec   { --band-bg: var(--rec);      --band-fg: var(--paper); --band-hole: rgba(245, 242, 235, 0.85); }
 .band--paper { --band-bg: var(--paper);    --band-fg: var(--ink); --band-hole: var(--ink); }
 .band--caro  { --band-bg: var(--carolina); --band-fg: var(--navy); --band-hole: var(--navy); }
 .band--navy  { --band-bg: var(--navy);     --band-fg: var(--paper); --band-hole: rgba(245, 242, 235, 0.85); }
-/* legacy tone names from the first pass map onto the new ones */
-.band--flare { --band-bg: var(--rec); --band-fg: var(--paper); --band-hole: rgba(245, 242, 235, 0.85); }
 
 /* ── FRAME (media) ───────────────────────────────────────────────
    A still as a frame of 35 mm: perforated rails either side, the edge
-   print in the margin, corner brackets that appear on hover like a
-   viewfinder. Rectangles only; a frame of film is a rectangle. */
+   print in the margin. A print speaks print, not camera: on hover the
+   frame settles in the gate and its inner edge shows, nothing more. */
 .media { position: relative; display: block; }
 .media__film {
   position: relative; background: var(--ink); color: var(--paper);
@@ -160,58 +184,39 @@
   position: relative; overflow: hidden; background: var(--navy);
   aspect-ratio: var(--ar, 16 / 9); border-radius: 2px;
 }
+.media__frame::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  box-shadow: inset 0 0 0 2px var(--paper);
+  transition: opacity var(--d2) var(--e-out);
+}
 .media__img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; transform-origin: 50% 50%;
-  transition: transform var(--d5) var(--e-out);
 }
-/* the viewfinder: four corner brackets and a centre mark */
-.media__vf {
-  position: absolute; inset: 6%; pointer-events: none; opacity: 0;
-  transition: opacity var(--d2) var(--e-out);
-  --c: rgba(245, 242, 235, 0.95);
-  background:
-    linear-gradient(var(--c), var(--c)) top left / 18px 2px no-repeat,
-    linear-gradient(var(--c), var(--c)) top left / 2px 18px no-repeat,
-    linear-gradient(var(--c), var(--c)) top right / 18px 2px no-repeat,
-    linear-gradient(var(--c), var(--c)) top right / 2px 18px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom left / 18px 2px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom left / 2px 18px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom right / 18px 2px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom right / 2px 18px no-repeat,
-    linear-gradient(var(--c), var(--c)) center / 10px 1.5px no-repeat,
-    linear-gradient(var(--c), var(--c)) center / 1.5px 10px no-repeat;
+@keyframes gate-weave {
+  0% { transform: translateY(0); } 33% { transform: translateY(-2px); } 66% { transform: translateY(1px); } 100% { transform: translateY(0); }
 }
-.media__rec {
-  position: absolute; top: var(--s3); left: var(--s3); pointer-events: none;
-  display: inline-flex; align-items: center; gap: 0.45em;
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
-  letter-spacing: var(--tr-wide); text-transform: uppercase; color: rgba(245, 242, 235, 0.95);
-  opacity: 0; transition: opacity var(--d2) var(--e-out);
+@media (hover: hover) and (pointer: fine) {
+  .media:hover .media__frame::after, a:hover > .media .media__frame::after, a:focus-visible > .media .media__frame::after { opacity: 0.9; }
+  .media:hover .media__img, a:hover > .media .media__img { animation: gate-weave 320ms steps(3) 1; }
+  .media:hover .media__edge .n, a:hover > .media .media__edge .n { color: var(--paper); }
+  .media[data-tilt]:hover .media__film, a:hover > .media[data-tilt] .media__film { transform: rotate(0deg); }
 }
-.media__rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); }
 /* the edge print along the bottom margin */
 .media__edge {
   display: flex; justify-content: space-between; gap: var(--s3);
   padding-block-start: var(--s2); font-family: var(--f-script); font-weight: 700;
-  font-size: var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(245, 242, 235, 0.55); white-space: nowrap; overflow: hidden;
+  font-size: var(--t-micro); letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(245, 242, 235, 0.72); white-space: nowrap; overflow: hidden;
 }
-.media__edge .n { color: var(--carolina-hi); }
-@media (hover: hover) and (pointer: fine) {
-  .media:hover .media__vf, .media:focus-visible .media__vf,
-  a:hover > .media .media__vf, a:focus-visible > .media .media__vf { opacity: 1; }
-  .media:hover .media__rec, a:hover > .media .media__rec, a:focus-visible > .media .media__rec { opacity: 1; }
-  .media:hover .media__img, a:hover > .media .media__img { transform: scale(1.03); }
-  .media[data-tilt]:hover .media__film, a:hover > .media[data-tilt] .media__film { transform: rotate(0deg); }
-}
+.media__edge .n { color: var(--carolina-hi); transition: color var(--d2) var(--e-out); }
 .media__cap {
   display: flex; align-items: baseline; gap: var(--s3);
   margin-block-start: var(--s4);
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
   letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
-.media__cap .n { color: var(--accent); font-variant-numeric: tabular-nums; }
+.media__cap .n { color: var(--accent-ink); font-variant-numeric: tabular-nums; }
 .media__cap .x { margin-inline-start: auto; color: var(--on-surface-dim); }
 
 /* the type-only leader for a film with no frame: black leader with
@@ -225,16 +230,17 @@
   font-size: clamp(22px, 2.6vw, 44px); line-height: 0.9; letter-spacing: var(--tr-tight);
 }
 .media__leader .k { font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--carolina-hi); }
+.media__frame:has(.laurel) .media__leader { align-content: start; row-gap: 0.5em; }
+.media__frame:has(.laurel) .media__leader .k:last-child { display: none; }
 
 /* ── LAUREL ─────────────────────────────────────────────────────
-   The festival's own mark of a win: two branches around the category.
-   Carolina laurels on paper, paper laurels on the dark fields. Tilted
-   a fraction, like a laurel printed on a poster. */
+   The festival's own mark of a win: two branches around the category,
+   printed direct on the still in paper, or in Carolina on paper. */
 .laurel {
   position: absolute; z-index: 4; display: grid; grid-template-columns: auto 1fr auto; align-items: center;
-  gap: 0.15em; width: clamp(96px, 11vw, 150px);
+  gap: 0.1em; width: clamp(100px, 9vw, 132px);
   color: var(--laurel, var(--carolina));
-  transform: rotate(var(--stamp-rot, -6deg));
+  transform: rotate(var(--stamp-rot, -4deg));
   pointer-events: none;
 }
 .laurel svg { width: 100%; height: auto; }
@@ -243,32 +249,73 @@
 .laurel__t {
   text-align: center; color: var(--laurel-fg, var(--ink));
   font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
-  font-size: clamp(12px, 1.2vw, 17px); line-height: 0.92; letter-spacing: 0;
+  font-size: clamp(14px, 1.2vw, 18px); line-height: 0.92; letter-spacing: 0;
+}
+.laurel__t b {
+  display: block; font-family: var(--f-script); font-weight: 700; font-size: max(0.62em, 9.5px);
+  letter-spacing: 0.08em; margin-block-end: 0.35em; color: var(--rec);
 }
 .laurel__t small {
-  display: block; font-family: var(--f-script); font-weight: 700; font-size: 0.6em;
+  display: block; font-family: var(--f-script); font-weight: 700; font-size: max(0.62em, 9.5px);
   letter-spacing: 0.06em; margin-block-start: 0.35em; color: var(--laurel, var(--carolina));
 }
-.laurel__t b { display: block; font-family: var(--f-script); font-weight: 700; font-size: 0.55em; letter-spacing: 0.1em; margin-block-end: 0.35em; color: var(--rec); }
+.laurel__fest {
+  display: block; font-family: var(--f-script); font-weight: 700; font-size: max(0.6em, 9.5px);
+  letter-spacing: 0.04em; margin-block-start: 0.45em; text-transform: none; color: var(--laurel-fg, var(--ink)); opacity: 0.85;
+}
 .laurel--paper { --laurel: var(--paper); --laurel-fg: var(--paper); }
 .laurel--navy { --laurel: var(--navy); --laurel-fg: var(--navy); }
 .laurel--rec { --laurel: var(--rec); --laurel-fg: var(--ink); }
 .laurel--ink { --laurel: var(--ink); --laurel-fg: var(--ink); }
 .laurel--inline { position: static; }
 .t-ink .laurel, .t-navy .laurel { --laurel: var(--carolina-hi); --laurel-fg: var(--paper); }
-/* on a photo, the laurel sits on a small paper plate so it reads */
-.laurel--plate { background: var(--paper); padding: 0.6em 0.8em; border-radius: 3px; --laurel-fg: var(--ink); --laurel: var(--carolina); }
-
-/* ── REEL BADGE ─────────────────────────────────────────────────
-   Rotary text on a ring with a reel at the core, turning slowly. */
-.badge { position: relative; display: grid; place-items: center; }
-.badge > svg:first-child { width: 100%; height: 100%; animation: badge-spin 22s linear infinite; }
-.badge > svg:first-child text {
-  font-family: var(--f-script); font-size: 12.5px; font-weight: 700;
-  letter-spacing: 0.12em; fill: currentColor; text-transform: uppercase;
+/* on a still: printed direct in paper with a shadow so it reads on anything */
+.laurel--plate {
+  --laurel: var(--paper); --laurel-fg: var(--paper);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.35));
 }
-.badge img, .badge .badge__core { position: absolute; width: 34%; animation: badge-spin 9s linear infinite reverse; }
-@keyframes badge-spin { to { transform: rotate(360deg); } }
+.laurel--plate .laurel__t b { color: #FF5A50; }
+
+/* ── CAN LABEL ─────────────────────────────────────────────────
+   A film can label: typed keys, hand-written values, taped on at an
+   angle. */
+.can {
+  position: absolute; z-index: 4; display: grid; width: clamp(128px, 12vw, 176px);
+  background: var(--paper); color: var(--ink); border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink); transform: rotate(var(--rot, -3deg));
+  font-family: var(--f-script); font-size: var(--t-micro); pointer-events: none;
+}
+.can > span { display: flex; justify-content: space-between; align-items: baseline; gap: 0.6em; padding: 0.3em 0.55em; border-block-end: 1px solid var(--ink-faint); }
+.can > span:last-child { border: 0; }
+.can i { font-style: normal; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
+.can b { font-family: var(--font-marker), "Permanent Marker", cursive; font-weight: 400; font-size: 1.3em; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62%; }
+.can--inline { position: static; }
+
+/* ── TICKET (the play control) ──────────────────────────────────── */
+.ticket {
+  position: absolute; left: var(--s5); bottom: var(--s5); z-index: 3;
+  display: grid; grid-template-columns: auto 1fr; column-gap: 0.9em; align-items: center;
+  padding: 0.55em 1.1em 0.55em 0.9em; border-radius: 2px;
+  background: var(--paper); color: var(--ink); border: 1.5px solid var(--ink);
+  -webkit-mask: radial-gradient(circle at 0 50%, transparent 7px, #000 7.5px);
+  mask: radial-gradient(circle at 0 50%, transparent 7px, #000 7.5px);
+  transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out);
+  text-align: left;
+}
+.ticket i {
+  grid-row: 1 / 3; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--f-script); font-weight: 700; font-style: normal; font-size: var(--t-micro);
+  letter-spacing: 0.12em; text-transform: uppercase; padding-inline-end: 0.5em; border-inline-end: 1px dashed currentColor;
+  opacity: 0.75;
+}
+.ticket b {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(18px, 1.8vw, 28px); line-height: 1;
+}
+.ticket b svg { width: 0.55em; height: 0.55em; fill: currentColor; }
+.ticket small { font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.75; white-space: nowrap; }
+.facade:hover .ticket, .facade:focus-visible .ticket { background: var(--rec); color: var(--paper); }
 
 /* ── ARROW BUTTON ───────────────────────────────────────────────── */
 .arrow {
@@ -278,8 +325,7 @@
 }
 .arrow svg { width: 0.75em; height: 0.75em; }
 
-/* ── TICKET BUTTON ───────────────────────────────────────────────
-   A stub: rectangular, notched at both ends, Courier caps. */
+/* ── STUB BUTTON ──────────────────────────────────────────────── */
 .pill {
   position: relative; display: inline-flex; align-items: center; gap: 0.6em;
   padding: 0.75em 1.4em; border: 1.5px solid var(--on-surface); border-radius: 3px;
@@ -287,25 +333,19 @@
   font-family: var(--f-script); font-weight: 700; text-transform: uppercase;
   font-size: var(--t-small); letter-spacing: var(--tr-wide); line-height: 1;
   transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out), transform var(--d2) var(--e-out);
-  --notch: var(--surface);
-  background-image:
-    radial-gradient(circle at 0 50%, var(--notch) 0 5px, transparent 5.5px),
-    radial-gradient(circle at 100% 50%, var(--notch) 0 5px, transparent 5.5px);
 }
 .pill:hover, .pill:focus-visible { background-color: var(--on-surface); color: var(--surface); transform: translateY(-2px); }
 .pill:disabled { opacity: 0.45; cursor: default; transform: none; }
 .pill svg { width: 0.8em; height: 0.8em; stroke: currentColor; }
 .pill--solid { background-color: var(--on-surface); color: var(--surface); }
 .pill--solid:hover, .pill--solid:focus-visible { background-color: var(--rec); border-color: var(--rec); color: var(--paper); }
-.pill--rec { border-color: var(--rec); color: var(--rec); }
-.pill--rec:hover, .pill--rec:focus-visible { background-color: var(--rec); color: var(--paper); }
 
 /* ── CATALOG NUMBER ─────────────────────────────────────────────── */
 .catno {
   display: inline-block; white-space: nowrap;
   font-family: var(--f-script); font-weight: 700; font-variant-numeric: tabular-nums;
   font-size: var(--t-label); letter-spacing: var(--tr-wide);
-  color: var(--accent);
+  color: var(--accent-ink);
   transform: rotate(var(--tilt, 0deg));
   transform-origin: left baseline;
 }
@@ -314,7 +354,7 @@
   font-size: var(--t-mega); line-height: var(--lh-solid); letter-spacing: var(--tr-tight);
   color: var(--on-surface);
 }
-.catno--big small { font-family: var(--f-script); font-weight: 700; font-size: 0.22em; letter-spacing: 0.06em; vertical-align: 2.2em; margin-inline-end: 0.2em; color: var(--accent); }
+.catno--big small { font-family: var(--f-script); font-weight: 700; font-size: 0.22em; letter-spacing: 0.06em; vertical-align: 2.2em; margin-inline-end: 0.2em; color: var(--accent-ink); }
 
 /* ── CREDIT ROLL ──────────────────────────────────────────────────
    End credits: role right, name left, meeting at the centre gutter. */
@@ -335,13 +375,6 @@
   font-family: var(--f-script); font-weight: 400; font-style: italic; text-transform: none; color: var(--on-surface-dim);
   font-size: clamp(15px, 1.2vw, 19px);
 }
-.roll__group { margin-block-start: var(--s6); padding-block-start: var(--s5); border-block-start: 1px solid var(--rule); }
-.roll__group:first-child { margin-block-start: 0; padding-block-start: 0; border: 0; }
-.roll__group h4 {
-  text-align: center; margin-block-end: var(--s4);
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-mega);
-  text-transform: uppercase; color: var(--accent);
-}
 .roll__aside {
   margin: var(--s6) auto 0; max-width: 52ch; text-align: center;
   font-size: var(--t-small); line-height: 1.6; color: var(--on-surface-dim);
@@ -355,12 +388,13 @@
 }
 [data-reveal].-in { opacity: 1; transform: none; }
 
+/* titles cut in, frame-stepped: a card, not a hand-lettered sticker */
 .glword { display: inline-block; white-space: nowrap; }
 .glw { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0.05em 0.08em 0.2em; margin: -0.05em -0.08em -0.2em; }
-.gl  { display: inline-block; transform: translate3d(0, 135%, 0) rotate(3deg); will-change: transform; }
+.gl  { display: inline-block; transform: translate3d(0, 110%, 0); will-change: transform; }
 .-in .gl {
-  transform: translate3d(0, var(--gy, 0), 0) rotate(var(--gr, 0deg));
-  transition: transform var(--d4) var(--e-out);
+  transform: none;
+  transition: transform 420ms steps(4, end);
   transition-delay: var(--gd, 0ms);
 }
 
@@ -382,7 +416,5 @@
 .-no-motion .gl,
 .-no-motion .wd,
 .-no-motion .sec__rule .n,
-.-no-motion .sec__rule .k,
-.-no-motion .sec__no { opacity: 1 !important; transform: none !important; }
-.-no-motion .sec__no { opacity: 0.12 !important; }
+.-no-motion .sec__rule .k { opacity: 1 !important; transform: none !important; }
 .-no-motion .sec__rule .ln { transform: scaleX(1) !important; }

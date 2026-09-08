@@ -1,7 +1,7 @@
 import { initMotion, prefersReduced, ScrollTrigger, gsap } from "./motion";
 import { initScroll, scrollTo } from "./scroll";
 import { runLoader } from "./loader";
-import { Curtain } from "./curtain";
+import { Curtain, type SlateMeta } from "./curtain";
 import { initAtmosphere, type Atmosphere } from "./atmosphere";
 import { initDeco } from "./deco";
 import { initBands } from "./bands";
@@ -32,12 +32,19 @@ export const getCurtain = () => curtain;
 
 /* Route navigation through the curtain: cover, then let the caller
    push the route. The next boot lifts it. */
-export const navigateThrough = (href: string, push: (href: string) => void) => {
+export const navigateThrough = (href: string, push: (href: string) => void, meta?: SlateMeta) => {
   if (!curtain || prefersReduced()) {
     push(href);
     return;
   }
-  curtain.cover(() => push(href));
+  curtain.cover(() => push(href), meta);
+};
+
+/* what the slate says for a same-page jump: the section's reel index
+   and name */
+const sceneMeta = (sel: string): SlateMeta => {
+  const sec = document.querySelector<HTMLElement>(sel);
+  return { scene: sec?.dataset.idx || "00", title: sec?.dataset.name || "" };
 };
 
 export const boot = (): (() => void) => {
@@ -63,7 +70,7 @@ export const boot = (): (() => void) => {
 
   /* anchor nav on the same page: cover, jump, uncover */
   const jump = (href: string) => {
-    curtain!.wipe(() => scrollTo(href === "#hero" ? 0 : href, true));
+    curtain!.wipe(() => scrollTo(href === "#hero" ? 0 : href, true), sceneMeta(href === "#hero" ? "#hero" : href));
   };
   const onAnchor = (e: Event) => {
     const a = (e.target as HTMLElement)?.closest<HTMLAnchorElement>("[data-nav]");
@@ -126,6 +133,6 @@ export const boot = (): (() => void) => {
     atmosphere?.stop();
     cleanups.reverse().forEach((c) => c());
     ScrollTrigger.getAll().forEach((t) => t.kill());
-    gsap.set("[data-hero], .hero__bar, .hero__hud, .hero__vf i, [data-hero-fade], .hero__side, [data-film-hero]", { clearProps: "all" });
+    gsap.set("[data-hero], .hero__stage, .hero__hud, .hero__vf i, .slate-card__arm, [data-hero-fade], [data-film-hero]", { clearProps: "all" });
   };
 };

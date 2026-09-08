@@ -1,30 +1,34 @@
 import type { CSSProperties, ReactNode } from "react";
 
 /* The laurel: the festival's own mark of a win, two branches around the
-   category. Kept under the old name so every caller stays the same. */
+   category, and the festival's name under it where there is room. Kept
+   under the old name so every caller stays the same. */
 export function Stamp({
   children,
   tone,
-  rot = -6,
+  rot = -4,
   inline = false,
   stamp = false,
   seal = false,
   plate = false,
   winner = true,
+  fest,
   className = "",
 }: {
   children: ReactNode;
   tone?: "ink" | "navy" | "rec" | "paper";
   rot?: number;
   inline?: boolean;
-  /** marks it for the rack scene's landing choreography */
+  /** marks it for the awards scene's landing choreography */
   stamp?: boolean;
   /** marks it for the film page's laurel choreography */
   seal?: boolean;
-  /** on a paper plate, for sitting on a photograph */
+  /** printed direct on a still, in paper */
   plate?: boolean;
   /** show the WINNER line above the category */
   winner?: boolean;
+  /** the festival line under the category */
+  fest?: string;
   className?: string;
 }) {
   return (
@@ -38,6 +42,7 @@ export function Stamp({
       <span className="laurel__t">
         {winner ? <b>Winner</b> : null}
         {children}
+        {fest ? <span className="laurel__fest">{fest}</span> : null}
       </span>
       <span className="laurel__r" aria-hidden="true"><svg viewBox="0 0 60 120"><use href="#i-laurel" /></svg></span>
     </span>

@@ -56,6 +56,11 @@ export const runLoader = (onReveal: () => void) => {
     if (num && n !== lastNum) {
       lastNum = n;
       num.textContent = String(n);
+      /* the 2-pop: one red frame when the 2 lands */
+      if (n === TO) {
+        loader.classList.add("-pop");
+        gsap.delayedCall(0.042, () => loader.classList.remove("-pop"));
+      }
     }
     const frac = t - Math.floor(t);
     sweep?.style.setProperty("--sweep", `${(frac * 360).toFixed(1)}deg`);

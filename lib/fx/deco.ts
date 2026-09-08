@@ -12,10 +12,9 @@ import { markByName, markImg } from "./marks";
 
 /* Per-section casts. */
 const CASTS: Record<string, string[]> = {
-  slate: ["strip", "reel", "clapper", "strip-v", "star"],
-  crew: ["chair", "strip", "spot", "clapper", "ticket"],
-  credits: ["reel", "strip-v", "sheet", "megaphone", "star"],
-  finale: ["sheet", "star", "reel", "strip", "spot"],
+  slate: ["strip", "reel", "can", "strip-v", "script"],
+  credits: ["clapper", "cstand", "boom", "gaff", "applebox"],
+  finale: ["strip", "can", "reel", "meter", "script"],
 };
 
 /* x/y in %, size in vw, rotation in deg — hand-placed so nothing lands
@@ -54,7 +53,6 @@ export const initDeco = (): (() => void) => {
       const mark = markByName(name);
       el.dataset.mark = name;
       el.style.setProperty("--ar", String(mark.ar));
-      if (name === "sheet") el.style.setProperty("--w", `${(w * 2.4).toFixed(1)}vw`);
       el.appendChild(markImg(mark.file));
       layer.appendChild(el);
     });

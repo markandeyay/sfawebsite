@@ -1,10 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
+import type { ReactNode } from "react";
+import type { Film } from "@/content/types";
 import { SITE } from "@/lib/site";
 import { SectionHead } from "./SectionHead";
+import { CrewSlates } from "./Crew";
 
-/* The exec board as an end-credit crawl: role above, name below,
-   centred, on the ink. No names have been supplied, and none are
-   invented. */
+/* The crew, then the crawl. The department slates on the ink stage,
+   and under them the end credits: the exec board's roles (no names have
+   been supplied, and none are invented) and the club's facts and links
+   as credit rows, crawling as you scroll. */
 const ROLES = [
   "President",
   "Vice president",
@@ -15,18 +19,30 @@ const ROLES = [
   "Acting guild lead",
 ];
 
-export function Credits() {
+const FACTS: Array<[string, ReactNode]> = [
+  ["Shot on location", "Chapel Hill, NC"],
+  ["Presented at", "The SFA Film Festival, every May"],
+  ["Awards", "Fifteen categories, voted by the members"],
+  ["Pitches open", "Every fall"],
+  ["Follow", <a key="ig" href={SITE.instagram} rel="noreferrer">@uncstudentfilmassociation</a>],
+  ["Watch", <a key="yt" href={SITE.youtube} rel="noreferrer">YouTube</a>],
+  ["Connect", <a key="li" href={SITE.linkedin} rel="noreferrer">LinkedIn</a>],
+];
+
+export function Credits({ stills }: { stills: Film[] }) {
   return (
-    <section className="sec t-ink" id="credits" data-scene data-name="End credits" data-idx="05">
+    <section className="sec t-ink" id="credits" data-scene data-name="End credits" data-idx="04">
       <SectionHead
-        n="05"
-        slug="INT. End credits — crawl"
-        title="End"
-        em="Credits"
-        meta={["The people who run it", "Names to be supplied"]}
+        n="04"
+        slug="INT. The crew — end credits"
+        title="The"
+        em="Crew"
+        meta={["Officers, producers, guilds and a hundred members", "Names to be supplied"]}
       />
 
-      <div className="credits__grid">
+      <CrewSlates stills={stills} />
+
+      <div className="credits__stage">
         <div className="credits__roll" data-roll>
           <dl className="roll roll--crawl">
             {ROLES.map((role) => (
@@ -35,32 +51,19 @@ export function Credits() {
                 <dd className="roll__name -missing">Name to be supplied</dd>
               </div>
             ))}
+            {FACTS.map(([role, name]) => (
+              <div className="roll__row" data-roll-row key={role}>
+                <dt className="roll__role">{role}</dt>
+                <dd className="roll__name">{name}</dd>
+              </div>
+            ))}
           </dl>
           <p className="roll__aside">
             Names go here when the club sends them: the current officers, the executive producers, and a lead for each guild.
           </p>
         </div>
-
-        <div className="credits__cols">
-          <div className="credits-col" data-store>
-            <h3>Meet</h3>
-            <p>Chapel Hill, NC<br />UNC campus<br />Pitches open in the fall<br /><s>Dates to be posted</s></p>
-          </div>
-          <div className="credits-col" data-store>
-            <h3>Festival</h3>
-            <p>SFA Film Festival<br />Every May<br />Fifteen awards<br />Voted by the members</p>
-          </div>
-          <div className="credits-col" data-store>
-            <h3>Contact</h3>
-            <p>
-              <a href={SITE.instagram} rel="noreferrer" className="u-line">@uncstudentfilmassociation</a><br />
-              <a href={SITE.youtube} rel="noreferrer" className="u-line">YouTube</a><br />
-              <a href={SITE.linkedin} rel="noreferrer" className="u-line">LinkedIn</a>
-            </p>
-          </div>
-          <div className="credits__mark" data-store>
-            <img src="/assets/marks/strip-v.svg" alt="" width="220" height="520" data-spin loading="lazy" />
-          </div>
+        <div className="credits__mark" aria-hidden="true">
+          <img src="/assets/marks/strip-v.svg" alt="" width="220" height="520" data-spin loading="lazy" />
         </div>
       </div>
     </section>

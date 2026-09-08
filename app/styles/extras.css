@@ -1,23 +1,25 @@
 /* ═══════════════════════════════════════════════════════════════════
-   EXTRAS — the pieces that are SFA's own: the slate card in the hero,
-   the title card's viewfinder, the laurel row, the call sheet, the
-   script page, the pitch chooser.
+   EXTRAS — the pieces that are SFA's own: the slate in the hero, the
+   title sweep, the call sheet, the script page, the laurel row.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── THE SLATE CARD ─────────────────────────────────────────────
-   A clapperboard carrying the cycle's key frame. The fields are
-   hand-written, as they are on a real slate. */
+   A clapperboard carrying the cycle's key frame, held into the lens.
+   The fields are hand-written, as on a real slate; the arm is hinged
+   and claps on arrival and on hover. */
 .slate-card {
   position: relative; display: grid; gap: 0;
-  transform: rotate(3deg); transform-origin: 50% 60%;
-  filter: drop-shadow(10px 12px 0 var(--carolina));
+  filter: drop-shadow(0 8px 0 rgba(14, 13, 12, 0.35));
 }
 .slate-card__arm {
   height: clamp(28px, 3.4vw, 46px);
   background: repeating-linear-gradient(-58deg, var(--ink) 0 22px, var(--paper) 22px 44px);
   border: 3px solid var(--ink); border-radius: 8px 8px 0 0;
-  transform: rotate(-6deg); transform-origin: 0 100%;
-  position: relative; z-index: 2;
+  transform: rotate(var(--arm-rest, -6deg)); transform-origin: 0 100%;
+  position: relative; z-index: 2; will-change: transform;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero__slate:hover .slate-card__arm, .hero__slate:focus-visible .slate-card__arm { animation: clap-sm 0.42s var(--e-snap) 1; }
 }
 .slate-card__board {
   background: var(--ink); color: var(--paper);
@@ -27,15 +29,16 @@
 }
 .slate-card__frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; background: var(--navy); }
 .slate-card__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slate-card__frame::after { content: ""; position: absolute; inset: 0; background: var(--paper); opacity: 0; pointer-events: none; }
+.slate-card__frame.-clap::after { animation: slate-flash 0.12s steps(2) 1; }
 .slate-card__fields {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(6px, 0.8vw, 12px);
 }
 .slate-card__fields > span {
   border: 1.5px solid rgba(245, 242, 235, 0.35); border-radius: 4px; padding: 0.35em 0.6em;
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-wide); text-transform: uppercase;
-  color: rgba(245, 242, 235, 0.55); line-height: 1.5;
+  color: rgba(245, 242, 235, 0.62); line-height: 1.5;
 }
-/* the values are chalk: a marker face, tilted a hair */
 .slate-card__fields > span b {
   display: block; font-family: var(--font-marker), "Permanent Marker", "Comic Sans MS", cursive; font-weight: 400;
   font-size: clamp(16px, 1.7vw, 27px); letter-spacing: 0; color: var(--paper); line-height: 1;
@@ -43,51 +46,27 @@
 }
 .slate-card__fields .hot b { color: var(--carolina-hi); }
 
-/* ── THE TITLE CARD (hero) ──────────────────────────────────────
-   Letterbox bars and a viewfinder frame around the title. */
-.tcard { position: relative; }
-.tcard__bar {
-  position: absolute; left: calc(var(--margin) * -1); right: calc(var(--margin) * -1); height: var(--bar);
-  background: var(--ink);
-}
-.tcard__bar.-top { top: calc(var(--bar) * -1 - var(--s4)); }
-.tcard__bar.-bottom { bottom: calc(var(--bar) * -1 - var(--s4)); }
-.tcard__vf { position: absolute; inset: calc(var(--s3) * -1) calc(var(--s4) * -1); pointer-events: none; }
-.tcard__vf i {
-  position: absolute; width: 22px; height: 22px; border: 2px solid var(--ink); opacity: 0.8;
-}
-.tcard__vf i:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; }
-.tcard__vf i:nth-child(2) { top: 0; right: 0; border-left: 0; border-bottom: 0; }
-.tcard__vf i:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; }
-.tcard__vf i:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-top: 0; }
-.tcard__hud {
-  position: absolute; top: calc(var(--s3) * -1); left: 0; right: 0; display: flex; justify-content: space-between;
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: var(--tr-wide);
-  text-transform: uppercase; color: var(--ink-soft); pointer-events: none; transform: translateY(-100%);
-}
-.tcard__hud .rec { display: inline-flex; align-items: center; gap: 0.45em; color: var(--rec); }
-.tcard__hud .rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); animation: rec-blink 1.6s steps(1) infinite; }
-/* the projector beam: a Carolina light passing through the title one
-   letter after the next, like bulbs chasing round a marquee. Each glyph
-   runs the same colour loop, offset by its reveal delay, so the wave
-   reads left to right through all three lines. Colour only: no layout,
-   no compositing, and the split letters stay exactly where they are. */
+/* ── THE TITLE SWEEP ────────────────────────────────────────────
+   A Carolina light passing through the title one letter after the
+   next, like bulbs chasing round a marquee. Each glyph runs the same
+   colour loop, offset by its reveal delay. Colour only. The hero title
+   rises smoothly (a main title fades; cards cut), while every other
+   title takes the frame-stepped cut. */
 .hero__title .gl {
-  --gr: 0deg !important; --gy: 0em !important;
   animation: beam-glyph 7.5s linear infinite;
   animation-delay: calc(var(--gd, 0ms) * 2.6 + 2.4s);
 }
+.-in.hero__stage .hero__title .gl { transition: transform var(--d4) var(--e-out); transition-delay: var(--gd, 0ms); }
 .hero__stage.-settled .hero__title .gl { will-change: auto; }
+.hero__stage.-off .hero__title .gl { animation-play-state: paused; }
 @keyframes beam-glyph {
-  0%, 100% { color: var(--ink); }
-  5%       { color: var(--carolina-lo); }
-  8%       { color: var(--carolina); }
-  10.5%    { color: var(--carolina-hi); }
+  0%, 100% { color: var(--paper); }
+  5%       { color: var(--carolina); }
+  9%       { color: var(--carolina-hi); }
   13%      { color: var(--carolina); }
-  19%      { color: var(--ink); }
+  19%      { color: var(--paper); }
 }
 .hero__line {
-  display: block; margin-block-start: var(--s5);
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
   letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--ink-soft);
 }
@@ -96,14 +75,22 @@
 
 /* ── LAUREL ROW (film page) ─────────────────────────────────────── */
 .seals { display: flex; flex-wrap: wrap; gap: var(--s5) var(--s6); align-items: center; }
-.seals .laurel { position: static; width: clamp(120px, 12vw, 170px); }
+.seals .laurel { position: static; width: clamp(130px, 13vw, 180px); }
 
 /* ── CALL SHEET (how it's made) ─────────────────────────────────
-   A real call sheet is a bordered Courier table with an inverted
-   header row. Day, call, scene, location. */
+   A real call sheet: a masthead of the production facts, a bordered
+   Courier table with an inverted header row, a line of small print. */
+.callsheet__mast {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1.5px solid var(--on-surface); border-block-end: 0;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro); letter-spacing: 0.04em; text-transform: uppercase;
+}
+.callsheet__mast > span { padding: 0.6em 0.8em; border-inline-start: 1px solid var(--rule); display: grid; gap: 0.2em; }
+.callsheet__mast > span:first-child { border: 0; }
+.callsheet__mast i { font-style: normal; color: var(--on-surface-dim); letter-spacing: 0.08em; }
 .callsheet {
-  width: 100%; border-collapse: collapse; margin-block-start: var(--s7);
-  font-family: var(--f-script); font-size: var(--t-label); letter-spacing: 0.02em; text-transform: uppercase;
+  width: 100%; border-collapse: collapse;
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label); letter-spacing: 0.02em; text-transform: uppercase;
   border: 1.5px solid var(--on-surface);
 }
 .callsheet caption {
@@ -112,35 +99,59 @@
 }
 .callsheet th, .callsheet td { padding: 0.7em 0.8em; border: 1px solid var(--rule); vertical-align: top; text-align: left; }
 .callsheet thead th { background: var(--on-surface); color: var(--surface); font-weight: 700; border-color: var(--on-surface); }
-.callsheet tbody th { font-weight: 700; white-space: nowrap; color: var(--accent); }
+.callsheet tbody th { font-weight: 700; white-space: nowrap; color: var(--accent-ink); }
 .callsheet td.when { white-space: nowrap; font-weight: 700; }
-.callsheet td.what { text-transform: none; font-family: var(--f-text); font-size: var(--t-small); letter-spacing: 0; line-height: 1.5; }
-.callsheet tr[data-fact] { opacity: 1; }
+.callsheet td.what { text-transform: none; font-family: var(--f-text); font-weight: 400; font-size: var(--t-small); letter-spacing: 0; line-height: 1.5; }
+.callsheet td.who { color: var(--on-surface-dim); }
+.callsheet__foot {
+  margin-block-start: var(--s3); font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
+  letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim);
+}
 
-/* ── SCRIPT PAGE (the pitch) ────────────────────────────────────── */
+/* ── SCRIPT PAGE (the pitch) ────────────────────────────────────
+   A formatted page: number, slugline, action, then each field as a
+   character cue over its dialogue line, with parentheticals. */
 .script {
   position: relative; background: var(--paper); border: 1.5px solid var(--ink);
-  padding: clamp(var(--s6), 4vw, var(--s9)) clamp(var(--s5), 5vw, var(--s10));
-  font-family: var(--f-script);
-  box-shadow: 8px 10px 0 var(--carolina);
+  padding: clamp(var(--s6), 6vw, 96px);
+  font-family: var(--f-script); color: var(--ink);
 }
-.script__pg { position: absolute; top: var(--s4); right: var(--s5); font-weight: 700; font-size: var(--t-label); }
-.script__slug { font-weight: 700; font-size: var(--t-small); text-transform: uppercase; margin-block-end: var(--s5); }
-.script .field__label { font-family: var(--f-script); font-weight: 700; text-align: center; letter-spacing: var(--tr-mega); }
-.script .field__input { font-family: var(--f-script); }
-.script .field__input--area { border-radius: 2px; }
-
-/* ── CHOOSER ────────────────────────────────────────────────────── */
-.choose { display: flex; flex-wrap: wrap; gap: var(--s2); justify-content: center; }
-.choose label {
-  display: inline-flex; align-items: center; gap: 0.5em; padding: 0.45em 0.9em;
-  border: 1.5px solid var(--on-surface-dim); border-radius: 3px; cursor: pointer;
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase;
-  transition: background-color var(--d2) var(--e-out), color var(--d2) var(--e-out), border-color var(--d2) var(--e-out);
+.script__pg { position: absolute; top: var(--s5); right: var(--s5); font-weight: 700; font-size: var(--t-small); }
+.script__slug { font-weight: 700; font-size: var(--t-small); text-transform: uppercase; letter-spacing: 0.02em; margin-block-end: var(--s5); }
+.script__action { font-weight: 700; font-size: var(--t-small); line-height: 1.8; max-width: 60ch; margin-block-end: var(--s7); }
+.script__action + .script__action { margin-block-start: calc(var(--s7) * -1 + var(--s3)); }
+.script .pitch__form { display: grid; gap: var(--s6); }
+.script .pitch__row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s6); }
+.script .field { display: grid; gap: var(--s2); }
+.script .field__label {
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-small); text-transform: uppercase;
+  letter-spacing: 0.02em; padding-inline-start: 38%;
 }
-.choose input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.choose label:has(input:checked) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.choose label:has(input:focus-visible) { outline: 3px solid var(--rec); outline-offset: 3px; }
+.script .field__paren {
+  font-weight: 400; font-size: var(--t-small); color: var(--ink-soft); padding-inline-start: 30%;
+}
+.script .field__input {
+  width: min(100%, 44ch); margin-inline-start: 22%; padding: 0.4em 0 0.5em;
+  border: 0; border-radius: 0; border-block-end: 1.5px solid var(--ink);
+  background: transparent; font-family: var(--f-script); font-size: var(--t-small); color: var(--ink);
+}
+.script .field__input:focus-visible { outline: none; border-color: var(--carolina-lo); }
+.script .field__input--area { min-height: 7em; resize: vertical; line-height: 1.7; border: 1.5px solid var(--ink); padding: 0.6em 0.8em; }
+.script .field.-bad .field__input { border-color: var(--rec); }
+.script .field__err { padding-inline-start: 22%; }
+/* the roles as a Courier checklist */
+.cbs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2) var(--s5); padding-inline-start: 22%; }
+.cb { position: relative; display: block; cursor: pointer; font-weight: 700; font-size: var(--t-small); text-transform: uppercase; letter-spacing: 0.02em; }
+.cb input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.cb span::before { content: "☐ "; }
+.cb input:checked + span::before { content: "☒ "; }
+.cb input:focus-visible + span { outline: 3px solid var(--rec); outline-offset: 3px; }
+.script .pitch__foot { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap; padding-inline-start: 22%; }
+.script .pitch__status { font-weight: 700; font-size: var(--t-small); text-transform: none; letter-spacing: 0; color: var(--ink-soft); }
+.script .pitch__status.-bad { color: var(--rec); }
+.script .pitch__status.-ok { color: var(--carolina-lo); }
+.script .pitch__status a { text-decoration: underline; text-underline-offset: 0.2em; }
+.script .req { color: var(--rec); }
 
 /* ── FILM PAGE EXTRAS ───────────────────────────────────────────── */
 .film__eyebrow {
@@ -149,8 +160,8 @@
   margin-block-end: var(--s7);
 }
 .film__eyebrow .ln { flex: 1; min-width: 24px; height: 1px; background: var(--ink-faint); }
-.film__eyebrow .hot { color: var(--rec); }
-.film__meta { display: grid; gap: var(--s2); font-family: var(--f-script); font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim); }
+.film__eyebrow .hot { color: var(--rec); font-size: var(--t-small); }
+.film__meta { display: grid; gap: var(--s2); font-family: var(--f-script); font-weight: 700; font-size: var(--t-label); letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim); }
 .film__meta b { color: var(--on-surface); font-weight: 700; }
 .film__sub { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: var(--t-d2); line-height: var(--lh-solid); letter-spacing: var(--tr-tight); margin-block-end: var(--s5); }
 .film__sub em { display: block; font-style: normal; font-family: var(--f-script); font-weight: 700; font-size: 0.42em; letter-spacing: 0; color: var(--accent); margin-block-start: 0.1em; }

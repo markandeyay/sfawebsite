@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCeremonies, getCeremony, getFilmsForCeremony, getKeyFilm, CANONICAL_CATEGORIES } from "@/content";
+import { getCeremonies, getCeremony, getFilmsForCeremony, getKeyFilm, formatCatalogNumber, CANONICAL_CATEGORIES } from "@/content";
 import type { AwardCategory, Department } from "@/content/types";
 import { numberWord, summarizeCeremony } from "@/lib/home";
 import { jitter } from "@/lib/hash";
 import { SectionHead } from "@/components/lot/SectionHead";
 import { CatNo } from "@/components/lot/CatNo";
 import { Media } from "@/components/lot/Media";
-import { Badge } from "@/components/lot/Badge";
+import { CanLabel } from "@/components/lot/Badge";
 import { Stamp } from "@/components/lot/Stamp";
 import { Band } from "@/components/lot/Band";
 import { Footer } from "@/components/lot/Footer";
@@ -60,11 +60,12 @@ export default async function CeremonyPage({ params }: PageProps) {
   const finaleFilm = getKeyFilm(ceremony);
   const rank = (c: AwardCategory) => CANONICAL_CATEGORIES.indexOf(c.category);
   const total = ceremony.categories.length;
+  const fest = `SFA Film Festival ${ceremony.year}`;
 
   return (
     <>
       <div className="night" style={{ paddingBlockStart: "calc(var(--s9) + 2vw)" }}>
-        <section className="sec t-paper" id="night" data-scene data-name="Awards night" data-idx="02" style={{ paddingBlockStart: 0 }}>
+        <section className="sec t-paper" id="night" data-scene data-name="Awards night" data-idx={String(ceremony.year).slice(2)} style={{ paddingBlockStart: 0 }}>
           <SectionHead
             n={String(ceremony.year).slice(2)}
             slug={`INT. Awards night — ${ceremony.held}`}
@@ -83,7 +84,7 @@ export default async function CeremonyPage({ params }: PageProps) {
                 <span className="tally__n" aria-label={`${h.wins} ${h.wins === 1 ? "win" : "wins"}`}>{h.wins}</span>
                 <div className="tally__film">
                   <CatNo no={h.film.no} />
-                  <Link href={`/films/${h.film.slug}`} className="tally__ttl u-line" data-cursor="Watch">{h.film.title}</Link>
+                  <Link href={`/films/${h.film.slug}`} className="tally__ttl u-line" data-cursor="Watch" data-slate={h.film.title} data-scene-no={`No. ${formatCatalogNumber(h.film.no)}`}>{h.film.title}</Link>
                   <span className="ty-label">Directed by {h.film.director}</span>
                 </div>
               </div>
@@ -92,7 +93,7 @@ export default async function CeremonyPage({ params }: PageProps) {
         </section>
 
         <Band
-          tone="rec"
+          tone="ink"
           rot={1.6}
           rows={[{ speed: -0.9, items: [{ b: "And the winner is" }, { em: ceremony.held }, { b: `${total} categories` }, { em: "Voted by the members" }] }]}
         />
@@ -111,12 +112,12 @@ export default async function CeremonyPage({ params }: PageProps) {
                   return (
                     <div className="win" data-win key={c.category}>
                       <span className="win__cat">{c.category}</span>
-                      <span className="win__seal" style={{ "--stamp-rot": `${jitter(`win:${c.category}`, -5, 5).toFixed(1)}deg` } as React.CSSProperties} aria-hidden="true">
-                        <Stamp inline winner={false} rot={0}>{l1}<br />{l2}</Stamp>
+                      <span className="win__seal" style={{ "--stamp-rot": `${jitter(`win:${c.category}`, -4, 4).toFixed(1)}deg` } as React.CSSProperties} aria-hidden="true">
+                        <Stamp inline winner={false} rot={0} fest={fest}>{l1}<br />{l2}</Stamp>
                       </span>
                       <div className="win__film">
                         <CatNo no={film.no} />
-                        <Link href={`/films/${film.slug}`} className="win__ttl u-line" data-cursor="Watch">{film.title}</Link>
+                        <Link href={`/films/${film.slug}`} className="win__ttl u-line" data-cursor="Watch" data-slate={film.title} data-scene-no={`No. ${formatCatalogNumber(film.no)}`}>{film.title}</Link>
                         {c.winner.person ? <span className="win__person">{c.winner.person}</span> : null}
                         {c.nominees.length ? (
                           <span className="win__person">Also nominated: {c.nominees.map((n) => films.get(n.filmSlug)?.title ?? n.filmSlug).join(", ")}</span>
@@ -135,22 +136,24 @@ export default async function CeremonyPage({ params }: PageProps) {
           <section className="sec t-ink" id="finale" data-scene data-name="Best Picture" data-idx="BP" aria-labelledby="finale-ttl">
             <SectionHead n="★" slug="INT. The finale — last envelope" title="Best" em="Picture" meta={[ceremony.held, "The last envelope"]} />
             <div className="finale" data-reveal-head>
-              <div className="finale__frame" data-finale>
-                <Media
-                  film={finaleFilm}
-                  rot={-0.8}
-                  size="full"
-                  cursor="Watch"
-                  edge={[`Best Picture ▸ ${ceremony.year}`, `No. ${String(finaleFilm.no).padStart(3, "0")}`]}
-                  cap={<><CatNo no={finaleFilm.no} />Directed by {finaleFilm.director}<span className="x">{ceremony.year}</span></>}
-                />
-                <Badge text={`Best Picture ★ ${ceremony.year} ★ Student Film Association ★ `} core="star.svg" />
+              <div className="finale__frame">
+                <div data-finale>
+                  <Media
+                    film={finaleFilm}
+                    rot={-0.8}
+                    size="full"
+                    cursor="Watch"
+                    edge={[`Best Picture ▸ ${ceremony.year}`, `No. ${formatCatalogNumber(finaleFilm.no)}`]}
+                    cap={<><CatNo no={finaleFilm.no} />Directed by {finaleFilm.director}<span className="x">{ceremony.year}</span></>}
+                  />
+                </div>
+                <CanLabel rows={[["Prod", "SFA"], ["Roll", String(ceremony.year)], ["Sc", formatCatalogNumber(finaleFilm.no)], ["Best pic", "✓"]]} rot={-4} />
               </div>
               <div className="finale__laurel">
-                <Stamp inline rot={-3}>Best<br />Picture</Stamp>
+                <Stamp inline rot={-3} fest={fest}>Best<br />Picture</Stamp>
               </div>
               <h2 className="finale__ttl" id="finale-ttl" data-split>
-                <Link href={`/films/${finaleFilm.slug}`} data-cursor="Watch">{finaleFilm.title}</Link>
+                <Link href={`/films/${finaleFilm.slug}`} data-cursor="Watch" data-slate={finaleFilm.title} data-scene-no={`No. ${formatCatalogNumber(finaleFilm.no)}`}>{finaleFilm.title}</Link>
               </h2>
               <p className="finale__by">
                 {numberWord(summary.lead?.wins ?? 1, true)} {(summary.lead?.wins ?? 1) === 1 ? "award" : "awards"} on the night — directed by {finaleFilm.director}

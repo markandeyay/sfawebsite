@@ -8,15 +8,15 @@ import { SITE } from "@/lib/site";
    ═══════════════════════════════════════════════════════════════════ */
 
 const NAV = [
-  { href: "/#slate", key: "slate", n: "01", label: "Slate" },
-  { href: "/#rack", key: "rack", n: "02", label: "Awards" },
-  { href: "/#story", key: "story", n: "03", label: "Call sheet" },
-  { href: "/#crew", key: "crew", n: "04", label: "Crew" },
-  { href: "/#credits", key: "credits", n: "05", label: "Credits" },
-  { href: "/#pitch", key: "pitch", n: "06", label: "Pitch" },
+  { href: "/#slate", key: "slate", label: "Slate" },
+  { href: "/#awards", key: "awards", label: "Awards" },
+  { href: "/#story", key: "story", label: "Call sheet" },
+  { href: "/#credits", key: "credits", label: "Credits" },
+  { href: "/#pitch", key: "pitch", label: "Pitch" },
 ];
 
-/* the slate that claps in the dark between pages */
+/* the slate that claps in the dark between pages; lib/fx/curtain.ts
+   writes where you are going into the fields */
 function ClapSlate() {
   return (
     <svg viewBox="0 0 120 100" aria-hidden="true">
@@ -25,7 +25,15 @@ function ClapSlate() {
         <path d="M14 6l10 18M34 6l10 18M54 6l10 18M74 6l10 18M94 6l10 18" stroke="#0E0D0C" strokeWidth="7" />
       </g>
       <rect x="4" y="28" width="112" height="66" rx="3" fill="currentColor" />
-      <path d="M16 46h88M16 62h88M16 78h50" stroke="#0E0D0C" strokeWidth="2" />
+      <path d="M12 46h96M12 62h96M12 78h56" stroke="#0E0D0C" strokeWidth="1.2" />
+      <text className="-k" x="12" y="36">Scene</text>
+      <text className="-k" x="76" y="36">Roll</text>
+      <text x="12" y="44.5" data-f="scene">—</text>
+      <text x="76" y="44.5" data-f="roll">SFA</text>
+      <text className="-big" x="12" y="60.5" data-f="title" />
+      <text className="-k" x="12" y="70">Take</text>
+      <text x="12" y="77" data-f="take">1</text>
+      <text className="-k" x="76" y="77">Sync</text>
     </svg>
   );
 }
@@ -82,7 +90,7 @@ export function ChromeTop() {
           </svg>
           <span className="leader__sweep" id="leader-sweep" aria-hidden="true" />
           <span className="leader__num" id="leader-num">8</span>
-          <p className="leader__meta"><span>SFA</span><b>Roll 2025</b><span>Picture start</span></p>
+          <p className="leader__meta"><span>SFA</span><b>Roll 2025 · Reel 01</b><span>Head · 24 fps</span></p>
         </div>
       </div>
 
@@ -100,7 +108,7 @@ export function ChromeTop() {
 
       {/* ══ HEADER: the HUD ══ */}
       <header className="header" id="header">
-        <Link className="header__mark" href="/" aria-label={SITE.name}>
+        <Link className="header__mark" href="/" aria-label={SITE.name} data-slate="Title card" data-scene-no="00">
           <span className="header__rec" aria-hidden="true" />
           <strong aria-hidden="true">SFA</strong>
           <span aria-hidden="true">Student Film<br />Association</span>
@@ -108,7 +116,7 @@ export function ChromeTop() {
         <nav className="header__nav" aria-label="Sections">
           {NAV.map((n) => (
             <Link key={n.key} href={n.href} data-nav data-navlink={n.key} className="u-line">
-              <i>{n.n}</i>{n.label}
+              {n.label}
             </Link>
           ))}
         </nav>

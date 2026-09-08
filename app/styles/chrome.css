@@ -2,13 +2,17 @@
    CHROME — the persistent frame: atmosphere, grain, the leader, the
    iris, the HUD header, the frame-counter rail, the reticle cursor,
    page-top.
+
+   The chrome takes its colour from the surface under it (the scene
+   observer stamps data-surface on the root) rather than from a
+   difference blend, so REC stays red and paper stays paper.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── ATMOSPHERE ───────────────────────────────────────────────────
    The underprint: screenplay lines and film edge codes streaming as
-   lanes, a drift field of film marks, occasional crossings, and the
-   cue mark that blinks in the corner at a reel change. All CSS
-   keyframes on the compositor. */
+   lanes, a drift field of film marks, occasional crossings. All CSS
+   keyframes on the compositor, paused while an opaque section covers
+   the viewport. */
 .atmos {
   position: fixed; inset: 0; z-index: var(--z-atmos);
   pointer-events: none; overflow: hidden; contain: strict;
@@ -74,30 +78,32 @@
 }
 
 /* The cue mark: the dot a projectionist watches for in the top-right
-   corner, four seconds before a reel ends. Two blinks, then nothing
-   for a long while. */
+   corner, seconds before a reel ends. Two blinks, then nothing for a
+   long while. */
 .cue {
   position: fixed; top: calc(var(--s6) + 2vh); right: calc(var(--margin) * 0.6);
   z-index: var(--z-front); width: 14px; height: 14px; border-radius: 50%;
   background: var(--ink); opacity: 0; pointer-events: none;
-  mix-blend-mode: difference; background: #fff;
 }
+:root[data-surface="dark"] .cue { background: var(--paper); }
 .cue.-blink { animation: cue-blink 0.9s steps(1) 2; }
 @keyframes cue-blink { 0% { opacity: 0.9; } 40% { opacity: 0; } 100% { opacity: 0; } }
 
-/* ── GRAIN ──────────────────────────────────────────────────────── */
+/* ── GRAIN ──────────────────────────────────────────────────────
+   Dark alpha speckle, composited normally: no blend re-run on every
+   scroll frame. Off on phones, where it only costs. */
 .grain {
-  position: fixed; inset: 0; z-index: 59; pointer-events: none;
-  opacity: 0.38; mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+  position: fixed; inset: 0; z-index: 59; pointer-events: none; opacity: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.085 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+@media (pointer: coarse), (max-width: 900px) { .grain { display: none; } }
 
 /* ── THE LEADER ───────────────────────────────────────────────────
    An Academy countdown leader instead of a loading bar: the numeral
    counts down as the real assets land, the sweep hand goes round once
    per number, the cross and the two circles are the leader's own
-   registration marks. At the end, a white flash frame, then the field
-   lifts. */
+   registration marks. On 2, the 2-pop: one red frame, then the white
+   flash frame, then the field lifts. */
 .loader {
   position: fixed; inset: 0; z-index: var(--z-loader);
   background: var(--ink); color: var(--paper);
@@ -109,6 +115,7 @@
   transition: clip-path var(--d5) var(--e-inout);
 }
 .loader.-gone { display: none; }
+.loader.-pop .leader__num { color: var(--rec); }
 .loader.-flash::after {
   content: ""; position: absolute; inset: 0; background: var(--paper);
   animation: leader-flash 0.24s steps(1) 1;
@@ -116,8 +123,6 @@
 @keyframes leader-flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 0; } }
 
 .leader { position: relative; width: min(64vmin, 560px); aspect-ratio: 1; display: grid; place-items: center; }
-/* the cross-hair and the two circles are drawn in SVG; the sweep is a
-   conic mask rotating on --sweep */
 .leader__marks { position: absolute; inset: 0; width: 100%; height: 100%; }
 .leader__marks * { fill: none; stroke: rgba(245, 242, 235, 0.55); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .leader__sweep {
@@ -138,7 +143,6 @@
   letter-spacing: var(--tr-mega); text-transform: uppercase; color: rgba(245, 242, 235, 0.55);
 }
 .leader__meta b { color: var(--paper); font-variant-numeric: tabular-nums; }
-/* corners: the frame's own edge */
 .loader__corner {
   position: absolute; width: 28px; height: 28px; border: 2px solid rgba(245, 242, 235, 0.4);
 }
@@ -153,11 +157,11 @@
 }
 
 /* ── THE IRIS (route and anchor transitions) ─────────────────────
-   The silent era's cut: a black iris closes on the page, a slate claps
-   in the dark, the iris opens on the next one. The ink field carries a
-   round hole cut by a mask; --iris is the radius of the hole, so 0 is
-   fully covered and 120vmax is fully open. The clap is one CSS
-   keyframe on the arm. */
+   The silent era's cut: a black iris closes on the page, a slate with
+   the destination written on it claps in the dark, a flash frame, and
+   the iris opens on the next page. The ink field carries a round hole
+   cut by a mask; --iris is the radius of the hole, so 0 is fully
+   covered and 120vmax is fully open. */
 .curtain {
   position: fixed; inset: 0; z-index: var(--z-curtain);
   pointer-events: none; visibility: hidden;
@@ -174,11 +178,16 @@
   position: absolute; inset: 0; background: var(--paper); opacity: 0; pointer-events: none;
 }
 .curtain__slate {
-  position: relative; z-index: 1; width: min(30vw, 260px); opacity: 0;
+  position: relative; z-index: 1; width: min(32vw, 280px); opacity: 0;
   will-change: transform, opacity; color: var(--paper);
 }
 .curtain__slate svg { width: 100%; height: auto; overflow: visible; }
 .curtain__slate .arm { transform-origin: 6px 22px; }
+.curtain__slate text {
+  font-family: var(--font-marker), "Permanent Marker", cursive; fill: #0E0D0C; font-size: 8.5px;
+}
+.curtain__slate text.-big { font-size: 11px; }
+.curtain__slate text.-k { font-family: var(--f-script); font-weight: 700; font-size: 5px; letter-spacing: 0.08em; text-transform: uppercase; fill: rgba(14, 13, 12, 0.55); }
 .curtain.-clap .curtain__slate .arm { animation: clap 0.42s var(--e-snap) 1; }
 @keyframes clap {
   0%   { transform: rotate(-22deg); }
@@ -186,37 +195,47 @@
   70%  { transform: rotate(-4deg); }
   100% { transform: rotate(0deg); }
 }
+/* the small clap a slate does on hover or arrival, shared by the hero
+   slate and the department slates */
+@keyframes clap-sm {
+  0%   { transform: rotate(-16deg); }
+  55%  { transform: rotate(0deg); }
+  70%  { transform: rotate(-9deg); }
+  100% { transform: rotate(var(--arm-rest, -6deg)); }
+}
+@keyframes slate-flash { 0% { opacity: 0.9; } 100% { opacity: 0; } }
 
 /* ── HEADER: the camera HUD ─────────────────────────────────────── */
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-header);
   display: grid; grid-template-columns: auto 1fr auto; align-items: center;
   gap: var(--s5); padding: var(--s4) var(--margin);
-  transition: transform var(--d3) var(--e-out);
-  mix-blend-mode: difference; color: #fff;
+  color: var(--ink);
+  transition: transform var(--d3) var(--e-out), color var(--d2) var(--e-out);
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
   letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
+:root[data-surface="dark"] :is(.header, .rail) { color: var(--paper); }
+:root[data-surface="caro"] :is(.header, .rail) { color: var(--navy); }
 .header.-hidden { transform: translateY(-115%); }
 .header__mark { display: flex; align-items: center; gap: var(--s3); }
 .header__rec {
   display: inline-block; width: 10px; height: 10px; border-radius: 50%;
   background: var(--rec); animation: rec-blink 1.6s steps(1) infinite;
-  /* difference blending would invert the red; isolate it */
-  mix-blend-mode: normal;
 }
 @keyframes rec-blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0.25; } }
 .header__mark strong { font-family: var(--f-display); font-weight: 900; font-size: clamp(22px, 2vw, 30px); letter-spacing: 0; line-height: 1; }
 .header__mark span { font-size: var(--t-micro); line-height: 1.25; opacity: 0.8; }
-.header__nav { display: flex; justify-content: center; gap: clamp(14px, 2.2vw, 38px); }
-.header__nav a { display: flex; align-items: baseline; gap: 0.5em; padding: var(--s2) 0; }
-.header__nav a i { font-style: normal; opacity: 0.5; }
-.header__nav a.-active i { opacity: 1; color: var(--rec); mix-blend-mode: normal; }
-.header__meta { display: flex; align-items: center; gap: var(--s4); }
-.header__tc { font-variant-numeric: tabular-nums; opacity: 0.85; letter-spacing: 0.04em; }
-.header__badge {
-  font-size: var(--t-micro); padding: 0.5em 0.9em; border: 1.5px solid currentColor; border-radius: 3px;
-}
+/* the reel list reads as edge print: frame lines between the names */
+.header__nav { display: flex; justify-content: center; }
+.header__nav a { padding: var(--s2) clamp(0.7em, 1.2vw, 1.1em); border-inline-start: 1px solid currentColor; opacity: 0.82; }
+.header__nav a:first-child { border: 0; }
+.header__nav a.-active { color: var(--rec); opacity: 1; }
+.header__meta { display: flex; align-items: center; gap: var(--s5); }
+.header__tc { font-variant-numeric: tabular-nums; opacity: 0.85; letter-spacing: 0.04em; min-width: 14ch; text-align: right; contain: layout paint; }
+/* JOIN is a record control, not a pill */
+.header__badge { display: inline-flex; align-items: center; gap: 0.45em; font-size: var(--t-label); }
+.header__badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); }
 
 /* underline sweep — out from the right, back in from the left */
 .u-line { position: relative; }
@@ -228,27 +247,29 @@
 .u-line:hover::after, .u-line:focus-visible::after { transform: scaleX(1); transform-origin: 0 50%; }
 
 /* ── THE FRAME COUNTER (rail) ─────────────────────────────────────
-   Where you are in the reel: frame number counts with scroll, the
-   scene name reads down the edge like the edge print on a strip. */
+   One narrow column at the left edge, like the edge print on a strip:
+   reel, a run of perforations with the frame marker, frame number,
+   scene name, all reading down. */
 .rail {
-  position: fixed; left: var(--s4); top: 50%; z-index: var(--z-rail);
-  transform: translateY(-50%);
+  position: fixed; left: var(--s3); top: 50%; z-index: var(--z-rail);
+  transform: translateY(-50%); width: 16px;
   display: grid; gap: var(--s3); justify-items: center;
-  pointer-events: none; mix-blend-mode: difference; color: #fff;
+  pointer-events: none; color: var(--ink);
+  transition: color var(--d2) var(--e-out);
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
   letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
-.rail__track {
-  position: relative; width: 6px; height: clamp(120px, 22vh, 220px);
-  /* a strip of perforations */
-  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0 8px, transparent 8px 14px);
+.rail__track { position: relative; width: 6px; height: clamp(120px, 22vh, 220px); }
+.rail__track::before {
+  content: ""; position: absolute; inset: 0; opacity: 0.4;
+  background: repeating-linear-gradient(180deg, currentColor 0 8px, transparent 8px 14px);
 }
 .rail__track i {
-  position: absolute; left: -3px; right: -3px; top: 0; height: 2px; background: #fff;
+  position: absolute; left: -3px; right: -3px; top: 0; height: 2px; background: currentColor;
   transform: translateY(var(--fr, 0px)); will-change: transform;
 }
-.rail__name { writing-mode: vertical-rl; letter-spacing: var(--tr-mega); opacity: 0.7; }
-.rail__idx, .rail__fr { font-variant-numeric: tabular-nums; }
+.rail__idx, .rail__fr, .rail__name { writing-mode: vertical-rl; font-variant-numeric: tabular-nums; }
+.rail__name { letter-spacing: var(--tr-mega); opacity: 0.7; }
 .rail__fr { opacity: 0.7; }
 
 /* ── CURSOR: the reticle ────────────────────────────────────────── */
@@ -265,7 +286,6 @@
   display: grid; place-items: center;
   transition: width var(--d2) var(--e-out), height var(--d2) var(--e-out),
               margin var(--d2) var(--e-out), background-color var(--d2) var(--e-out);
-  /* four corner brackets and a centre tick, drawn with gradients */
   --c: var(--ink);
   background:
     linear-gradient(var(--c), var(--c)) top left / 8px 1.5px no-repeat,
@@ -279,7 +299,7 @@
     linear-gradient(var(--c), var(--c)) center / 5px 1.5px no-repeat;
 }
 .cursor__label {
-  font-family: var(--f-script); font-weight: 700; font-size: 10px;
+  font-family: var(--f-script); font-weight: 700; font-size: 10.5px;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink);
   opacity: 0; transform: translateY(4px);
   transition: opacity var(--d1) var(--e-out), transform var(--d2) var(--e-snap);
@@ -294,14 +314,17 @@
 
 /* ── PAGE TOP ───────────────────────────────────────────────────── */
 .pagetop {
-  position: fixed; right: var(--margin); bottom: var(--s6); z-index: var(--z-rail);
+  position: fixed; right: var(--s4); bottom: var(--s6); z-index: var(--z-rail);
   width: 52px; height: 52px; border-radius: 3px;
   background: var(--ink); color: var(--paper);
   display: grid; place-items: center;
   opacity: 0; visibility: hidden; transform: translateY(14px) scale(0.85);
-  transition: opacity var(--d2) var(--e-out), transform var(--d3) var(--e-out), visibility var(--d2);
+  transition: opacity var(--d2) var(--e-out), transform var(--d3) var(--e-out), visibility var(--d2),
+              background-color var(--d2) var(--e-out), color var(--d2) var(--e-out);
   font-family: var(--f-script); font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
 }
+:root[data-surface="dark"] .pagetop { background: var(--paper); color: var(--ink); }
+:root[data-surface="caro"] .pagetop { background: var(--navy); color: var(--paper); }
 .pagetop.-show { opacity: 1; visibility: visible; transform: none; }
-.pagetop:hover { background: var(--rec); }
+.pagetop:hover { background: var(--rec); color: var(--paper); }
 .pagetop svg { width: 15px; height: 15px; }

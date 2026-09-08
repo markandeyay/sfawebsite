@@ -6,10 +6,11 @@ import { boot, navigateThrough } from "@/lib/fx/boot";
 
 /* ═══════════════════════════════════════════════════════════════════
    ENGINE — boots the motion engine for the current route and tears it
-   down when the route changes. Internal links go through the curtain:
+   down when the route changes. Internal links go through the iris:
    the click is intercepted in the capture phase (before Next's Link
-   handler, which respects defaultPrevented), the stripes cover the
-   screen, the router pushes, and the next boot lifts the curtain.
+   handler, which respects defaultPrevented), the iris closes on the
+   screen with the destination written on the slate, the router pushes,
+   and the next boot opens the iris.
    ═══════════════════════════════════════════════════════════════════ */
 
 const INTERNAL = /^\/(films|awards)(\/|$)|^\/$/;
@@ -32,7 +33,12 @@ export default function Engine() {
       if (path === pathname && hash) return; /* same-page anchor: the boot owns it */
       if (path === pathname && !hash) return;
       e.preventDefault();
-      navigateThrough(href, (h) => router.push(h));
+      /* links carry what the slate should say; otherwise the link text */
+      const meta = {
+        scene: a.dataset.sceneNo || "",
+        title: a.dataset.slate || (a.textContent || "").trim().replace(/\s+/g, " ").slice(0, 24),
+      };
+      navigateThrough(href, (h) => router.push(h), meta);
     };
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);

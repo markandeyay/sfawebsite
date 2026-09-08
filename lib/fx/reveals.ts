@@ -9,7 +9,7 @@ import { prefersReduced } from "./motion";
    Stagger rides on --gd / --wd custom properties.
    ═══════════════════════════════════════════════════════════════════ */
 
-const STEP_LETTER = 24;
+const STEP_LETTER = 18;
 const STEP_WORD = 34;
 
 const splitLetters = (host: HTMLElement) => {
@@ -40,13 +40,9 @@ const splitLetters = (host: HTMLElement) => {
           const g = document.createElement("span");
           g.className = "gl";
           g.textContent = ch;
+          /* letters cut in, frame-stepped, and land true: a title card
+             is set by a compositor, not lettered by hand */
           g.style.setProperty("--gd", `${idx * STEP_LETTER}ms`);
-          /* Letters settle slightly off-true: display type that reads as
-             set by hand rather than snapped to a baseline. Under a degree
-             and a couple of hundredths of an em, so it registers as
-             character, not as a rendering bug. */
-          g.style.setProperty("--gr", `${(Math.random() * 2 - 1).toFixed(2)}deg`);
-          g.style.setProperty("--gy", `${(Math.random() * 0.036 - 0.018).toFixed(3)}em`);
           idx++;
           w.appendChild(g);
           word.appendChild(w);

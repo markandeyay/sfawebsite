@@ -1,13 +1,13 @@
 import { SectionHead } from "./SectionHead";
 import { PitchForm } from "./PitchForm";
 
-/* The interest form as a script page: a numbered Courier page with a
-   slugline, the fields in the same face. */
+/* The interest form as a formatted script page: number, slugline,
+   action, then each field as a character cue over its dialogue line. */
 export function Pitch() {
   return (
-    <section className="sec t-paper" id="pitch" data-scene data-name="Pitch" data-idx="06">
+    <section className="sec t-paper" id="pitch" data-scene data-name="Pitch" data-idx="05">
       <SectionHead
-        n="06"
+        n="05"
         slug="INT. Send your pitch — anytime"
         title="Send your"
         em="Pitch"
@@ -15,17 +15,15 @@ export function Pitch() {
       />
 
       <div className="pitch__grid">
-        <div className="pitch__copy" data-reveal>
-          <p className="pitch__lede">No experience needed. Bring a script, an idea, or just yourself.</p>
-          <p className="pitch__body">
-            Pitches open in the fall. If you want to write, act, shoot, edit, produce, or just be on a
-            set, say so here and the club will find you a crew. Any UNC student, any major.
-          </p>
-          <p className="pitch__key"><span className="req" aria-hidden="true">*</span> Required. Everything else is optional.</p>
-        </div>
         <div className="script" data-reveal>
           <span className="script__pg" aria-hidden="true">1.</span>
-          <p className="script__slug" aria-hidden="true">INT. Your pitch — day</p>
+          <p className="script__slug">INT. Your pitch — day</p>
+          <p className="script__action">
+            No experience needed. Bring a script, an idea, or just yourself. Pitches open in the fall.
+            If you want to write, act, shoot, edit, produce, or just be on a set, say so here and the
+            club will find you a crew. Any UNC student, any major.
+          </p>
+          <p className="script__action">Fields marked <span className="req" aria-hidden="true">*</span> are required.</p>
           <PitchForm />
         </div>
       </div>
