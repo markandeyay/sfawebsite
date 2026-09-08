@@ -31,7 +31,6 @@
   animation-play-state: var(--atmos-play, running);
 }
 .atmos__lane[data-dir="r"] { animation-name: atmos-run-r; }
-.atmos__lane[data-kind="poster"] { font-family: var(--f-display); font-weight: 900; letter-spacing: 0; }
 .atmos__lane b { font-weight: inherit; padding-inline-end: var(--gap, 0.9em); }
 /* an edge-code lane: a perforated strip with the codes in the margin */
 .atmos__lane[data-kind="edge"] {
@@ -115,10 +114,12 @@
   transition: clip-path var(--d5) var(--e-inout);
 }
 .loader.-gone { display: none; }
+/* a returning visitor in the same session never sees the leader */
+.-seen .loader { display: none; }
 .loader.-pop .leader__num { color: var(--rec); }
 .loader.-flash::after {
-  content: ""; position: absolute; inset: 0; background: var(--paper);
-  animation: leader-flash 0.24s steps(1) 1;
+  content: ""; position: absolute; inset: 0; background: var(--paper); opacity: 0;
+  animation: leader-flash 0.24s steps(1) 1 forwards;
 }
 @keyframes leader-flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 0; } }
 
@@ -181,6 +182,7 @@
   position: relative; z-index: 1; width: min(32vw, 280px); opacity: 0;
   will-change: transform, opacity; color: var(--paper);
 }
+@media (max-width: 900px) { .curtain__slate { width: min(66vw, 280px); } }
 .curtain__slate svg { width: 100%; height: auto; overflow: visible; }
 .curtain__slate .arm { transform-origin: 6px 22px; }
 .curtain__slate text {
@@ -215,8 +217,12 @@
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
   letter-spacing: var(--tr-wide); text-transform: uppercase;
 }
-:root[data-surface="dark"] :is(.header, .rail) { color: var(--paper); }
-:root[data-surface="caro"] :is(.header, .rail) { color: var(--navy); }
+/* the header reads the surface under itself (the top band of the
+   viewport), the rail the surface at the centre, page-top the bottom */
+:root[data-surface-top="dark"] .header { color: var(--paper); }
+:root[data-surface-top="caro"] .header { color: var(--navy); }
+:root[data-surface="dark"] .rail { color: var(--paper); }
+:root[data-surface="caro"] .rail { color: var(--navy); }
 .header.-hidden { transform: translateY(-115%); }
 .header__mark { display: flex; align-items: center; gap: var(--s3); }
 .header__rec {
@@ -225,14 +231,15 @@
 }
 @keyframes rec-blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0.25; } }
 .header__mark strong { font-family: var(--f-display); font-weight: 900; font-size: clamp(22px, 2vw, 30px); letter-spacing: 0; line-height: 1; }
-.header__mark span { font-size: var(--t-micro); line-height: 1.25; opacity: 0.8; }
+.header__mark .header__tc { font-size: var(--t-label); line-height: 1; opacity: 0.85; }
+.header__reel { font-size: var(--t-label); opacity: 0.85; white-space: nowrap; }
 /* the reel list reads as edge print: frame lines between the names */
 .header__nav { display: flex; justify-content: center; }
 .header__nav a { padding: var(--s2) clamp(0.7em, 1.2vw, 1.1em); border-inline-start: 1px solid currentColor; opacity: 0.82; }
 .header__nav a:first-child { border: 0; }
 .header__nav a.-active { color: var(--rec); opacity: 1; }
 .header__meta { display: flex; align-items: center; gap: var(--s5); }
-.header__tc { font-variant-numeric: tabular-nums; opacity: 0.85; letter-spacing: 0.04em; min-width: 14ch; text-align: right; contain: layout paint; }
+.header__tc { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; min-width: 11ch; contain: layout paint; }
 /* JOIN is a record control, not a pill */
 .header__badge { display: inline-flex; align-items: center; gap: 0.45em; font-size: var(--t-label); }
 .header__badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); }
@@ -323,8 +330,8 @@
               background-color var(--d2) var(--e-out), color var(--d2) var(--e-out);
   font-family: var(--f-script); font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
 }
-:root[data-surface="dark"] .pagetop { background: var(--paper); color: var(--ink); }
-:root[data-surface="caro"] .pagetop { background: var(--navy); color: var(--paper); }
+:root[data-surface-bottom="dark"] .pagetop { background: var(--paper); color: var(--ink); }
+:root[data-surface-bottom="caro"] .pagetop { background: var(--navy); color: var(--paper); }
 .pagetop.-show { opacity: 1; visibility: visible; transform: none; }
 .pagetop:hover { background: var(--rec); color: var(--paper); }
 .pagetop svg { width: 15px; height: 15px; }

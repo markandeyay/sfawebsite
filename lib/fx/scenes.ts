@@ -32,12 +32,26 @@ export const prepareScenes = () => {
   set("[data-film-hero]", { opacity: 0, y: 40 });
 };
 
+/* the intro timeline and the slate's tremor are held so a route change
+   mid-intro can kill them instead of leaving them running on a detached
+   page */
+let intro: gsap.core.Timeline | null = null;
+let tremor: gsap.core.Tween | null = null;
+export const killIntro = () => {
+  intro?.kill();
+  tremor?.kill();
+  intro = null;
+  tremor = null;
+};
+
 /* The iris opens onto a page that then assembles itself. Beats are
    deliberately overlapped rather than sequential. */
 export const heroIntro = () => {
   if (prefersReduced()) return;
 
+  killIntro();
   const tl = gsap.timeline({ defaults: { ease: EASE.out } });
+  intro = tl;
   const stage = document.querySelector<HTMLElement>(".hero__stage");
 
   if (stage) {
@@ -61,7 +75,7 @@ export const heroIntro = () => {
       }, 3.6);
 
     /* the slate keeps a hand's tremor after the intro lands */
-    gsap.to(".hero__mascot", {
+    tremor = gsap.to(".hero__mascot", {
       y: -3, rotate: -4.4, duration: 5.5,
       ease: "sine.inOut", yoyo: true, repeat: -1, delay: 3,
     });
@@ -193,11 +207,12 @@ const slateScene = () => {
 
   const distance = () => Math.max(0, track.scrollWidth - window.innerWidth + 40);
 
-  /* Entrance: the strip rises into place before the pin takes over. */
+  /* Entrance: the strip rises into place before the pin takes over. On
+     yPercent, so it composes with the drift the pin writes on y. */
   gsap.fromTo(shots,
-    { y: (i: number) => 60 + i * 20, opacity: 0 },
+    { yPercent: (i: number) => 12 + i * 4, opacity: 0 },
     {
-      y: 0, opacity: 1,
+      yPercent: 0, opacity: 1,
       duration: 0.95, ease: EASE.out, stagger: 0.06,
       scrollTrigger: { trigger: pin, start: "top 90%", once: true },
     });
@@ -293,8 +308,9 @@ const creditsScene = () => {
   const stage = document.querySelector<HTMLElement>(".credits__stage");
   const roll = stage?.querySelector<HTMLElement>(".roll--crawl");
   if (!stage || !roll) return;
-  gsap.fromTo(roll, { y: "34vh" }, {
-    y: "-46%", ease: EASE.linear,
+  /* from just below the fold to its last line landing at 85vh */
+  gsap.fromTo(roll, { y: () => window.innerHeight * 0.34 }, {
+    y: () => window.innerHeight * 0.35 - roll.offsetHeight / 2, ease: EASE.linear,
     scrollTrigger: { trigger: stage, start: "top top", end: "bottom bottom", scrub: true, invalidateOnRefresh: true },
   });
 };

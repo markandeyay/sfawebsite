@@ -58,23 +58,13 @@
 }
 .hero__mascot > a { display: block; }
 
-.hero__line { margin-block-start: var(--s7); }
+.hero__line { margin-block-start: var(--s7); font-size: var(--t-small); }
+/* the foot is edge print, not a status line */
 .hero__foot {
-  display: flex; align-items: flex-end; justify-content: space-between;
+  display: flex; align-items: baseline; justify-content: space-between;
   gap: var(--s6); flex-wrap: wrap; margin-block-start: auto;
-  padding-block-start: var(--s4); border-block-start: 1px solid var(--ink-faint);
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
-  letter-spacing: var(--tr-wide); text-transform: uppercase;
-}
-.hero__foot .hot { color: var(--rec); }
-.hero__scroll { display: flex; align-items: center; gap: var(--s3); }
-.hero__scroll i {
-  display: block; width: 1px; height: 22px; background: var(--ink);
-  transform-origin: 50% 0; animation: scroll-tick 2.2s var(--e-inout) infinite;
-}
-@keyframes scroll-tick {
-  0%, 100% { transform: scaleY(0.3); opacity: 0.3; }
-  50%      { transform: scaleY(1);   opacity: 1; }
+  font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.75;
 }
 
 /* ── STORY: the call sheet ─────────────────────────────────────────── */
@@ -104,7 +94,7 @@
 .story__lede .ln--mark { position: relative; padding-inline: 0.16em; isolation: isolate; }
 .story__lede .ln--mark .mk {
   position: absolute; left: 0; right: 0; top: 24%; height: 62%; z-index: -1;
-  background: var(--carolina-hi); transform: scaleX(0); transform-origin: 0 50%; will-change: transform;
+  background: var(--carolina-hi); transform-origin: 0 50%;
 }
 .story__body { font-size: var(--t-body); line-height: var(--lh-body); max-width: 58ch; margin-block-end: var(--s5); }
 .callsheet-wrap { overflow-x: auto; margin-block-start: var(--s7); }
@@ -149,12 +139,12 @@
 }
 /* on the reel, the title is a grease-pencil note, circled if it won */
 .slate__track .shot__ttl {
-  position: relative; display: inline-block; margin: var(--s4) 0 0 var(--s2); padding: 0.15em 0.55em;
+  position: relative; display: inline-block; margin: var(--s4) 0 0 var(--s2); padding: 0.15em 0.7em;
   font-family: var(--font-marker), "Permanent Marker", cursive; font-weight: 400; text-transform: none;
   font-size: clamp(20px, 2vw, 30px); line-height: 1; letter-spacing: 0; color: var(--paper);
   transform: rotate(-1.5deg); transform-origin: 0 100%;
 }
-.shot__pick { position: absolute; inset: -18% -10%; width: 120%; height: 136%; pointer-events: none; }
+.shot__pick { position: absolute; inset: -18% -10%; width: 120%; max-width: none; height: 136%; pointer-events: none; }
 .shot__pick ellipse { fill: none; stroke: var(--rec); stroke-width: 2.5; stroke-dasharray: 150 8; }
 .shot__meta {
   margin: var(--s2) 0 0 var(--s2); display: flex; gap: var(--s4); flex-wrap: wrap; align-items: baseline;
@@ -241,14 +231,14 @@
   position: relative; display: flex; flex-direction: column; overflow: hidden;
   min-height: clamp(280px, 36vh, 400px);
   border: 2px solid var(--navy); border-radius: 4px; background: var(--paper); color: var(--navy);
-  transition: transform var(--d3) var(--e-out), color var(--d3) var(--e-out);
+  /* translate, not transform: it composes with the scrubbed transform GSAP writes */
+  transition: translate var(--d3) var(--e-out), color var(--d3) var(--e-out);
 }
 .crew-card__arm {
   position: relative; z-index: 2; flex: 0 0 auto; height: clamp(18px, 2vw, 26px);
   background: repeating-linear-gradient(-58deg, var(--navy) 0 14px, var(--paper) 14px 28px);
   border-block-end: 2px solid var(--navy);
   transform-origin: 0 100%; transform: rotate(var(--arm-rest, -12deg)); will-change: transform;
-  transition: transform 160ms cubic-bezier(0.2, 0.9, 0.3, 1.25);
 }
 .crew-card.-in .crew-card__arm { --arm-rest: 0deg; }
 .crew-card__in { position: relative; display: flex; flex-direction: column; flex: 1; padding: clamp(var(--s5), 2.4vw, var(--s7)); }
@@ -273,7 +263,7 @@
 .crew-card:nth-child(4) { --ox: 88%; --oy: 80%; }
 .crew-card__idx, .crew-card__ttl, .crew-card__txt, .crew-card__take { position: relative; z-index: 2; }
 .crew-card__slug { z-index: 2; }
-.crew-card:hover, .crew-card:focus-visible { transform: translateY(-6px); color: var(--carolina-hi); }
+.crew-card:hover, .crew-card:focus-visible { translate: 0 -6px; color: var(--carolina-hi); }
 .crew-card:hover .crew-card__veil,
 .crew-card:focus-visible .crew-card__veil { clip-path: ellipse(126% 126% at var(--ox, 50%) var(--oy, 50%)); }
 .crew-card:hover .crew-card__bg, .crew-card:focus-visible .crew-card__bg { opacity: 0.32; transform: none; }
@@ -304,7 +294,7 @@
 }
 .crew-card__take b { font-weight: 700; color: var(--rec); }
 
-.credits__stage { position: relative; min-height: 160vh; }
+.credits__stage { position: relative; min-height: 140vh; }
 .credits__roll {
   position: sticky; top: 0; height: 100vh; overflow: clip;
   display: grid; align-content: center; padding-inline: var(--margin);
@@ -403,7 +393,7 @@ select.field__input { appearance: none; cursor: pointer; }
 }
 
 /* ── FILM PAGE ──────────────────────────────────────────────────── */
-.film { position: relative; z-index: var(--z-content); padding-block-start: calc(var(--s9) + 2vw); }
+.film { position: relative; z-index: var(--z-content); padding-block-start: calc(var(--s9) + 2vw); background: var(--wash); }
 .film__head { padding-inline: var(--margin); }
 .film__no { display: block; }
 .film__ttl {
@@ -436,7 +426,7 @@ select.field__input { appearance: none; cursor: pointer; }
 .player > iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 /* ── AWARDS PAGE ─────────────────────────────────────────────────── */
-.night { position: relative; z-index: var(--z-content); }
+.night { position: relative; z-index: var(--z-content); background: var(--wash); }
 .tally { display: grid; gap: var(--s3); padding-inline: var(--margin); }
 .tally__row {
   display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s6); align-items: baseline;

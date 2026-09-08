@@ -94,7 +94,7 @@ export default async function CeremonyPage({ params }: PageProps) {
 
         <Band
           tone="ink"
-          rot={1.6}
+          rot={0}
           rows={[{ speed: -0.9, items: [{ b: "And the winner is" }, { em: ceremony.held }, { b: `${total} categories` }, { em: "Voted by the members" }] }]}
         />
 

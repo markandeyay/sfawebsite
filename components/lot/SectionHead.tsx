@@ -1,7 +1,7 @@
 /* A script page. The page number top right, the scene number in both
    margins with the slugline between them (INT. THE SLATE — NIGHT), the
-   title in the poster face with its second line in the script face,
-   and the parenthetical under it. */
+   parenthetical under it the way an action line follows a slugline,
+   then the title in one face on one line. */
 const trim = (s: string) => s.replace(/[.\s]+$/, "");
 
 export function SectionHead({
@@ -29,12 +29,11 @@ export function SectionHead({
         <span className="ln" />
         <span className="n">{n}</span>
       </div>
+      <p className="sec__meta">({trim(meta[0])}. {trim(meta[1])}.)</p>
       <div className="sec__title">
         <h2 className="sec__tt" data-split>
-          {title}
-          <em>{em}</em>
+          {title}<em>{em}</em>
         </h2>
-        <p className="sec__meta">({trim(meta[0])}. {trim(meta[1])}.)</p>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import { initBands } from "./bands";
 import { initCursor } from "./cursor";
 import { initChrome } from "./chrome";
 import { initReveals } from "./reveals";
-import { prepareScenes, heroIntro, initScenes, refreshScenes } from "./scenes";
+import { prepareScenes, heroIntro, killIntro, initScenes, refreshScenes } from "./scenes";
 
 /* ═══════════════════════════════════════════════════════════════════
    BOOT — one page, one engine.
@@ -102,6 +102,7 @@ export const boot = (): (() => void) => {
     refreshScenes();
   };
 
+  const calls: gsap.core.Tween[] = [];
   const firstVisit = !sessionStorage.getItem(LOADED_KEY);
   const loader = document.getElementById("loader");
   if (firstVisit && loader) {
@@ -115,12 +116,12 @@ export const boot = (): (() => void) => {
          if there is one, then lift the curtain onto the assembled page */
       if (hash && document.querySelector(hash)) scrollTo(hash, true);
       else window.scrollTo(0, 0);
-      gsap.delayedCall(0.05, () => {
+      calls.push(gsap.delayedCall(0.05, () => {
         curtain!.uncover();
-        gsap.delayedCall(0.2, reveal);
-      });
+        calls.push(gsap.delayedCall(0.2, reveal));
+      }));
     } else {
-      gsap.delayedCall(0.05, reveal);
+      calls.push(gsap.delayedCall(0.05, reveal));
     }
   }
 
@@ -130,6 +131,8 @@ export const boot = (): (() => void) => {
   cleanups.push(() => window.removeEventListener("load", onLoad));
 
   return () => {
+    killIntro();
+    calls.forEach((c) => c.kill());
     atmosphere?.stop();
     cleanups.reverse().forEach((c) => c());
     ScrollTrigger.getAll().forEach((t) => t.kill());

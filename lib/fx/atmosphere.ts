@@ -27,13 +27,12 @@ const EDGE = [
   "SFA 2025", "ROLL A", "12A", "13", "14", "15A", "SCENE 12 TAKE 2", "KEEP",
   "NO. 001", "NO. 002", "NO. 003", "PRINT", "HEAD", "TAIL", "SYNC",
 ];
-const POSTER = ["Student Film Association", "Festival in May", "Twelve Films", "Fifteen Awards", "Chapel Hill", "No Experience Needed"];
-
-type Kind = "script" | "edge" | "poster";
+type Kind = "script" | "edge";
 interface Tier { kind: Kind; fs: [number, number]; op: [number, number]; dur: [number, number] }
+/* no poster words: big ghost brand words under a title are a watermark
+   field, not a projection booth's paperwork */
 const TIERS: Record<Kind, Tier> = {
-  poster: { kind: "poster", fs: [84, 124], op: [0.028, 0.038], dur: [150, 210] },
-  script: { kind: "script", fs: [18, 26], op: [0.06, 0.085], dur: [110, 160] },
+  script: { kind: "script", fs: [18, 26], op: [0.035, 0.05], dur: [110, 160] },
   edge: { kind: "edge", fs: [11, 14], op: [0.10, 0.14], dur: [90, 130] },
 };
 
@@ -71,7 +70,7 @@ export const initAtmosphere = (): Atmosphere | null => {
 
   const vw = window.innerWidth;
   const narrow = vw < 900;
-  const LANES = narrow ? 11 : 17;
+  const LANES = narrow ? 6 : 9;
   const FIELD = narrow ? 4 : 6;
   const scale = Math.min(1, Math.max(0.5, vw / 1440));
 
@@ -89,9 +88,8 @@ export const initAtmosphere = (): Atmosphere | null => {
   /* ── FAR: the lanes ─────────────────────────────────────────────── */
   const farFrag = document.createDocumentFragment();
   for (let i = 0; i < LANES; i++) {
-    /* mostly script lines, a strip of edge code every third lane, one
-       lane of poster words */
-    const tier = i === 2 ? TIERS.poster : i % 3 === 1 ? TIERS.edge : TIERS.script;
+    /* script lines, with a strip of edge code every third lane */
+    const tier = i % 3 === 1 ? TIERS.edge : TIERS.script;
     const fs = rand(tier.fs[0], tier.fs[1]) * scale;
     const lane = document.createElement("div");
     lane.className = "atmos__lane";
@@ -102,11 +100,11 @@ export const initAtmosphere = (): Atmosphere | null => {
     lane.style.setProperty("--dur", `${rand(tier.dur[0], tier.dur[1]).toFixed(0)}s`);
     if (i % 3 === 2) lane.dataset.dir = "r";
 
-    const perChar = fs * (tier.kind === "poster" ? 0.42 : 0.62);
+    const perChar = fs * 0.62;
     const unit = document.createElement("span");
     let width = 0;
     let guard = 0;
-    const words = tier.kind === "poster" ? POSTER : tier.kind === "edge" ? EDGE : SCRIPT;
+    const words = tier.kind === "edge" ? EDGE : SCRIPT;
     while (width < vw * 1.25 && guard++ < 80) {
       const txt = pick(words);
       const b = document.createElement("b");

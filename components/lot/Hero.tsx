@@ -55,13 +55,12 @@ export function Hero({ keyFilm, films, awards, year }: { keyFilm: Film; films: n
       </div>
 
       <p className="hero__line" data-hero>
-        <b>A student-run studio at UNC.</b> {films} films a year <span className="hot">▸</span> {awards} awards <span className="hot">▸</span> one festival, every May
+        <b>A student-run studio at UNC.</b> {films} films a year <span className="hot">▸</span> {awards} awards <span className="hot">▸</span> one festival, every May <span className="hot">▸</span> no experience needed
       </p>
 
-      <div className="hero__foot" data-hero-fade>
-        <span className="hero__scroll"><i />Scroll</span>
-        <span className="u-hide-sp">No experience needed</span>
-        <span className="hot">Festival in May</span>
+      <div className="hero__foot" data-hero-fade aria-hidden="true">
+        <span>SFA ▸ Roll {year} ▸ 01A ▸ Head</span>
+        <span>24 fps · Roll down ▼</span>
       </div>
     </section>
   );

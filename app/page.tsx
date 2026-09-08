@@ -31,7 +31,7 @@ export default function Home() {
       {/* a strip of the year's own frames, and a strip of head leader */}
       <Band
         tone="ink"
-        rot={-2.4}
+        rot={0}
         rows={[
           { speed: 1, items: films.map((f) => ({ frame: f })) },
           { speed: -0.68, items: [{ b: "Picture start" }, { em: "Head" }, { b: `SFA Roll ${year}` }, { em: "24 fps" }, { b: "8" }, { em: "Sync" }, { b: "7" }, { em: "Print" }, { b: "6" }, { em: "Keep" }] },
@@ -40,10 +40,11 @@ export default function Home() {
 
       <Slate films={films} year={year} />
 
+      {/* the winners' frames with their categories printed in the margin */}
       <Band
         tone="paper"
-        rot={1.8}
-        rows={[{ speed: -1, items: [{ b: "Awards Night" }, { em: ceremony.held }, { b: "Best Picture" }, { em: summary.lead ? `${summary.lead.film.title} took ${summary.lead.wins}` : "Voted by the members" }] }]}
+        rot={0}
+        rows={[{ speed: -1, items: summary.highlights.map((h) => ({ frame: h.film, code: `${h.category} · ${h.wins} ${h.wins === 1 ? "win" : "wins"}` })) }]}
       />
 
       <Awards summary={summary} />

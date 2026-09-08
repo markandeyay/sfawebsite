@@ -161,7 +161,7 @@ export default async function FilmPage({ params }: PageProps) {
 
       <Band
         tone="ink"
-        rot={-1.4}
+        rot={0}
         rows={[{ speed: 0.9, items: [{ b: "Roll Sound" }, { em: "Speed" }, { b: "Mark It" }, { em: "Action" }, { b: "Cut" }, { em: "Check the gate" }] }]}
       />
 

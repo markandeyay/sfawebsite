@@ -62,9 +62,11 @@ Credits are `{ "role", "name" }` pairs in the order they should roll.
   choreography, one pin per page), `marks` (the doodle registry) and `boot`
   (one boot per route, torn down on navigation).
 - `components/engine/` mounts the chrome and boots the engine per route;
-  `components/lot/` are the homepage sections and the shared pieces
-  (slugline head, strip, film frame, laurel (`Stamp.tsx`), badge, catalog
-  number, laurel labels); `components/film/` the film page's screen.
+  `components/lot/` are the homepage sections (the screen, the slate, awards
+  night, the call sheet, the crew and the crawl, the pitch, THE END) and
+  the shared pieces (script-page head, strip, film frame, laurel
+  (`Stamp.tsx`), can label (`Badge.tsx`), catalog number, laurel labels);
+  `components/film/` the film page's screen with its ticket.
 - `content/`: `films.json`, `awards.json`, the types and the validator.
 - `public/assets/marks/`: the rough-stroke SVG doodles (strips of film, a
   reel, a clapper, a chair, a spot, a ticket, a star) and the hand-lettered

@@ -77,6 +77,15 @@ export function ChromeTop() {
         </defs>
       </svg>
 
+      {/* the leader runs once per session; a returning visitor must not see
+          the server-rendered 8 for the hydrate window, so the gate is set
+          before hydration */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: "try{if(sessionStorage.getItem('sfa:loaded'))document.documentElement.classList.add('-seen')}catch(e){}",
+        }}
+      />
+
       {/* ══ THE LEADER ══ */}
       <div className="loader" id="loader">
         <span className="loader__corner -tl" aria-hidden="true" /><span className="loader__corner -tr" aria-hidden="true" />
@@ -108,10 +117,11 @@ export function ChromeTop() {
 
       {/* ══ HEADER: the HUD ══ */}
       <header className="header" id="header">
+        {/* one line of camera OSD: REC, the mark, the timecode */}
         <Link className="header__mark" href="/" aria-label={SITE.name} data-slate="Title card" data-scene-no="00">
           <span className="header__rec" aria-hidden="true" />
           <strong aria-hidden="true">SFA</strong>
-          <span aria-hidden="true">Student Film<br />Association</span>
+          <span className="header__tc" id="header-tc" aria-hidden="true">00:00:00:00</span>
         </Link>
         <nav className="header__nav" aria-label="Sections">
           {NAV.map((n) => (
@@ -121,7 +131,7 @@ export function ChromeTop() {
           ))}
         </nav>
         <div className="header__meta">
-          <span className="header__tc u-hide-sp" id="header-tc" aria-hidden="true">TC 00:00:00:00</span>
+          <span className="header__reel" id="header-reel" aria-hidden="true">Reel 00 · Leader</span>
           <a className="header__badge" href={SITE.instagram} rel="noreferrer">Join</a>
         </div>
       </header>

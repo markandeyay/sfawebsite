@@ -1665,6 +1665,25 @@ changed the composition:
   are gone. The grain is dark alpha speckle composited normally, and off on
   phones. ScrollTrigger refreshes on resize again.
 
+A three-lens verification on the second pass scored the resemblance 4 of
+10 and named the connective tissue that still read as stussy.ink: the
+two-colour stacked section titles on a numbered rule, the tilted tapes at
+every seam, the "| SCROLL / red status" hero foot, the mark-plus-descriptor
+header lockup, and the ghost poster words in the atmosphere. The third pass
+removed them: titles are one line in one face under the slugline and its
+parenthetical; the strips run level (film runs flat through a gate) and
+the awards strip carries the winners' frames with their categories in the
+margin; the hero foot is edge print; the header is one line of camera OSD
+(REC, SFA, timecode) with the playing reel on the right; the poster tier is
+gone and the script lanes are halved and fainter. It also fixed what the
+lenses found mechanically: the header and page-top now read the surface
+under themselves through two more observers instead of the viewport centre,
+the crew slates no longer fight a CSS transition with the scrub, the credit
+crawl carries its aside and lands its last line at 85vh, the loader's flash
+frame no longer leaves a paper sheet, a returning visitor never sees the
+server-rendered 8, the intro timeline and the slate tremor are killed on
+route change, and the reel's entrance composes with its drift.
+
 ### 14.5 Verified
 
 Production build, Playwright with installed Chrome: the countdown leader

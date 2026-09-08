@@ -44,23 +44,25 @@ export function Credits({ stills }: { stills: Film[] }) {
 
       <div className="credits__stage">
         <div className="credits__roll" data-roll>
-          <dl className="roll roll--crawl">
-            {ROLES.map((role) => (
-              <div className="roll__row" data-roll-row key={role}>
-                <dt className="roll__role">{role}</dt>
-                <dd className="roll__name -missing">Name to be supplied</dd>
-              </div>
-            ))}
-            {FACTS.map(([role, name]) => (
-              <div className="roll__row" data-roll-row key={role}>
-                <dt className="roll__role">{role}</dt>
-                <dd className="roll__name">{name}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="roll__aside">
-            Names go here when the club sends them: the current officers, the executive producers, and a lead for each guild.
-          </p>
+          <div className="roll--crawl">
+            <dl className="roll">
+              {ROLES.map((role) => (
+                <div className="roll__row" data-roll-row key={role}>
+                  <dt className="roll__role">{role}</dt>
+                  <dd className="roll__name -missing">Name to be supplied</dd>
+                </div>
+              ))}
+              {FACTS.map(([role, name]) => (
+                <div className="roll__row" data-roll-row key={role}>
+                  <dt className="roll__role">{role}</dt>
+                  <dd className="roll__name">{name}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="roll__aside">
+              Names go here when the club sends them: the current officers, the executive producers, and a lead for each guild.
+            </p>
+          </div>
         </div>
         <div className="credits__mark" aria-hidden="true">
           <img src="/assets/marks/strip-v.svg" alt="" width="220" height="520" data-spin loading="lazy" />

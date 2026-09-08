@@ -14,7 +14,7 @@
 /* every paper section ends the way a script page does */
 .sec.t-paper::after {
   content: "(CONTINUED)"; display: block; text-align: right;
-  padding: var(--s6) var(--margin) 0;
+  padding: var(--s6) calc(var(--margin) + var(--s8)) 0;
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-micro);
   letter-spacing: var(--tr-wide); color: var(--on-surface-dim);
 }
@@ -53,7 +53,7 @@
 }
 .sec__rule .n { font-size: var(--t-label); color: var(--on-surface); font-variant-numeric: tabular-nums; min-width: 2.2em; }
 .sec__rule .n:last-child { text-align: right; }
-.sec__rule .k { flex: 1; color: var(--on-surface); text-align: center; }
+.sec__rule .k { flex: 1; color: var(--on-surface); text-align: left; }
 .sec__rule .k em { font-style: normal; color: var(--accent-ink); }
 .sec__rule .ln {
   flex: 0 0 auto; width: clamp(24px, 6vw, 90px); height: 1px; background: var(--rule);
@@ -68,21 +68,19 @@
 .-in .sec__rule .n { opacity: 1; transform: none; }
 .-in .sec__rule .k { opacity: 1; transform: none; transition-delay: 200ms; }
 
-.sec__title { display: block; margin-block-start: var(--s5); }
-.sec__tt {
-  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
-  font-size: var(--t-d1); line-height: var(--lh-solid); letter-spacing: var(--tr-tight);
-}
-.sec__tt em {
-  display: block; font-style: normal; font-family: var(--f-script); font-weight: 700;
-  font-size: 0.46em; line-height: 1.1; letter-spacing: -0.02em; margin-block-start: 0.08em;
-  color: var(--accent);
-}
+/* the slugline carries the head; the parenthetical follows it as a
+   script's action line does; the title is one line in one face */
 .sec__meta {
-  margin: var(--s4) 0 0 1.5em; max-width: 44ch;
+  margin: var(--s3) 0 0 1.5em; max-width: 52ch;
   font-family: var(--f-script); font-weight: 700; font-size: var(--t-small); line-height: 1.8;
   color: var(--on-surface-dim);
 }
+.sec__title { display: block; margin-block-start: var(--s5); }
+.sec__tt {
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
+  font-size: var(--t-d2); line-height: var(--lh-solid); letter-spacing: var(--tr-tight);
+}
+.sec__tt em { display: inline; font-style: normal; font-family: inherit; font-size: 1em; color: inherit; margin-inline-start: 0.22em; }
 
 /* ── STRIP (marquee tape as 35 mm) ───────────────────────────────
    Full-bleed, tilted, a strip of film lying across the seam between
@@ -93,10 +91,11 @@
   position: relative; z-index: var(--z-band);
   margin-block: calc(var(--section-y) * -0.22);
   padding-block: 0; overflow: hidden;
-  transform: rotate(var(--rot, -2deg)) scale(1.06);
-  transform-origin: 50% 50%;
+  /* film runs level through a gate; the seam is carried by motion, not tilt */
+  transform: none;
   pointer-events: none;
 }
+.band:has(+ .footer) { margin-block-end: max(var(--s5), 4vw); }
 .band__row {
   position: relative; isolation: isolate;
   display: flex; white-space: nowrap; align-items: stretch;
@@ -288,7 +287,7 @@
 .can > span { display: flex; justify-content: space-between; align-items: baseline; gap: 0.6em; padding: 0.3em 0.55em; border-block-end: 1px solid var(--ink-faint); }
 .can > span:last-child { border: 0; }
 .can i { font-style: normal; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); }
-.can b { font-family: var(--font-marker), "Permanent Marker", cursive; font-weight: 400; font-size: 1.3em; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62%; }
+.can b { font-family: var(--font-marker), "Permanent Marker", cursive; font-weight: 400; font-size: 1.3em; line-height: 1.05; max-width: 68%; text-align: right; overflow-wrap: anywhere; }
 .can--inline { position: static; }
 
 /* ── TICKET (the play control) ──────────────────────────────────── */

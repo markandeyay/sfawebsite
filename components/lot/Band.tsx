@@ -2,7 +2,7 @@
 import type { CSSProperties } from "react";
 import type { Film } from "@/content/types";
 
-export type BandItem = { b: string } | { em: string } | { frame: Film };
+export type BandItem = { b: string } | { em: string } | { frame: Film; code?: string };
 
 /* A strip of 35 mm lying across the seam between two sections:
    perforations top and bottom, the club's own frames or leader words
@@ -34,7 +34,7 @@ export function Band({
                         <span className="ldr">{f.title}</span>
                       )}
                     </span>
-                    <span className="band__code">SFA ▸ {f.year} ▸ {String(f.no).padStart(2, "0")}A</span>
+                    <span className="band__code">{it.code ?? `SFA ▸ ${f.year} ▸ ${String(f.no).padStart(2, "0")}A`}</span>
                   </span>
                 );
               }
