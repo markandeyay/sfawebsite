@@ -1684,6 +1684,11 @@ frame no longer leaves a paper sheet, a returning visitor never sees the
 server-rendered 8, the intro timeline and the slate tremor are killed on
 route change, and the reel's entrance composes with its drift.
 
+The client then asked for the pitch section to go entirely ("you do that
+separately"): the script-page form, its nav entry, the footer link and the
+mail-relay setup document were removed. Join, which goes to the club's
+Instagram, is the one action left on the site.
+
 ### 14.5 Verified
 
 Production build, Playwright with installed Chrome: the countdown leader

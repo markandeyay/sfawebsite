@@ -12,7 +12,6 @@ const NAV = [
   { href: "/#awards", key: "awards", label: "Awards" },
   { href: "/#story", key: "story", label: "Call sheet" },
   { href: "/#credits", key: "credits", label: "Credits" },
-  { href: "/#pitch", key: "pitch", label: "Pitch" },
 ];
 
 /* the slate that claps in the dark between pages; lib/fx/curtain.ts

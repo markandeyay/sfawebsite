@@ -108,51 +108,6 @@
   letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim);
 }
 
-/* ── SCRIPT PAGE (the pitch) ────────────────────────────────────
-   A formatted page: number, slugline, action, then each field as a
-   character cue over its dialogue line, with parentheticals. */
-.script {
-  position: relative; background: var(--paper); border: 1.5px solid var(--ink);
-  padding: clamp(var(--s6), 6vw, 96px);
-  font-family: var(--f-script); color: var(--ink);
-}
-.script__pg { position: absolute; top: var(--s5); right: var(--s5); font-weight: 700; font-size: var(--t-small); }
-.script__slug { font-weight: 700; font-size: var(--t-small); text-transform: uppercase; letter-spacing: 0.02em; margin-block-end: var(--s5); }
-.script__action { font-weight: 700; font-size: var(--t-small); line-height: 1.8; max-width: 60ch; margin-block-end: var(--s7); }
-.script__action + .script__action { margin-block-start: calc(var(--s7) * -1 + var(--s3)); }
-.script .pitch__form { display: grid; gap: var(--s6); }
-.script .pitch__row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s6); }
-.script .field { display: grid; gap: var(--s2); }
-.script .field__label {
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-small); text-transform: uppercase;
-  letter-spacing: 0.02em; padding-inline-start: 38%;
-}
-.script .field__paren {
-  font-weight: 400; font-size: var(--t-small); color: var(--ink-soft); padding-inline-start: 30%;
-}
-.script .field__input {
-  width: min(100%, 44ch); margin-inline-start: 22%; padding: 0.4em 0 0.5em;
-  border: 0; border-radius: 0; border-block-end: 1.5px solid var(--ink);
-  background: transparent; font-family: var(--f-script); font-size: var(--t-small); color: var(--ink);
-}
-.script .field__input:focus-visible { outline: none; border-color: var(--carolina-lo); }
-.script .field__input--area { min-height: 7em; resize: vertical; line-height: 1.7; border: 1.5px solid var(--ink); padding: 0.6em 0.8em; }
-.script .field.-bad .field__input { border-color: var(--rec); }
-.script .field__err { padding-inline-start: 22%; }
-/* the roles as a Courier checklist */
-.cbs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2) var(--s5); padding-inline-start: 22%; }
-.cb { position: relative; display: block; cursor: pointer; font-weight: 700; font-size: var(--t-small); text-transform: uppercase; letter-spacing: 0.02em; }
-.cb input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.cb span::before { content: "☐ "; }
-.cb input:checked + span::before { content: "☒ "; }
-.cb input:focus-visible + span { outline: 3px solid var(--rec); outline-offset: 3px; }
-.script .pitch__foot { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap; padding-inline-start: 22%; }
-.script .pitch__status { font-weight: 700; font-size: var(--t-small); text-transform: none; letter-spacing: 0; color: var(--ink-soft); }
-.script .pitch__status.-bad { color: var(--rec); }
-.script .pitch__status.-ok { color: var(--carolina-lo); }
-.script .pitch__status a { text-decoration: underline; text-underline-offset: 0.2em; }
-.script .req { color: var(--rec); }
-
 /* ── FILM PAGE EXTRAS ───────────────────────────────────────────── */
 .film__eyebrow {
   display: flex; align-items: center; gap: var(--s4); flex-wrap: wrap; padding-inline: var(--margin);

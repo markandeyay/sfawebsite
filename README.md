@@ -6,8 +6,9 @@ between routes, a camera HUD with a running timecode and a frame counter,
 a title card with letterbox bars, screenplay sluglines for section heads,
 strips of 35 mm as the tapes between sections, every still in sprocket-railed
 film chrome with edge print, laurels for the awards, a call sheet, a credit
-crawl, a script page for the pitch form and THE END over a strip of
-perforations. Big Shoulders Display and Courier Prime on paper and ink, with
+crawl and THE END over a strip of perforations. There is no contact form:
+pitches are handled by the club separately, and the only action on the site
+is Join, which goes to Instagram. Big Shoulders Display and Courier Prime on paper and ink, with
 Carolina blue and REC red. The motion engine (GSAP + Lenis: smooth scroll,
 one pinned reel, split-letter reveals, tapes that react to scroll speed, a
 three-depth atmosphere of screenplay lines and edge codes) is the one from the
@@ -53,8 +54,8 @@ Credits are `{ "role", "name" }` pairs in the order they should roll.
   depth), `base.css`, `chrome.css` (atmosphere, the leader, the iris, the HUD
   header, the rail, the cursor), `components.css` (sluglines, strips, film
   frames, laurels, the reel badge, the credit roll, reveals),
-  `sections.css`, `extras.css` (the slate card, the call sheet, the script
-  page, the pitch chooser), `responsive.css`.
+  `sections.css`, `extras.css` (the slate card, the title sweep, the call
+  sheet, the laurel row), `responsive.css`.
 - `lib/fx/` is the engine: `motion` (eases and durations mirrored from the
   tokens), `scroll` (one Lenis, one broadcast), `atmosphere`, `bands`,
   `chrome` (timecode, frame counter, cue mark), `cursor`, `curtain` (the
@@ -63,7 +64,7 @@ Credits are `{ "role", "name" }` pairs in the order they should roll.
   (one boot per route, torn down on navigation).
 - `components/engine/` mounts the chrome and boots the engine per route;
   `components/lot/` are the homepage sections (the screen, the slate, awards
-  night, the call sheet, the crew and the crawl, the pitch, THE END) and
+  night, the call sheet, the crew and the crawl, THE END) and
   the shared pieces (script-page head, strip, film frame, laurel
   (`Stamp.tsx`), can label (`Badge.tsx`), catalog number, laurel labels);
   `components/film/` the film page's screen with its ticket.
@@ -72,8 +73,6 @@ Credits are `{ "role", "name" }` pairs in the order they should roll.
   reel, a clapper, a chair, a spot, a ticket, a star) and the hand-lettered
   word marks used in the atmosphere.
   `scripts/` holds the still pipeline and the content validator.
-- `docs/APPS_SCRIPT_SETUP.md`: how to wire the pitch form to a Google Apps
-  Script mail relay; until then the form points at Instagram.
 - `DESIGN_NOTES.md` is the record of every direction, rejection and pass;
   `AUDIT.md` the diagnosis of an earlier build.
 
@@ -84,5 +83,4 @@ curtain, the bands), `lenis` (momentum scroll), `sharp` (the still pipeline).
 
 Exec-board names (the end credits roll shows "Name to be supplied"), semester
 dates, full crew credits per film, person-level award winners, a public
-upload or a frame for At Last, the Gift, the 2026 slate, and a mail relay for
-the pitch form.
+upload or a frame for At Last, the Gift, and the 2026 slate.

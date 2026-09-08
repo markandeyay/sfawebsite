@@ -6,7 +6,6 @@ import { Slate } from "@/components/lot/Slate";
 import { Awards } from "@/components/lot/Awards";
 import { Story } from "@/components/lot/Story";
 import { Credits } from "@/components/lot/Credits";
-import { Pitch } from "@/components/lot/Pitch";
 import { Footer } from "@/components/lot/Footer";
 
 /* The screening room: one long scroll, paper and ink by turns, every
@@ -52,8 +51,6 @@ export default function Home() {
       <Story film={storyFilm} year={year} />
 
       <Credits stills={crewStills} />
-
-      <Pitch />
 
       <Footer year={year} />
     </>

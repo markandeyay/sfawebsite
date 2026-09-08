@@ -69,8 +69,6 @@
   .credits__roll { position: static; height: auto; overflow: visible; padding-block: var(--s6); }
   .credits__mark { display: none; }
 
-  .pitch__grid { grid-template-columns: minmax(0, 1fr); }
-
   .film__grid { grid-template-columns: minmax(0, 1fr); }
   .film__adj-grid { grid-template-columns: minmax(0, 1fr); }
   .win { grid-template-columns: auto minmax(0, 1fr); }
@@ -88,17 +86,12 @@
   .crew__grid  { grid-template-columns: minmax(0, 1fr); }
   .hero__foot { gap: var(--s4); }
   .pagetop { right: var(--s4); bottom: var(--s4); width: 46px; height: 46px; }
-  .pitch__row { grid-template-columns: minmax(0, 1fr); }
   .roll__row { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
   .roll__role { text-align: left; }
   .ticket { left: var(--s4); bottom: var(--s4); }
   .ticket b { font-size: 16px; }
   .ticket small { display: none; }
   .seals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5) var(--s3); }
-  .script { padding: var(--s6) var(--s4); }
-  .script .field__label, .script .field__paren, .script .field__err, .script .pitch__foot, .cbs { padding-inline-start: 0; }
-  .script .field__input { margin-inline-start: 0; width: 100%; }
-  .cbs { grid-template-columns: minmax(0, 1fr); }
   .laurel__t { font-size: 13px; }
   .seals .laurel { width: clamp(120px, 44vw, 160px); }
   .roll--crawl .roll__name { font-size: clamp(18px, 5.6vw, 22px); overflow-wrap: anywhere; }

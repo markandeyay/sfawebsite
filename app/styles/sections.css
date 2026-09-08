@@ -311,42 +311,6 @@
 .credits__mark { position: absolute; right: var(--margin); top: var(--s8); width: clamp(80px, 7vw, 110px); }
 .credits__mark img { width: 100%; height: auto; filter: invert(1); opacity: 0.35; will-change: transform; }
 
-/* ── PITCH: the script page ───────────────────────────────────────── */
-.pitch__grid { display: grid; grid-template-columns: minmax(0, 760px); justify-content: center; padding-inline: var(--margin); }
-.pitch__form { display: grid; gap: var(--s6); }
-.pitch__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s6); }
-.field { display: grid; gap: var(--s3); align-content: start; }
-.field__label {
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
-  letter-spacing: var(--tr-wide); text-transform: uppercase;
-}
-.field__input {
-  width: 100%; padding: var(--s2) 0 var(--s3);
-  background: transparent; border: 0; border-radius: 0;
-  border-block-end: 1.5px solid var(--on-surface-dim);
-  font-family: var(--f-script); font-size: var(--t-small);
-  letter-spacing: var(--tr-normal); color: var(--on-surface);
-  transition: border-color var(--d2) var(--e-out);
-}
-.field__input:focus-visible { outline: none; border-color: var(--accent); }
-.field__input--area { padding: var(--s4); resize: vertical; min-height: 8em; line-height: 1.7; border: 1.5px solid var(--on-surface-dim); border-radius: 2px; }
-select.field__input { appearance: none; cursor: pointer; }
-.field.-bad .field__input { border-color: var(--rec); }
-.field__err {
-  display: none; font-family: var(--f-script); font-weight: 700; font-size: var(--t-small);
-  letter-spacing: 0.02em; text-transform: uppercase; color: var(--rec);
-}
-.field.-bad .field__err { display: block; }
-.pitch__foot { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap; }
-.pitch__status {
-  font-family: var(--f-script); font-weight: 700; font-size: var(--t-label);
-  letter-spacing: var(--tr-wide); text-transform: uppercase; color: var(--on-surface-dim);
-}
-.pitch__status.-bad { color: var(--rec); }
-.pitch__status.-ok { color: var(--carolina-lo); }
-.pitch__status a { text-decoration: underline; text-underline-offset: 0.2em; }
-.req { color: var(--rec); font-weight: 700; }
-
 /* ── FOOTER: THE END ──────────────────────────────────────────────
    The end card, bracketed by tail leader: a strip of perforations
    with its edge print above and below. */

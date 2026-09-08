@@ -1,11 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Film } from "@/content/types";
+import { SITE } from "@/lib/site";
 
 const CARDS = [
   { href: "/#credits", slug: "Officers", ttl: ["The", "Officers"], txt: "An officer board runs the club: president, vice president, treasurer." },
   { href: "/#credits", slug: "Producers", ttl: ["The", "Producers"], txt: "A board of executive producers runs the slate and gives every greenlit film a producer." },
-  { href: "/#pitch", slug: "Guilds", ttl: ["The", "Guilds"], txt: "Screenwriting, editing, acting and more: the departments that teach the craft." },
-  { href: "/#pitch", slug: "Members", ttl: ["The", "Members"], txt: "Over a hundred undergraduates from every major. Most arrive with no experience." },
+  { href: "/#story", slug: "Guilds", ttl: ["The", "Guilds"], txt: "Screenwriting, editing, acting and more: the departments that teach the craft." },
+  { href: SITE.instagram, slug: "Members", ttl: ["The", "Members"], txt: "Over a hundred undergraduates from every major. Most arrive with no experience." },
 ];
 
 /* Four department slates on the ink stage, each a clapperboard with a
@@ -17,7 +18,15 @@ export function CrewSlates({ stills }: { stills: Film[] }) {
       {CARDS.map((c, i) => {
         const still = stills[i % stills.length];
         return (
-          <a className="crew-card" href={c.href} key={c.slug} data-nav data-slate-card data-cursor="Go">
+          <a
+            className="crew-card"
+            href={c.href}
+            key={c.slug}
+            data-nav={c.href.startsWith("/") ? "" : undefined}
+            rel={c.href.startsWith("/") ? undefined : "noreferrer"}
+            data-slate-card
+            data-cursor="Go"
+          >
             <span className="crew-card__arm" aria-hidden="true" />
             {still?.still ? (
               <img className="crew-card__bg" src={still.still.original.replace(/\.webp$/, "-sm.webp")} alt="" aria-hidden="true" loading="lazy" width="640" height="360" />
